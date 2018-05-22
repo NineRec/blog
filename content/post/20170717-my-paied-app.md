@@ -1,5 +1,5 @@
 ---
-categories: essay
+categories: [essay]
 date: 2017-07-17T00:00:00Z
 title: 我的付费应用列表
 url: /post/my-paied-app/

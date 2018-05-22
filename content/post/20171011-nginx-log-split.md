@@ -1,5 +1,5 @@
 ---
-categories: Nginx
+categories: [Nginx]
 date: 2017-10-11T00:00:00Z
 title: Nginx 日志切分
 url: /post/nginx-log-split/

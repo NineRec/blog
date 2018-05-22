@@ -2,7 +2,7 @@
 title: "My Love Story"
 date: 2014-01-01T20:14:33+08:00
 lastmod: 2018-05-21T20:14:33+08:00
-category: essay
+category: [essay]
 url: /post/my-love-story/
 ---
 
