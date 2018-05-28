@@ -5,7 +5,7 @@ lastmod: 2018-05-23T18:11:45+08:00
 categories: [Container]
 ---
 
-## Bbackground
+## Background
 
 这是基于 Liz Rice 在 Container Camp 的会议分享，Liz 在不到 20 分钟的时间里，用 100 行左右的 Golang 代码，构建了一个容器。分享链接为[Building a container from scratch in Go](https://www.youtube.com/watch?v=Utf-A4rODH8)。
 
