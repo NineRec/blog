@@ -13,6 +13,8 @@ Nginx 的 `access_log & error_log`，在漫长的岁月中不断增长。然而 
 
 这里应该有更舒适的办法。
 
+<!--more-->
+
 ### 找到答案
 
 其实这时候就是体现不同的搜索引擎在解决技术问题时的能力了。Google 简单搜索了下，找到了如下文章： [How To Configure Logging and Log Rotation in Nginx on an Ubuntu VPS](https://www.digitalocean.com/community/tutorials/how-to-configure-logging-and-log-rotation-in-nginx-on-an-ubuntu-vps)

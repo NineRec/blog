@@ -9,6 +9,8 @@ categories: [Container]
 
 这是基于 Liz Rice 在 Container Camp 的会议分享，Liz 在不到 20 分钟的时间里，用 100 行左右的 Golang 代码，构建了一个容器。分享链接为[Building a container from scratch in Go](https://www.youtube.com/watch?v=Utf-A4rODH8)。
 
+<!--more-->
+
 ## Rootfs
 
 Liz 在用到文件系统时，展示了她虚拟机上的 `/home/rootfs`，说了句 "I just happen to have one lying around"。通常我们自己的 Linux 系统中并没有这么个目录，不过从视频的评论中可以找到一些相关链接，能够帮忙我们了解并构建一个 chroot。
