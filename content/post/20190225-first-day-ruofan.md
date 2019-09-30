@@ -16,4 +16,6 @@ url: /post/first-day-ruofan/
 
 其他：我用了大概 100g 的粉末，配上 600ml 的水，感觉不够粘稠，下一次尝试少放些水，让它粘稠一些。
 
+> 补充：尝试少放了些水，口感确实会略好一些。
+
 ![ruofan](/static/ruofan.jpeg)

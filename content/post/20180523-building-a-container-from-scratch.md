@@ -3,6 +3,8 @@ title: "从零构建一个容器"
 date: 2018-05-23T18:11:45+08:00
 lastmod: 2018-05-23T18:11:45+08:00
 categories: [Container]
+tags: [go]
+url: /post/building-container-from-scratch/
 ---
 
 ## Background

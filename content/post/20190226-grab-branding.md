@@ -1,5 +1,7 @@
 ---
 title: "Grab Branding"
+categories: [essay]
+tags: [Grab]
 date: 2019-02-26T16:08:26+08:00
 lastmod: 2019-02-26T16:08:26+08:00
 url: /post/grab-branding/
