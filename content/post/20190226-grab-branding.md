@@ -9,7 +9,7 @@ url: /post/grab-branding/
 
 公司要在技术圈子做一些宣传，为了能够吸引更多优秀工程师。厚着脸皮也去凑了个热闹。当然这里只是我早先计划的一些答案，和现场发挥的差异蛮大。
 
-link: https://www.youtube.com/watch?v=oFMlPZD57FQ
+视频链接: https://www.youtube.com/watch?v=oFMlPZD57FQ
 
 <!--more-->
 
