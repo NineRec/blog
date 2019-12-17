@@ -52,7 +52,7 @@ copyright = "NineRec"     # default: author.name ↓        # 默认为下面配
   description = "My blog -- blog.codepanic.cn."
 
   # paginate of archives, tags and categories
-  archivePaginate = 5
+  archivePaginate = 15
 
   # The date format to use; for a list of valid formats, see https://gohugo.io/functions/format/
   dateFormatToUse = "2006-01-02"
