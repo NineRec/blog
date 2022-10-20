@@ -30,15 +30,15 @@ copyright = "NineRec"     # default: author.name ↓        # 默认为下面配
   identifier = "archives"
   url = "/post/"
 [[menu.main]]
-  name = "Tags"
-  weight = 30
-  identifier = "tags"
-  url = "/tags/"
-[[menu.main]]
   name = "Categories"
-  weight = 40
+  weight = 30
   identifier = "categories"
   url = "/categories/"
+[[menu.main]]
+  name = "Quotes"
+  weight = 40
+  identifier = "quotes"
+  url = "/quotes/"
 
 [params]
   version = "4.x"           # Used to give a friendly message when you have an incompatible update
