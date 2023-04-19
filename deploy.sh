@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo -e "\033[0;32mUpdate submodules/theme...\033[0m"
+echo -e "\033[0;32mUpdate submodules...\033[0m"
 
 git submodule update --recursive --remote
 

@@ -1,6 +1,8 @@
 # CodePanic Blog Content
 
-The repo for `blog.CodePanic.com`. Based on Hugo.
+The repo for `blog.CodePanic.cn`. Based on Hugo.
+
+Directly copied the theme [hugo-theme-even](https://github.com/olOwOlo/hugo-theme-even) code to folder `theme/even`, as repo not actively maintained, and there are bugs needs to be fixed.
 
 ## init the repo
 
@@ -9,7 +11,7 @@ git clone https://github.com/NineRec/blog.git
 git submodule update --init
 ```
 
-## new post 
+## new post
 
 ```
 hugo new post/blog-title.md
@@ -20,4 +22,3 @@ hugo new post/blog-title.md
 ```
 sh deploy.sh
 ```
-

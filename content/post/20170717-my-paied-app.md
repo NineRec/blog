@@ -1,7 +1,7 @@
 ---
 categories: [essay]
-date: 2017-07-17T00:00:00Z
-lastmod: 2020-07-08T11:31:50+08:00
+date: 2017-07-17
+lastmod: 2023-04-08
 title: 我的付费应用列表
 url: /post/my-paied-app/
 ---
@@ -40,7 +40,9 @@ Affinity Designer 是 Adobe Illustrator 的替代软件。 类似 Affinity Photo
 
 Quiver 是个早期以 block 形式著称的文档笔记软件，对 markedown 和 code block 都有可以接受的支持。
 
-不过最近在换用 Notion，会觉得 Notion 的使用体验，feature 丰富程度都更优秀。而且 Notion 的 database 的概念确实能够满足更多的需求。 
+不过最近在换用 Notion，会觉得 Notion 的使用体验，feature 丰富程度都更优秀。而且 Notion 的 database 的概念确实能够满足更多的需求。
+
+> updated at 2023-04: 主要换用 LogSeq，更适合日常随手记录笔记
 
 ### 马克飞象 - Markdown 笔记软件
 
