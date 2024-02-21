@@ -51,3 +51,11 @@ url: /quotes
 每隔一段时间你就会有一个大成果，人们会说：「他是怎么做到的？他一定是个天才！」  
 > 
 > -- <cite>费曼</cite>
+
+***
+
+软件架构与硬件算力规模对齐(copied from [凤凰架构](https://icyfenix.cn/tricks/2021/arch/))
+
+> As long as there were no machines, programming was no problem at all; when we had a few weak computers, programming became a mild problem, and now we have gigantic computers, programming has become an equally gigantic problem.
+> 在没有计算机的时候，也就没有编程问题；当我们有了简单的计算机，编程只是个小问题；而现在我们有了算力规模庞大的计算机，那编程就成为了一个同样巨大的问题了。
+> -- Edsger Dijkstra, Communications of the ACM, 1972

@@ -1,7 +1,7 @@
 ---
 title: "Thoughts On Code Structure"
-categories: [go]
-tags: [go]
+categories: [golang]
+tags: [golong]
 date: 2019-09-30T09:19:44+08:00
 lastmod: 2021-02-07T09:19:44+08:00
 ---
@@ -20,6 +20,13 @@ lastmod: 2021-02-07T09:19:44+08:00
 > ......  
 > High internal quality leads to faster delivery of new features ...... attention to internal quality pays off in weeks not months         
 >   --- Martin Fowlers
+
+粗略翻译如下：
+
+> 包含大量 Cruft(废弃/冗余/混乱 etc) 代码的软件更难修改，导致新功能的推出速度变慢且缺陷变多。
+> ......
+> 高内部质量有助于加速新功能的交付......专注于提升软件的内部质量，其益处可以在数周内显现，而非数月。
+
 
 ### How - 方法和建议
 
