@@ -127,8 +127,8 @@ copyright = "NineRec"     # default: author.name ↓        # 默认为下面配
 
   [params.social]                                         # 社交链接
     a-email = "mailto:gongshang1990#163.com"
+    c-twitter = "https://twitter.com/codepanic_shang"
     g-github = "https://github.com/NineRec"
-    h-weibo = "http://weibo.com/gongshanag"
 
 # 将下面这段配置取消注释可以使 hugo 生成 .md 文件
 # Uncomment these options to make hugo output .md files.
