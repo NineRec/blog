@@ -59,3 +59,10 @@ url: /quotes
 > As long as there were no machines, programming was no problem at all; when we had a few weak computers, programming became a mild problem, and now we have gigantic computers, programming has become an equally gigantic problem.
 > 在没有计算机的时候，也就没有编程问题；当我们有了简单的计算机，编程只是个小问题；而现在我们有了算力规模庞大的计算机，那编程就成为了一个同样巨大的问题了。
 > -- Edsger Dijkstra, Communications of the ACM, 1972
+
+***
+
+Heinrich’s Law(海恩法则/海因里希法则)
+
+> Heinrich’s Law states that for every major injury (serious accident), there are 29 minor injuries and 300 no-injury incidents (near-misses). 
+> “海恩法则": 就是“（在飞行安全领域）每一起严重事故的背后，必然有29 起轻微事故和 300 起未遂先兆以及 1000 起事故隐患”
