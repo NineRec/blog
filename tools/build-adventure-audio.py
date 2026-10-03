@@ -1,92 +1,98 @@
-"""Rebuild bundled English recordings on macOS; no speech synthesis runs in the browser.
+"""Render every production clip with Zoey's selected 03-curious fictional voice.
 
-Requires the Samantha voice and afconvert. Existing animal-call source recordings are
-kept in static/butterfly-adventure/audio. See credits.html for their licenses.
+Run with .voice-lab/.venv/bin/python. Models and caches remain in .voice-lab;
+the reference/profile are versioned under tools/voice. Browsers only play AAC.
 """
-import array
+import argparse
+import hashlib
 import json
-import math
-import random
+import os
 from pathlib import Path
 import subprocess
-import sys
 import tempfile
-import wave
+import time
 
 ROOT = Path(__file__).resolve().parents[1]
+LAB = ROOT / '.voice-lab'
+os.environ.setdefault('HF_HOME', str(LAB / 'cache/huggingface'))
+os.environ.setdefault('TOKENIZERS_PARALLELISM', 'false')
+import mlx.core as mx
+import numpy as np
+import soundfile as sf
+from mlx_audio.tts.utils import load_model
+
 AUDIO = ROOT / 'static/butterfly-adventure/audio'
-RATE = 22050
-VOICE = 'Samantha'
-
-
-def pcm(path, target):
-    subprocess.run(['afconvert', str(path), str(target), '-f', 'WAVE', '-d', f'LEI16@{RATE}', '-c', '1'], check=True)
-    with wave.open(str(target)) as source:
-        assert source.getnchannels() == 1 and source.getsampwidth() == 2
-        return source.readframes(source.getnframes())
+PROFILE = ROOT / 'tools/voice/zoey-curious.json'
+RATE = 24000
 
 
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('keys', nargs='*')
+    parser.add_argument('--force', action='store_true')
+    args = parser.parse_args()
+    profile = json.loads(PROFILE.read_text())
+    reference = PROFILE.parent / profile['reference_file']
+    assert hashlib.sha256(reference.read_bytes()).hexdigest() == profile['reference_sha256']
+    model_path = LAB / 'models/Qwen3-TTS-12Hz-1.7B-Base-8bit'
+    revision = (model_path / 'selected-revision.txt').read_text().strip()
+    assert revision == profile['model_revision'], 'Use the pinned Base model revision'
     lines = json.loads((AUDIO / 'narration.json').read_text())
-    with tempfile.TemporaryDirectory(prefix='little-wonders-') as directory:
+    info_path = AUDIO / 'recording-info.json'
+    old = json.loads(info_path.read_text()) if info_path.exists() else {}
+    info = {'guide': 'Zoey', 'voice': 'Zoey / 03-curious', 'style': profile['style'],
+            'locale': 'en-US', 'format': 'bundled prerecorded AAC', 'model': profile['model'],
+            'model_revision': revision, 'reference_sha256': profile['reference_sha256'],
+            'clips': len(lines), 'recordings': old.get('recordings', {})}
+    todo = []
+    for key, text in lines.items():
+        if args.keys and key not in args.keys:
+            continue
+        call = next(iter(sorted(AUDIO.glob(f'{key}-call.*'))), None)
+        fingerprint = hashlib.sha256((text + json.dumps(profile, sort_keys=True)).encode() + (call.read_bytes() if call else b'')).hexdigest()
+        if not args.force and (AUDIO / f'{key}.m4a').exists() and info['recordings'].get(key, {}).get('fingerprint') == fingerprint:
+            continue
+        todo.append((key, text, call, fingerprint))
+    if not todo:
+        print('All selected Zoey clips are current', flush=True)
+        return
+    print(f'Loading pinned Base model; {len(todo)} clips to render', flush=True)
+    model = load_model(str(model_path))
+    mx.eval(model.parameters())
+    assert model.config.tts_model_type == 'base'
+    with tempfile.TemporaryDirectory(prefix='zoey-production-') as directory:
         temp = Path(directory)
-        # A soft crafted owl hoot, with fades at both ends of every pulse.
-        samples = array.array('h')
-        for index in range(RATE * 2):
-            t = index / RATE
-            local = t if t < .7 else t - 1
-            if 0 <= local < .6:
-                envelope = math.sin(math.pi * local / .6) ** 2
-                phase = 2 * math.pi * (380 * local - 28 * local * local)
-                value = .32 * envelope * (math.sin(phase) + .13 * math.sin(2 * phase))
-            else:
-                value = 0
-            samples.append(int(value * 32767))
-        with wave.open(str(AUDIO / 'owl-call.wav'), 'w') as out:
-            out.setparams((1, 2, RATE, 0, 'NONE', 'not compressed'))
-            out.writeframes(samples.tobytes())
-        # A gentle, original tiger growl effect; not a wildlife recording.
-        noise = random.Random(42)
-        samples = array.array('h')
-        phase = 0
-        for index in range(RATE * 3):
-            t = index / RATE
-            local = t % 1.5
-            envelope = math.sin(math.pi * min(local, 1.1) / 1.1) ** 2 if local < 1.1 else 0
-            phase += 2 * math.pi * (105 + 12 * math.sin(t * 5)) / RATE
-            tone = sum(math.sin(phase * harmonic) / harmonic for harmonic in range(1, 9)) / 2
-            value = .36 * envelope * (tone + .13 * noise.uniform(-1, 1))
-            samples.append(int(value * 32767))
-        with wave.open(str(AUDIO / 'tiger-call.wav'), 'w') as out:
-            out.setparams((1, 2, RATE, 0, 'NONE', 'not compressed'))
-            out.writeframes(samples.tobytes())
-        for key, text in lines.items():
-            if len(sys.argv) > 1 and key not in sys.argv[1:]:
-                continue
-            spoken = temp / 'spoken.aiff'
-            subprocess.run(['say', '-v', VOICE, '-r', '158', '-o', str(spoken), text], check=True)
-            frames = pcm(spoken, temp / 'voice.wav')
-            call = next(iter(sorted(AUDIO.glob(f'{key}-call.*'))), None)
+        for index, (key, text, call, fingerprint) in enumerate(todo):
+            started = time.monotonic()
+            seed = profile['seed'] + int(hashlib.sha256(key.encode()).hexdigest()[:6], 16)
+            mx.random.seed(seed)
+            results = list(model.generate(text=text, ref_audio=str(reference), ref_text=profile['reference_text'], lang_code='English',
+                                          temperature=profile['temperature'], top_p=profile['top_p'], max_tokens=800, verbose=False))
+            audio = np.concatenate([np.asarray(r.audio).reshape(-1) for r in results])
+            sr = results[0].sample_rate
+            if not np.isfinite(audio).all() or len(audio) < sr * .25 or max(abs(audio)) < .003:
+                raise RuntimeError(f'Invalid or silent voice clip: {key}')
+            if any(r.token_count >= 800 for r in results):
+                raise RuntimeError(f'Truncated voice clip: {key}')
+            speech_seconds = len(audio) / sr
             if call:
-                call_frames = pcm(call, temp / 'call.wav')
-                # At most 4 seconds per call; tame recorded volume for little ears.
-                call_samples = array.array('h', call_frames[:RATE * 4 * 2])
-                peak = max((abs(value) for value in call_samples), default=1)
-                scale = min(1, 19000 / max(1, peak))
-                for i, value in enumerate(call_samples):
-                    fade = min(1, i / 400, (len(call_samples) - i) / 700)
-                    call_samples[i] = int(value * scale * fade)
-                frames += bytes(int(.35 * RATE) * 2) + call_samples.tobytes()
-            with wave.open(str(temp / 'combined.wav'), 'w') as out:
-                out.setparams((1, 2, RATE, 0, 'NONE', 'not compressed'))
-                out.writeframes(frames)
+                subprocess.run(['afconvert', str(call), str(temp / 'call.wav'), '-f', 'WAVE', '-d', f'LEI16@{sr}', '-c', '1'], check=True)
+                samples, _ = sf.read(temp / 'call.wav', dtype='float32')
+                samples = samples[:sr * 4]
+                samples *= min(1, .58 / max(.001, float(max(abs(samples)))))
+                fade = min(700, len(samples) // 4)
+                samples[:fade] *= np.linspace(0, 1, fade)
+                samples[-fade:] *= np.linspace(1, 0, fade)
+                audio = np.concatenate([audio, np.zeros(int(.35 * sr)), samples])
+            audio *= min(1, .88 / max(.001, float(max(abs(audio)))))
+            sf.write(temp / 'combined.wav', audio, sr, subtype='PCM_16')
             subprocess.run(['afconvert', str(temp / 'combined.wav'), str(AUDIO / f'{key}.m4a'), '-f', 'm4af', '-d', 'aac', '-b', '64000'], check=True)
-            print(f'Recorded {key}', flush=True)
-    if len(sys.argv) == 1:
-        (AUDIO / 'recording-info.json').write_text(json.dumps({
-            'guide': 'Zoey', 'voice': VOICE, 'locale': 'en-US',
-            'format': 'bundled prerecorded AAC', 'clips': len(lines),
-        }, indent=2) + '\n')
+            info['recordings'][key] = {'fingerprint': fingerprint, 'seed': seed, 'speech_seconds': round(speech_seconds, 3),
+                                      'duration_seconds': round(len(audio) / sr, 3), 'sha256': hashlib.sha256((AUDIO / f'{key}.m4a').read_bytes()).hexdigest()}
+            info_path.write_text(json.dumps(info, indent=2) + '\n')
+            mx.clear_cache()
+            print(f'{index+1}/{len(todo)} {key}: {speech_seconds:.2f}s voice, {time.monotonic()-started:.1f}s render', flush=True)
+    print('All recordings use Zoey / 03-curious', flush=True)
 
 
 if __name__ == '__main__':

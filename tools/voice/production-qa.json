@@ -1,0 +1,978 @@
+{
+  "voice": "Zoey / 03-curious",
+  "reference_sha256": "4408318aac13b69082a9e2724955ec9304e1ad5f5b05f44fa7f3b3d7ca9364bd",
+  "clips": [
+    {
+      "key": "garden-0-0",
+      "sha256": "d0e4b3742762873ebf14ae04aa64ecadb527959d91b1adc073a781a5571aed30",
+      "duration_seconds": 8.96,
+      "rms": 0.0758,
+      "expected": "A butterfly left a tiny egg on a leaf. Shall we take a closer look? There is a little life growing inside. Let's be gentle and give it time.",
+      "transcribed": "A butterfly left a tiny egg on a leaf. Shall we take a closer look? There is a little life growing inside. Let's be gentle and give it time.",
+      "similarity": 1.0
+    },
+    {
+      "key": "garden-0-1",
+      "sha256": "8e1868a99fee1945d6231f065b042008c5bee1af59d6a03cc260ad681fe44382",
+      "duration_seconds": 6.72,
+      "rms": 0.0595,
+      "expected": "Zoey leans in. Did you see that tiny wiggle? The baby caterpillar is growing inside its egg.",
+      "transcribed": "Zoe leans in. Did you see that tiny wiggle? The baby caterpillar is growing inside its egg.",
+      "similarity": 1.0
+    },
+    {
+      "key": "garden-0-2",
+      "sha256": "96d2b0b1adadad6b215cbe50b822580e57c3a3b300512f1bf91ccd5b66b6cb64",
+      "duration_seconds": 6.72,
+      "rms": 0.082,
+      "expected": "Crack! A little line appears in the shell. The caterpillar is ready to hatch. Watch the shell open.",
+      "transcribed": "Crack! A little line appears in the shell. The caterpillar is ready to hatch. Watch the shell open.",
+      "similarity": 1.0
+    },
+    {
+      "key": "garden-0-3",
+      "sha256": "6b3e5e8d8ef06537c17ccf01c5b1c9db8a8482935b9824458e9cc1fe67e73019",
+      "duration_seconds": 8.0,
+      "rms": 0.0861,
+      "expected": "Hello, little caterpillar! It crawls out of its egg. Zoey waves hello. Our new friend is ready for some tasty leaves.",
+      "transcribed": "Hello, little caterpillar. It crawls out of its egg. Zoe waves hello. Our new friend is ready for some tasty leaves.",
+      "similarity": 1.0
+    },
+    {
+      "key": "garden-1-0",
+      "sha256": "a5ee0ed0a7d585fee370fe4785beb14e265ecc02d0c2130f8df1ddf881097e3b",
+      "duration_seconds": 7.52,
+      "rms": 0.0735,
+      "expected": "Zoey picks a leaf. Our little caterpillar is hungry! Caterpillars eat leaves and shed their old skin as they grow.",
+      "transcribed": "Zoe picks a leaf. Our little caterpillar is hungry. Caterpillars eat leaves and shed their old skin as they grow.",
+      "similarity": 1.0
+    },
+    {
+      "key": "garden-1-1",
+      "sha256": "8df4a20e33b2227679fa547b872d2e221d5217bcf34f79c53e5834b2e71842b2",
+      "duration_seconds": 7.2,
+      "rms": 0.0794,
+      "expected": "Crunch! Zoey offers the first leaf. What a lovely lunch. The caterpillar takes a bite and grows a little bigger.",
+      "transcribed": "Crunch! Zoe offers the first leaf. What a lovely lunch! The caterpillar takes a bite and grows a little bigger.",
+      "similarity": 1.0
+    },
+    {
+      "key": "garden-1-2",
+      "sha256": "092135ad872e380fad8ed37840332273effbbf22ddd239a43b4066988bed20d1",
+      "duration_seconds": 8.08,
+      "rms": 0.0633,
+      "expected": "Crunch, crunch! Another leaf, another little growth spurt. Zoey reaches out carefully. Growing takes lots of energy.",
+      "transcribed": "Crunch! Crunch! Another leaf, another little growth spurt. Zoe reaches out carefully. Growing takes lots of energy.",
+      "similarity": 1.0
+    },
+    {
+      "key": "garden-1-3",
+      "sha256": "f43b5886504c00856e8be1d3a8a09e9526c6b784fc24eb3564e6ebd1de69aec7",
+      "duration_seconds": 8.16,
+      "rms": 0.0674,
+      "expected": "Our caterpillar is all grown. It finds a safe branch. Watch it hang in a J shape and shed its skin to reveal a chrysalis.",
+      "transcribed": "Our caterpillar is all grown. It finds a safe branch. Watch it hang in a J shape and shed its skin to reveal a chrysalis.",
+      "similarity": 1.0
+    },
+    {
+      "key": "garden-2-0",
+      "sha256": "700979bd04300d3b5a301047930539fe3621cade431111b8b6f5032387dde491",
+      "duration_seconds": 7.76,
+      "rms": 0.0645,
+      "expected": "A chrysalis hangs from the branch. Zoey waits quietly and watches. Inside, the caterpillar is changing into a butterfly.",
+      "transcribed": "A chrysalis hangs from the branch. Zoe waits quietly and watches. Inside, the caterpillar is changing into a butterfly.",
+      "similarity": 1.0
+    },
+    {
+      "key": "garden-2-1",
+      "sha256": "935dd77e6cdcc8184520514bcc46a4e5369f2c62c1efe924a8899d9867050276",
+      "duration_seconds": 8.16,
+      "rms": 0.0601,
+      "expected": "The garden is quiet. The chrysalis gently sways. Days pass in nature. Our little story makes time move faster.",
+      "transcribed": "The garden is quiet. The chrysalis gently sways. Days pass in nature. Our little story makes time move faster.",
+      "similarity": 1.0
+    },
+    {
+      "key": "garden-2-2",
+      "sha256": "4b3a92b437399e6c23cb5a9ce14a9a871ffa8f61e1fec56d32c7b260b93c6d27",
+      "duration_seconds": 6.64,
+      "rms": 0.0698,
+      "expected": "Look, Zoey! The chrysalis shell is beginning to split. A butterfly will emerge with soft, folded wings.",
+      "transcribed": "Look, Zoe! The chrysalis shell is beginning to split. A butterfly will emerge with soft folded wings.",
+      "similarity": 1.0
+    },
+    {
+      "key": "garden-2-3",
+      "sha256": "f487b5acf1c2a7ed3c986cde4e19557e7aaf410e0e9502122f2cea8e36e94ac8",
+      "duration_seconds": 6.56,
+      "rms": 0.0678,
+      "expected": "The butterfly climbs out, slowly and carefully. It holds on while its soft wings begin to unfurl.",
+      "transcribed": "The butterfly climbs out, slowly and carefully. It holds on while its soft wings begin to unfurl.",
+      "similarity": 1.0
+    },
+    {
+      "key": "garden-3-0",
+      "sha256": "676c0fa76d01350af3eaa671fdbe2390e2549139592940715dc120101b05d5d4",
+      "duration_seconds": 6.48,
+      "rms": 0.0656,
+      "expected": "Zoey watches the butterfly rest on the branch. Its wings are soft and folded. Give them time to expand.",
+      "transcribed": "Zoe watches the butterfly rest on the branch. Its wings are soft and folded. Give them time to expand.",
+      "similarity": 1.0
+    },
+    {
+      "key": "garden-3-1",
+      "sha256": "268dd2b2ee16da21bc80b1e37dbefe94d170dd8b7c59e9deec22dcd13902d909",
+      "duration_seconds": 8.48,
+      "rms": 0.0622,
+      "expected": "The wings slowly open. Look at those lovely colors! Zoey stretches too. The butterfly still needs time to dry its wings.",
+      "transcribed": "The wings slowly open. Look at those lovely colors. Zoe stretches too. The butterfly still needs time to dry its wings.",
+      "similarity": 1.0
+    },
+    {
+      "key": "garden-3-2",
+      "sha256": "2e8aa77ec734abfb977f03ec149f071718ab18af0bfde30f69338229882aad22",
+      "duration_seconds": 8.0,
+      "rms": 0.0748,
+      "expected": "The wings are open and dry. A new adventure is waiting. Zoey lifts a hand. Are you ready to help our friend take flight?",
+      "transcribed": "The wings are open and dry. A new adventure is waiting. Zoe lifts a hand. Are you ready to help our friend take flight?",
+      "similarity": 1.0
+    },
+    {
+      "key": "garden-3-3",
+      "sha256": "f0f65299e308f50de2980d03e9de8b4d6b26dba01b34b370147fea7964aa39d2",
+      "duration_seconds": 10.48,
+      "rms": 0.0671,
+      "expected": "Up, up, and away! Zoey waves as the butterfly takes flight. Tap a flower to invite it for nectar. A butterfly can lay eggs, and the story begins again.",
+      "transcribed": "Up, up and away. Zoe waves as the butterfly takes flight. Tap a flower to invite it for nectar. A butterfly can lay eggs, and the story begins again.",
+      "similarity": 1.0
+    },
+    {
+      "key": "zoo-intro",
+      "sha256": "f2280ea9accce00b35dd021c5d9b6b1210fdcea494ea239d20e9864411f33d6a",
+      "duration_seconds": 8.16,
+      "rms": 0.0866,
+      "expected": "Welcome to the zoo! Swipe in any direction. Tap a friend to hear its name and see what it does. Let us meet twenty-four animal friends!",
+      "transcribed": "Welcome to the zoo! Swipe in any direction! Tap a friend to hear its name and see what it does. Let us meet 24 animal friends.",
+      "similarity": 0.941
+    },
+    {
+      "key": "sea-intro",
+      "sha256": "c3a81b57162b32e842ce9c5b4b9a34c98adf05ebb6d13c5864557a1b7c99c5a1",
+      "duration_seconds": 8.88,
+      "rms": 0.0708,
+      "expected": "Come explore the ocean with me! Swipe in any direction. Tap a friend and watch its own special way of moving. We can meet eighteen ocean friends!",
+      "transcribed": "Come explore the ocean with me. Swipe in any direction. Tap a friend and watch its own special way of moving. We can meet 18 ocean friends.",
+      "similarity": 1.0
+    },
+    {
+      "key": "game-complete",
+      "sha256": "5d632bc405a5d3790aef092494e6cb2c4a39c2679be560a8ba85fbb668a0a95e",
+      "duration_seconds": 5.92,
+      "rms": 0.0873,
+      "expected": "You did it! Egg, caterpillar, chrysalis, butterfly. A wonderful circle of life!",
+      "transcribed": "You did it! Egg, caterpillar, chrysalis, butterfly, a wonderful circle of life!",
+      "similarity": 1.0
+    },
+    {
+      "key": "zoey-hello",
+      "sha256": "ed66f6796050e043890d0d962c515afd5d935f2323ebf6fcaeb0e04cdb5c9be7",
+      "duration_seconds": 3.44,
+      "rms": 0.1014,
+      "expected": "Hello! I am Zoey. Let us explore together!",
+      "transcribed": "Hello, I am Zoe. Let us explore together.",
+      "similarity": 1.0
+    },
+    {
+      "key": "nectar",
+      "sha256": "10cafb79055491a3d27a9408446bdfae33e66411c7d20e483a4f518038a7780d",
+      "duration_seconds": 4.08,
+      "rms": 0.0594,
+      "expected": "A sweet little stop! The butterfly visits a flower for nectar.",
+      "transcribed": "A sweet little stop. The butterfly visits a flower for nectar.",
+      "similarity": 1.0
+    },
+    {
+      "key": "lion",
+      "sha256": "0c081b2a64101c5e1ad88a720403fdf3c9268c25d16f80272dc35e5cd159f4cb",
+      "duration_seconds": 5.87,
+      "rms": 0.1226,
+      "expected": "Look! A lion!",
+      "transcribed": "Look! A lion!",
+      "similarity": 1.0
+    },
+    {
+      "key": "elephant",
+      "sha256": "0d26236f9103461968574595e54caf979876ab3c24b2fa39194efc70bc0e1b6d",
+      "duration_seconds": 3.586,
+      "rms": 0.0609,
+      "expected": "Look! An elephant!",
+      "transcribed": "Look! An elephant!",
+      "similarity": 1.0
+    },
+    {
+      "key": "giraffe",
+      "sha256": "1c83ef037873846f4f216dd7e04dae90183cdd3c946770009c26607f5df834ca",
+      "duration_seconds": 3.841,
+      "rms": 0.0708,
+      "expected": "Look! A giraffe!",
+      "transcribed": "Look! A giraffe!",
+      "similarity": 1.0
+    },
+    {
+      "key": "zebra",
+      "sha256": "61c4feb76682e309318aa42231835cff8d67af373297ae07659cc7a7950c4025",
+      "duration_seconds": 4.579,
+      "rms": 0.061,
+      "expected": "Look! A zebra!",
+      "transcribed": "Look! A zebra!",
+      "similarity": 1.0
+    },
+    {
+      "key": "monkey",
+      "sha256": "e5e6bf518ab70de7145b50b8e4fa5395dc8dee846edbac772cb52464672e48ed",
+      "duration_seconds": 2.735,
+      "rms": 0.0721,
+      "expected": "Look! A monkey!",
+      "transcribed": "Look! A monkey!",
+      "similarity": 1.0
+    },
+    {
+      "key": "owl",
+      "sha256": "5471f6613d88e7af597abc610cd9a4490bf9ed53a87aeed5c6c443554bfa0855",
+      "duration_seconds": 3.95,
+      "rms": 0.1014,
+      "expected": "Look! An owl!",
+      "transcribed": "Look! An owl!",
+      "similarity": 1.0
+    },
+    {
+      "key": "turtle",
+      "sha256": "90a961c3a582d1c692a7db4b13724600d40d88e7b24f8d534f9d952ee44a4674",
+      "duration_seconds": 1.52,
+      "rms": 0.0782,
+      "expected": "Look! A sea turtle!",
+      "transcribed": "Look! A sea turtle!",
+      "similarity": 1.0
+    },
+    {
+      "key": "clownfish",
+      "sha256": "bc134433324c99d1aa55cd9b4884bc3847a8201a963ddbe142a75a5b1cedf0d4",
+      "duration_seconds": 1.52,
+      "rms": 0.0772,
+      "expected": "Look! A clownfish!",
+      "transcribed": "Look, a clownfish!",
+      "similarity": 1.0
+    },
+    {
+      "key": "dolphin",
+      "sha256": "fba19c09f90fc2b7951baf5d2aab7965ca34706f66fe365b0862e5020e5e1b00",
+      "duration_seconds": 1.12,
+      "rms": 0.0934,
+      "expected": "Look! A dolphin!",
+      "transcribed": "Look a dolphin!",
+      "similarity": 1.0
+    },
+    {
+      "key": "octopus",
+      "sha256": "6da449c31fca20fd5a12cc1c0e888294709fed407ebdfa6ffb0732a5f94c2b0a",
+      "duration_seconds": 1.92,
+      "rms": 0.0692,
+      "expected": "Look! An octopus!",
+      "transcribed": "Look! An octopus!",
+      "similarity": 1.0
+    },
+    {
+      "key": "whale",
+      "sha256": "7290e95d274bebaeb28bd53ca93d93b829a015c10c39e15e632b8d5130b3f72c",
+      "duration_seconds": 1.44,
+      "rms": 0.093,
+      "expected": "Look! A whale!",
+      "transcribed": "Look! A whale!",
+      "similarity": 1.0
+    },
+    {
+      "key": "jellyfish",
+      "sha256": "fa39b53f1eab22626e8f6a6c6dde0876662b24ce7cfc34a07171d2551ad614d3",
+      "duration_seconds": 1.52,
+      "rms": 0.0913,
+      "expected": "Look! A jellyfish!",
+      "transcribed": "Look, a jellyfish!",
+      "similarity": 1.0
+    },
+    {
+      "key": "tiger",
+      "sha256": "4f34de2ae992c10323d3d7ad7e11df6d766b3d24fc0f3f4013f7469b99e6c732",
+      "duration_seconds": 4.87,
+      "rms": 0.0788,
+      "expected": "Look! A tiger!",
+      "transcribed": "Look! A tiger!",
+      "similarity": 1.0
+    },
+    {
+      "key": "bear",
+      "sha256": "58be3f39525e6c395abee6884aedb79cd291cfbc97caba4d285ef02927704b2f",
+      "duration_seconds": 5.95,
+      "rms": 0.0562,
+      "expected": "Look! A bear!",
+      "transcribed": "Look! A bear!",
+      "similarity": 1.0
+    },
+    {
+      "key": "duck",
+      "sha256": "0d5c19c676b16cb8a6d446a40dcf5ff599b4cdaace8301e04b50e9ac607d8df9",
+      "duration_seconds": 5.037,
+      "rms": 0.0648,
+      "expected": "Look! A duck!",
+      "transcribed": "Look! A duck!",
+      "similarity": 1.0
+    },
+    {
+      "key": "frog",
+      "sha256": "0c116391ede7517518b2adc80a489456afff6b066a8b730bf9b35bd735391e7e",
+      "duration_seconds": 2.601,
+      "rms": 0.0682,
+      "expected": "Look! A frog!",
+      "transcribed": "Look, a frog!",
+      "similarity": 1.0
+    },
+    {
+      "key": "shark",
+      "sha256": "7730b91c4a02ac70628c53a631314604f93bc0f72d7fe8b066daec0773fdb980",
+      "duration_seconds": 1.28,
+      "rms": 0.0845,
+      "expected": "Look! A shark!",
+      "transcribed": "Look! A shark!",
+      "similarity": 1.0
+    },
+    {
+      "key": "stingray",
+      "sha256": "03d631c37154e6abdc86d3a9e074871779b579ebc45c2442433e66fb141a44e7",
+      "duration_seconds": 1.6,
+      "rms": 0.0915,
+      "expected": "Look! A stingray!",
+      "transcribed": "Look! A stingray!",
+      "similarity": 1.0
+    },
+    {
+      "key": "seahorse",
+      "sha256": "5a38169547cdda0cbf47ea76b853991f9acdc8c58e6754d01d376059e715047e",
+      "duration_seconds": 1.6,
+      "rms": 0.08,
+      "expected": "Look! A seahorse!",
+      "transcribed": "Look! A seahorse!",
+      "similarity": 1.0
+    },
+    {
+      "key": "crab",
+      "sha256": "39bd48f9becc8d0998f0503a9f51e2e850fed1f0a160024a1b10d436e529b3d2",
+      "duration_seconds": 1.52,
+      "rms": 0.0903,
+      "expected": "Look! A crab!",
+      "transcribed": "Look! A crab!",
+      "similarity": 1.0
+    },
+    {
+      "key": "hippo",
+      "sha256": "ee0279dd3b9e7a0c0dd885a9479688dcc06afc53cb2792e65e3c607354eb4ecf",
+      "duration_seconds": 4.29,
+      "rms": 0.0729,
+      "expected": "Look! A hippo!",
+      "transcribed": "Look! A hippo!",
+      "similarity": 1.0
+    },
+    {
+      "key": "rhino",
+      "sha256": "bd6af82f2c741452da902b94abc863dcc3be1083c77fbfa14533974540f7144d",
+      "duration_seconds": 4.53,
+      "rms": 0.0677,
+      "expected": "Look! A rhino!",
+      "transcribed": "Look! A Rhino!",
+      "similarity": 1.0
+    },
+    {
+      "key": "otter",
+      "sha256": "3ec051cad4f50ef2eda0d3e3eb4cec6c1d0def1fd5af343155af2a53035dcc8c",
+      "duration_seconds": 4.37,
+      "rms": 0.0641,
+      "expected": "Look! An otter!",
+      "transcribed": "Look! An otter!",
+      "similarity": 1.0
+    },
+    {
+      "key": "panda",
+      "sha256": "1a1aec71dc94f0285774ba3b53e2f4351937e2736752e7bfe9b663e5a14bb70f",
+      "duration_seconds": 4.45,
+      "rms": 0.0678,
+      "expected": "Look! A panda!",
+      "transcribed": "Look! A panda!",
+      "similarity": 1.0
+    },
+    {
+      "key": "kangaroo",
+      "sha256": "5a8570fdf2650b438d3b2c99dee0bfa4d14086245e02ec0949beb8fb0b88132e",
+      "duration_seconds": 4.37,
+      "rms": 0.0611,
+      "expected": "Look! A kangaroo!",
+      "transcribed": "Look! A kangaroo!",
+      "similarity": 1.0
+    },
+    {
+      "key": "penguin",
+      "sha256": "bba758e7b16014c01b264976a9426ad9a573ad2cc644fb05e855a7a388f573e1",
+      "duration_seconds": 4.21,
+      "rms": 0.0589,
+      "expected": "Look! A penguin!",
+      "transcribed": "Look! A penguin!",
+      "similarity": 1.0
+    },
+    {
+      "key": "crocodile",
+      "sha256": "58c0334893ce96f2a24a5f1f2c66528e906c262ad487b2b04979174ff80b0054",
+      "duration_seconds": 4.53,
+      "rms": 0.0771,
+      "expected": "Look! A crocodile!",
+      "transcribed": "Look, a crocodile!",
+      "similarity": 1.0
+    },
+    {
+      "key": "flamingo",
+      "sha256": "fcff0ad75277f9661577abee0901d2ddcf272be01a0617214f453e73792bc99d",
+      "duration_seconds": 4.37,
+      "rms": 0.0664,
+      "expected": "Look! A flamingo!",
+      "transcribed": "Look, a flamingo!",
+      "similarity": 1.0
+    },
+    {
+      "key": "gorilla",
+      "sha256": "1a1b11b172063a52eef99b82a7b21d1ca9b9f268210b1233ad81cc3a1acb0267",
+      "duration_seconds": 4.29,
+      "rms": 0.0785,
+      "expected": "Look! A gorilla!",
+      "transcribed": "Look! A gorilla!",
+      "similarity": 1.0
+    },
+    {
+      "key": "fox",
+      "sha256": "91b0119ff4ed02e8fbd3a8391d8783cc71ed6609647e4811b3c840e57aa5d15c",
+      "duration_seconds": 4.13,
+      "rms": 0.0608,
+      "expected": "Look! A fox!",
+      "transcribed": "Look a fox!",
+      "similarity": 1.0
+    },
+    {
+      "key": "deer",
+      "sha256": "7c7e54cede725a64f972ed9de80550c3de1e24c94a9656e162f94880d460521a",
+      "duration_seconds": 4.45,
+      "rms": 0.0719,
+      "expected": "Look! A deer!",
+      "transcribed": "Look! A deer!",
+      "similarity": 1.0
+    },
+    {
+      "key": "rabbit",
+      "sha256": "ba1635b95f6e3b1b6367f4a9ab55918ab0a1d145ef1e1d1ae9232c03684b05ad",
+      "duration_seconds": 4.29,
+      "rms": 0.0535,
+      "expected": "Look! A rabbit!",
+      "transcribed": "Look! A rabbit!",
+      "similarity": 1.0
+    },
+    {
+      "key": "horse",
+      "sha256": "89b5d2616810523b8a384fe1f29eb09dd88e70fd97da34e99e338bd415eee8c0",
+      "duration_seconds": 4.45,
+      "rms": 0.0793,
+      "expected": "Look! A horse!",
+      "transcribed": "Look, a horse!",
+      "similarity": 1.0
+    },
+    {
+      "key": "cow",
+      "sha256": "4fd6dea0e7bffcaf325ffce9e2da042d6fbbf6ce25f62f73c01fecb72da969af",
+      "duration_seconds": 4.29,
+      "rms": 0.0701,
+      "expected": "Look! A cow!",
+      "transcribed": "Look! A cow!",
+      "similarity": 1.0
+    },
+    {
+      "key": "seal",
+      "sha256": "d3085340652499c3f6488abbb2c69309fea69c74d9ffdc06dc2b36ca2e9f0cfc",
+      "duration_seconds": 1.28,
+      "rms": 0.0796,
+      "expected": "Look! A seal!",
+      "transcribed": "Look! A seal!",
+      "similarity": 1.0
+    },
+    {
+      "key": "pufferfish",
+      "sha256": "677a1fbb4c1b4f89fc513a83841b12038a300c75ac65d809ecc394465976146f",
+      "duration_seconds": 1.68,
+      "rms": 0.0761,
+      "expected": "Look! A pufferfish!",
+      "transcribed": "Look! A puffer fish!",
+      "similarity": 1.0
+    },
+    {
+      "key": "starfish",
+      "sha256": "35d65ef8744e7973b3beab714e3ee1e8214eb0d665901cbd6d2fedb9c72b429d",
+      "duration_seconds": 1.44,
+      "rms": 0.0811,
+      "expected": "Look! A starfish!",
+      "transcribed": "Look, a starfish!",
+      "similarity": 1.0
+    },
+    {
+      "key": "manta",
+      "sha256": "7a4c2dadaef5223eac2584cd9c148d952ac6984d135f0e5199007c9cae596b84",
+      "duration_seconds": 1.92,
+      "rms": 0.0929,
+      "expected": "Look! A manta ray!",
+      "transcribed": "Look! A manta ray!",
+      "similarity": 1.0
+    },
+    {
+      "key": "swordfish",
+      "sha256": "626c08343e844d8a747056e4bd1e242155f0f124baf151f317b6a175e9e355cd",
+      "duration_seconds": 1.68,
+      "rms": 0.0695,
+      "expected": "Look! A swordfish!",
+      "transcribed": "Look, a swordfish.",
+      "similarity": 1.0
+    },
+    {
+      "key": "shrimp",
+      "sha256": "f6ff54d2122a690b0fe9a8b4a7b5516d8be54bd49d10cce4e3c2b403db0903ce",
+      "duration_seconds": 1.2,
+      "rms": 0.0899,
+      "expected": "Look! A shrimp!",
+      "transcribed": "Look, a shrimp!",
+      "similarity": 1.0
+    },
+    {
+      "key": "lobster",
+      "sha256": "ea49bfdb07e352639cf829a166b89cbdfadfb8bd63fe97c05c578e6df0461e7e",
+      "duration_seconds": 1.44,
+      "rms": 0.0834,
+      "expected": "Look! A lobster!",
+      "transcribed": "Look! A lobster!",
+      "similarity": 1.0
+    },
+    {
+      "key": "mermaid",
+      "sha256": "245612a5af8296e4861e54efb289b0878ecaaf3b8dc9d03183487503bca34399",
+      "duration_seconds": 1.52,
+      "rms": 0.0938,
+      "expected": "Look! A mermaid!",
+      "transcribed": "Look! A mermaid!",
+      "similarity": 1.0
+    },
+    {
+      "key": "clock-intro",
+      "sha256": "4f7fb6e8f7c1f22d9103ca850a2c0e3815022f1ca0664f9563e509d881c4e4a4",
+      "duration_seconds": 6.0,
+      "rms": 0.0725,
+      "expected": "Welcome to my clock cottage! The long hand stays at twelve. Move the short hand to the hour we need.",
+      "transcribed": "Welcome to my clock cottage. The long hand stays at 12. Move the shorthand to the hour we need.",
+      "similarity": 1.0
+    },
+    {
+      "key": "clock-wrong",
+      "sha256": "ad9fddfbc3b5fbd278c824bd71eb96f145793d8a77cc564b42672fa075239b59",
+      "duration_seconds": 4.72,
+      "rms": 0.0765,
+      "expected": "Almost! Keep the long hand at twelve. Let us try the short hand again.",
+      "transcribed": "Almost! Keep the long hand at 12. Let us try the short hand again.",
+      "similarity": 1.0
+    },
+    {
+      "key": "clock-done",
+      "sha256": "0be068ff56512e9983883cc25e87afb72fdf08ae2bdc887871f439b378dc6011",
+      "duration_seconds": 3.28,
+      "rms": 0.1028,
+      "expected": "You did it! We found all the hours in our lovely day.",
+      "transcribed": "You did it! We found all the hours in our lovely day!",
+      "similarity": 1.0
+    },
+    {
+      "key": "market-intro",
+      "sha256": "0f0b571c6e47620fb4f62e1945742cb2337630ed015f189e146582e8ebd8ed7f",
+      "duration_seconds": 8.16,
+      "rms": 0.0718,
+      "expected": "Let us visit the little market! Follow our shopping list. Put the food in the basket. Then pay one gold coin for each item.",
+      "transcribed": "Let us visit the little market. Follow our shopping list, put the food in the basket, then pay one gold coin for each item.",
+      "similarity": 1.0
+    },
+    {
+      "key": "market-wrong",
+      "sha256": "fe8c2a643b13e9c8ed2dacaa540742acc3fca08e75c17ae4da3fbb3677e3bd64",
+      "duration_seconds": 4.16,
+      "rms": 0.0781,
+      "expected": "That is not on our list just now. Let us put it back and look again.",
+      "transcribed": "That is not on our list just now. Let us put it back and look again.",
+      "similarity": 1.0
+    },
+    {
+      "key": "market-good",
+      "sha256": "214a49a27b1268f17e70ec46144b1684b87b01f6fe1641d9005de7cec1593e58",
+      "duration_seconds": 2.8,
+      "rms": 0.0921,
+      "expected": "Lovely! Into our basket it goes!",
+      "transcribed": "Lovely! Into our basket it goes!",
+      "similarity": 1.0
+    },
+    {
+      "key": "market-pay",
+      "sha256": "8fa39c22f3a56bc9cc33d094fd6dc10691d43372b9973d022522d2215013cce0",
+      "duration_seconds": 5.84,
+      "rms": 0.0713,
+      "expected": "Our basket is ready! Count the food. Now put the same number of gold coins on the tray.",
+      "transcribed": "Our basket is ready. Count the food. Now put the same number of gold coins on the tray.",
+      "similarity": 1.0
+    },
+    {
+      "key": "market-coins",
+      "sha256": "28f3e947b138a60ce824c5701b60cb67adbde748dbb7043f290d6427a2b38893",
+      "duration_seconds": 3.36,
+      "rms": 0.0685,
+      "expected": "Let us count again. One gold coin for each piece of food.",
+      "transcribed": "Let us count again. One gold coin for each piece of food.",
+      "similarity": 1.0
+    },
+    {
+      "key": "market-done",
+      "sha256": "08765e1757fb439cf93a6e07c3f760339e4891b134353c5b5bfefc2a053c7806",
+      "duration_seconds": 4.48,
+      "rms": 0.0775,
+      "expected": "We did it! The food and the coins match. Thank you for shopping with me!",
+      "transcribed": "We did it! The food and the coins match. Thank you for shopping with me!",
+      "similarity": 1.0
+    },
+    {
+      "key": "kitchen-intro",
+      "sha256": "7b6b0dd2409b59ee363df47846786f15e516a2227f9e55ec0cd1018239e67f65",
+      "duration_seconds": 6.72,
+      "rms": 0.0842,
+      "expected": "Welcome to my little kitchen! First look at our finished dish. Then follow the recipe, one ingredient at a time.",
+      "transcribed": "Welcome to my little kitchen. First look at our finished dish. Then follow the recipe, one ingredient at a time.",
+      "similarity": 1.0
+    },
+    {
+      "key": "kitchen-wrong",
+      "sha256": "d0607fd52a855fb974e405d535f169d705678494883a0113667b033cab7a4067",
+      "duration_seconds": 4.56,
+      "rms": 0.0741,
+      "expected": "Not yet, little chef! Let us look at the next ingredient and try again.",
+      "transcribed": "Not yet, little chef. Let us look at the next ingredient and try again.",
+      "similarity": 1.0
+    },
+    {
+      "key": "kitchen-stir",
+      "sha256": "cc415e57e1b363455e4ad947c57a45e3f26ba014d595a59efc979ea4f8dd6b86",
+      "duration_seconds": 4.16,
+      "rms": 0.0819,
+      "expected": "Now stir it around! Three little circles, nice and gentle.",
+      "transcribed": "Now stir it around. Three little circles, nice and gentle.",
+      "similarity": 1.0
+    },
+    {
+      "key": "kitchen-wait",
+      "sha256": "41255be30cfffb6b5d61cd4035d07015539a8c75d274b6a68457461efaf7c589",
+      "duration_seconds": 4.0,
+      "rms": 0.0798,
+      "expected": "Listen! Our soup is bubbling. Let us give it a little time.",
+      "transcribed": "Listen, our soup is bubbling. Let us give it a little time.",
+      "similarity": 1.0
+    },
+    {
+      "key": "kitchen-done",
+      "sha256": "c1f3fbefa6999f58d7a7c48f2cb8bc2b282472b30c8c474de0119cb80d7906d6",
+      "duration_seconds": 4.32,
+      "rms": 0.1009,
+      "expected": "We made it! What a lovely dish. You are a wonderful little chef!",
+      "transcribed": "We made it! What a lovely dish! You are a wonderful little chef!",
+      "similarity": 1.0
+    },
+    {
+      "key": "recipe-boat",
+      "sha256": "46c1a4aee67ed105f0cba019c88e9145679d1a4053d8d40a5178fd15905674b8",
+      "duration_seconds": 5.36,
+      "rms": 0.0785,
+      "expected": "A fruit boat! First the banana, then strawberries, then blueberries.",
+      "transcribed": "A fruit boat. First the banana, then strawberries, then blueberries.",
+      "similarity": 1.0
+    },
+    {
+      "key": "recipe-soup",
+      "sha256": "8d913b2fd2e7f1b2354436f1e77bbd8cf5419e5b0ad7767a5264e85df93b7cda",
+      "duration_seconds": 6.08,
+      "rms": 0.083,
+      "expected": "Vegetable soup! Carrot, broccoli, tomato, and water. Then stir and wait for the bubbles.",
+      "transcribed": "vegetable soup, carrot, broccoli, tomato, and water, then stir and wait for the bubbles.",
+      "similarity": 1.0
+    },
+    {
+      "key": "recipe-milk",
+      "sha256": "2c4cc1cbbea16fe2ad90bc479312601f40fae81c5b1939ad86e5c1f32c74d304",
+      "duration_seconds": 4.48,
+      "rms": 0.0889,
+      "expected": "Strawberry milk! Strawberries first, then milk. Give it a little stir.",
+      "transcribed": "Strawberry milk, strawberries first, then milk. Give it a little stir.",
+      "similarity": 1.0
+    },
+    {
+      "key": "clock-8",
+      "sha256": "6d1c32ab7d4dfe3a4d75f619cc12fe0c960d4ee2205036e6e7f56a0f650c635a",
+      "duration_seconds": 2.88,
+      "rms": 0.095,
+      "expected": "It is eight in the morning. Let us have breakfast!",
+      "transcribed": "It is eight in the morning. Let us have breakfast.",
+      "similarity": 1.0
+    },
+    {
+      "key": "clock-find-8",
+      "sha256": "5506c5a62c82ea8b2618431c693572e2583dc1f903341905685128e0f2c7f1df",
+      "duration_seconds": 3.36,
+      "rms": 0.061,
+      "expected": "Breakfast time! Can you move the short hand to eight?",
+      "transcribed": "Breakfast time! Can you move the shorthand to 8?",
+      "similarity": 1.0
+    },
+    {
+      "key": "clock-10",
+      "sha256": "e859c9d172aaa74884c96e90402609ecefb65e7e10c41e673cd92f63275ba33b",
+      "duration_seconds": 3.04,
+      "rms": 0.0832,
+      "expected": "It is ten in the morning. Let us visit the little market!",
+      "transcribed": "It is 10 in the morning. Let us visit the little market.",
+      "similarity": 1.0
+    },
+    {
+      "key": "clock-find-10",
+      "sha256": "d6824a2d1a7f5b322298241577ab6476ebb38488d971ad58fb7ba2eda279b25b",
+      "duration_seconds": 2.8,
+      "rms": 0.0661,
+      "expected": "Market time! Can you move the short hand to ten?",
+      "transcribed": "Market time! Can you move the shorthand to 10?",
+      "similarity": 1.0
+    },
+    {
+      "key": "clock-12",
+      "sha256": "5cdf8b55131b3969f55ce419a3f955137214e7b2c9d3af9149647e5901c48986",
+      "duration_seconds": 3.04,
+      "rms": 0.1037,
+      "expected": "It is twelve, noon! Let us go to the garden!",
+      "transcribed": "It is 12 noon. Let us go to the garden.",
+      "similarity": 1.0
+    },
+    {
+      "key": "clock-find-12",
+      "sha256": "8df1169af18f749031e4c36dcaf4ed197c2e8fba47e8a13aa75fe3dfaa98f1c0",
+      "duration_seconds": 3.2,
+      "rms": 0.0766,
+      "expected": "Garden time! Can you move the short hand to twelve?",
+      "transcribed": "Garden Time! Can you move the shorthand to 12?",
+      "similarity": 1.0
+    },
+    {
+      "key": "clock-15",
+      "sha256": "6c289c4e84cb601bc89b11e1d1ae149609f9320b9da75a89626184151b6e8463",
+      "duration_seconds": 4.88,
+      "rms": 0.0871,
+      "expected": "It is three in the afternoon, fifteen hundred hours. Let us watch the mermaid swim!",
+      "transcribed": "It is three in the afternoon, 1500 hours. Let us watch the mermaid swim.",
+      "similarity": 0.852
+    },
+    {
+      "key": "clock-find-15",
+      "sha256": "80e054835f46ec0f15e2e8dd9448f6d0b26e54ae5e42d478fcd644007d5a5a7b",
+      "duration_seconds": 3.28,
+      "rms": 0.0705,
+      "expected": "Mermaid time! Can you move the short hand to three?",
+      "transcribed": "Mermaid time! Can you move the shorthand to three?",
+      "similarity": 1.0
+    },
+    {
+      "key": "clock-16",
+      "sha256": "f388786e8e033a20a268b429f29a4ed6b54488a80dbd2c9d8abb0fdf7e6d82e3",
+      "duration_seconds": 3.2,
+      "rms": 0.0757,
+      "expected": "It is four in the afternoon. Let us take a little rest.",
+      "transcribed": "It is four in the afternoon. Let us take a little rest.",
+      "similarity": 1.0
+    },
+    {
+      "key": "clock-find-16",
+      "sha256": "df49f28f2673d8605780d29cf3bd106d2a965e26bf53609407115e013873cc44",
+      "duration_seconds": 2.96,
+      "rms": 0.0853,
+      "expected": "Rest time! Can you move the short hand to four?",
+      "transcribed": "Rest time! Can you move the shorthand to 4?",
+      "similarity": 1.0
+    },
+    {
+      "key": "clock-18",
+      "sha256": "a168144de032739d93e79cd36a9badecad6a52fb2522e702d8d50a20d7897bda",
+      "duration_seconds": 3.52,
+      "rms": 0.0762,
+      "expected": "It is six in the evening. Let us cook some lovely soup!",
+      "transcribed": "It is six in the evening. Let us cook some lovely soup.",
+      "similarity": 1.0
+    },
+    {
+      "key": "clock-find-18",
+      "sha256": "87a5f1ad8f2477dae060c2b21979ea9ffc2e96c30aaa24aea33a4d7b5bd24cec",
+      "duration_seconds": 3.04,
+      "rms": 0.0597,
+      "expected": "Soup time! Can you move the short hand to six?",
+      "transcribed": "Soup time! Can you move the shorthand to 6?",
+      "similarity": 1.0
+    },
+    {
+      "key": "clock-20",
+      "sha256": "9dd9748014834c0d4123b4415c773846218c20b3279673f583be3a19b174003d",
+      "duration_seconds": 3.2,
+      "rms": 0.0842,
+      "expected": "It is eight in the evening. Time for a warm bath!",
+      "transcribed": "It is eight in the evening. Time for a warm bath.",
+      "similarity": 1.0
+    },
+    {
+      "key": "clock-find-20",
+      "sha256": "75e7bde205bc9f061b82a42ed78ce8e196b439af5b63a5eab6cb9739d32b402a",
+      "duration_seconds": 2.88,
+      "rms": 0.0696,
+      "expected": "Bath time! Can you move the short hand to eight?",
+      "transcribed": "Bath time! Can you move the shorthand to 8?",
+      "similarity": 1.0
+    },
+    {
+      "key": "clock-21",
+      "sha256": "e9462b90d8030a5e3a94865db962083a623e9617e7ea43ab413c587eb7e4a92e",
+      "duration_seconds": 5.04,
+      "rms": 0.0866,
+      "expected": "It is nine in the evening, twenty-one hundred hours. Let us tell a princess story!",
+      "transcribed": "It is nine in the evening, 2,100 hours. Let us tell a princess story.",
+      "similarity": 0.864
+    },
+    {
+      "key": "clock-find-21",
+      "sha256": "0acad98642d43fb3e97ae6df15241dc9acf373fc4e9387eae7c0bc838310d161",
+      "duration_seconds": 3.6,
+      "rms": 0.0751,
+      "expected": "Princess story time! Can you move the short hand to nine?",
+      "transcribed": "Princess Storytime! Can you move the shorthand to 9?",
+      "similarity": 1.0
+    },
+    {
+      "key": "food-banana",
+      "sha256": "d064fa90e363317bdb04a267b517b9c772879f5f61419b8bca53c874a84d28d4",
+      "duration_seconds": 0.64,
+      "rms": 0.0892,
+      "expected": "Banana!",
+      "transcribed": "Banana?",
+      "similarity": 1.0
+    },
+    {
+      "key": "food-strawberry",
+      "sha256": "f36b72cdc06d129f1eb099d5b8ea0a58c0fa855f81c48e00505be54649c863f5",
+      "duration_seconds": 1.28,
+      "rms": 0.0828,
+      "expected": "Strawberry!",
+      "transcribed": "Strawberry.",
+      "similarity": 1.0
+    },
+    {
+      "key": "food-blueberry",
+      "sha256": "98c5d31e98d8af8c68d688d48a3de902e2931c271c09fc90a7571b471b5dc5e8",
+      "duration_seconds": 0.96,
+      "rms": 0.0921,
+      "expected": "Blueberry!",
+      "transcribed": "Blueberry!",
+      "similarity": 1.0
+    },
+    {
+      "key": "food-apple",
+      "sha256": "122898fae7d4847b4c8b7994d1035f9ee822c7ec446d7abb7807a8621f98173d",
+      "duration_seconds": 0.64,
+      "rms": 0.0956,
+      "expected": "Apple!",
+      "transcribed": "Apple?",
+      "similarity": 1.0
+    },
+    {
+      "key": "food-orange",
+      "sha256": "5e26e4ef00d70e93c3add08e43d761c292cab2b4a6bb2b6b914b937ce24385d6",
+      "duration_seconds": 0.8,
+      "rms": 0.1313,
+      "expected": "Orange!",
+      "transcribed": "Orange!",
+      "similarity": 1.0
+    },
+    {
+      "key": "food-carrot",
+      "sha256": "ea81ba8feb18a5de8742e8b01cd9cf931b6aa64a585af0ec11db2a5f16dd6d09",
+      "duration_seconds": 0.64,
+      "rms": 0.0587,
+      "expected": "Carrot!",
+      "transcribed": "Carrot!",
+      "similarity": 1.0
+    },
+    {
+      "key": "food-broccoli",
+      "sha256": "a459195666a60f83efb9428aefd80168ab259971d9b7a4d9ab5af2bd5c513dab",
+      "duration_seconds": 1.04,
+      "rms": 0.0923,
+      "expected": "Broccoli!",
+      "transcribed": "Broccoli",
+      "similarity": 1.0
+    },
+    {
+      "key": "food-tomato",
+      "sha256": "0b4f35ddf106a4af5a843cf66fcfde6b7bb96ec0cdfa9a9c52771dabd6e91a40",
+      "duration_seconds": 0.96,
+      "rms": 0.0722,
+      "expected": "Tomato!",
+      "transcribed": "Tomato",
+      "similarity": 1.0
+    },
+    {
+      "key": "food-cucumber",
+      "sha256": "9e9b819df7e8405d7f305a16a5d8f9a0eb118b24fc90b2a917c5772ceeaf4718",
+      "duration_seconds": 0.96,
+      "rms": 0.1003,
+      "expected": "Cucumber!",
+      "transcribed": "Cucumber",
+      "similarity": 1.0
+    },
+    {
+      "key": "food-peas",
+      "sha256": "6dfdbb6af5bc8a48739d6f4a296ac84291ae749fb775e5d1b22a6d421f61085e",
+      "duration_seconds": 0.8,
+      "rms": 0.06,
+      "expected": "Peas!",
+      "transcribed": "Peace!",
+      "similarity": 1.0
+    },
+    {
+      "key": "food-milk",
+      "sha256": "82029a651eba8c381fd426ccbad57f803567f3555c50bc1d499893cf0c123cf2",
+      "duration_seconds": 0.72,
+      "rms": 0.0949,
+      "expected": "Milk!",
+      "transcribed": "milk",
+      "similarity": 1.0
+    },
+    {
+      "key": "food-water",
+      "sha256": "31f7cc1e58d832dfb3702121c089f84e895d008a7a83242c4658db9f019d4336",
+      "duration_seconds": 0.8,
+      "rms": 0.1296,
+      "expected": "Water!",
+      "transcribed": "Water?",
+      "similarity": 1.0
+    }
+  ]
+}

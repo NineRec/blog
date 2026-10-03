@@ -25,4 +25,4 @@ sh deploy.sh
 
 ## Interactive storybook
 
-[Little Wonders](static/butterfly-adventure/README.md) lives in `static/butterfly-adventure/` and is published at `/butterfly-adventure/`. It includes a butterfly lifecycle, animated SVG guide, draggable zoo and ocean scenes, and bundled English audio. For a local preview, run `python3 -m http.server 8080 --directory static` and open `http://localhost:8080/butterfly-adventure/`.
+[Zoey's Little Wonders](static/butterfly-adventure/README.md) lives in `static/butterfly-adventure/` and is published at `/butterfly-adventure/`. A separate selection page opens six viewport-filling games: butterfly garden, zoo, ocean, clock cottage, market, and kitchen. Original SVG materials have an independent motion gallery, zoo/ocean support two-dimensional touch panning, and all English recordings use the selected Zoey curious voice. For a local preview, run `python3 -m http.server 8080 --directory static` and open `http://localhost:8080/butterfly-adventure/`.

@@ -1,0 +1,17 @@
+{
+  "character": "Zoey",
+  "style": "Curious and expressive",
+  "candidate": "03-curious",
+  "language": "English",
+  "design_model": "mlx-community/Qwen3-TTS-12Hz-1.7B-VoiceDesign-8bit",
+  "design_revision": "f90d617701d9f7f4ca499291e0b57f2b3c2fd2ee",
+  "instruction": "A fictional five-year-old little girl named Zoey speaking English with a natural American accent. A distinctly young child's small, light voice with a naturally high pitch, clear words, and gentle, age-appropriate intonation. Suitable for a friendly children's picture book. She sounds curious and excited to discover animals, with lively rising intonation and an easy pace. Keep every animal name clear.",
+  "reference_text": "Hi, I'm Zoey! Come explore with me. Look, a butterfly! Let's visit the zoo and the ocean. Elephant. Giraffe. Dolphin. Seahorse. Wow, that was amazing!",
+  "reference_file": "zoey-curious-reference.wav",
+  "reference_sha256": "4408318aac13b69082a9e2724955ec9304e1ad5f5b05f44fa7f3b3d7ca9364bd",
+  "model": "mlx-community/Qwen3-TTS-12Hz-1.7B-Base-8bit",
+  "seed": 53,
+  "temperature": 0.7,
+  "top_p": 0.9,
+  "model_revision": "e7dd0585652209fa0d7783659aad4e8a324de11c"
+}

@@ -21,3 +21,6 @@ hugo.linux
 
 # Local Python tool caches
 __pycache__/
+
+# Local voice design experiments (models, virtualenv, generated audio)
+/.voice-lab/
