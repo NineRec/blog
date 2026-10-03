@@ -21,10 +21,20 @@ async function buy(page,id){await page.locator(`#market-foods [data-pick=${id}]`
 async function put(page,id){await page.locator(`#kitchen-shelf [data-pick=${id}]`).tap();await page.waitForFunction(()=>!document.querySelector('.drop-ghost'));}
 (async()=>{
  await new Promise(r=>server.listen(0,'127.0.0.1',r));const base=process.env.BASE_URL||`http://127.0.0.1:${server.address().port}/butterfly-adventure/`;
- const browser=await(browserName==='webkit'?webkit:chromium).launch({headless:true});const errors=[],failed=[],external=[];
+ const browser=await(browserName==='webkit'?webkit:chromium).launch({headless:true});const errors=[],failed=[],external=[],blockedInfrastructure=[];
  try{
  const page=await browser.newPage({viewport:{width:834,height:1194},hasTouch:true,isMobile:true,deviceScaleFactor:2});
- page.on('pageerror',e=>errors.push(e.message));page.on('response',r=>{if(r.status()>=400)failed.push(r.url());});page.on('request',r=>{if(!r.url().startsWith(new URL(base).origin))external.push(r.url());});
+ // The deployed proxy injects Cloudflare analytics. Block it to prove the
+ // games work without it; any other off-origin dependency still fails.
+ const origin=new URL(base).origin;
+ await page.route('**/*',route=>{
+   const u=new URL(route.request().url());
+   if(u.origin===origin)return route.continue();
+   if(process.env.BASE_URL&&u.hostname==='static.cloudflareinsights.com'&&u.pathname.startsWith('/beacon.min.js/'))blockedInfrastructure.push(u.href);
+   else external.push(u.href);
+   return route.abort();
+ });
+ page.on('pageerror',e=>errors.push(e.message));page.on('response',r=>{if(r.status()>=400)failed.push(r.url());});
  const open=async game=>{await page.goto(base+`play.html?game=${game}`);await page.locator(`body[data-game=${game}]`).waitFor();};
  await page.goto(base);assert.equal(await page.locator('.game-door').count(),6);await page.locator('.game-door[href$="game=clock"]').tap();await page.locator('body[data-game=clock]').waitFor();assert.equal(await page.locator('body').getAttribute('data-game'),'clock');await page.locator('.brand').tap();await page.locator('.game-door').first().waitFor();assert.equal(await page.locator('.game-door').count(),6);
  await page.screenshot({path:path.join(output,`${browserName}-hub.png`),fullPage:true});console.log('PASS separate selection page, six doors, home navigation');
@@ -63,7 +73,7 @@ async function put(page,id){await page.locator(`#kitchen-shelf [data-pick=${id}]
  await page.emulateMedia({reducedMotion:'reduce'});await open('garden');for(let i=0;i<15;i++)await advance(page);assert.match(await page.locator('#chapter-number').textContent(),/CHAPTER 04/);console.log('PASS reduced-motion lifecycle');await page.emulateMedia({reducedMotion:'no-preference'});
  for(const size of [{width:834,height:1194},{width:1194,height:834},{width:390,height:844},{width:1024,height:768}]){await page.setViewportSize(size);for(const game of ['garden','zoo','sea','clock','market','kitchen']){await open(game);const layout=await page.evaluate(()=>{const out=[];for(const el of document.querySelectorAll('.topbar, .action-area, .toy-footer, .kitchen-shelf, .market-list, .recipe-menu')){if(!el.checkVisibility())continue;const r=el.getBoundingClientRect();if(r.bottom>innerHeight+1||r.left<-1||r.right>innerWidth+1)out.push({class:el.className,rect:{bottom:r.bottom,left:r.left,right:r.right}});}return{over:out,scroll:document.documentElement.scrollWidth>innerWidth,position:getComputedStyle(document.body).position};});assert.equal(layout.position,'fixed');assert.equal(layout.scroll,false);assert.deepEqual(layout.over,[],`${game} fits ${size.width}×${size.height}`);if(game==='market'||game==='kitchen')assert.ok(await page.locator('[data-pick]').first().boundingBox().then(r=>r.height>=44));}await page.screenshot({path:path.join(output,`${browserName}-${size.width}-kitchen.png`)});}
  console.log('PASS all six fixed-viewport games at iPad portrait/landscape, phone and 1024×768');
- const audio=await page.evaluate(async()=>{const lines=await(await fetch('audio/narration.json')).json(),meta=await(await fetch('audio/recording-info.json')).json(),ctx=new(window.AudioContext||window.webkitAudioContext)();for(const id of Object.keys(lines)){const r=await fetch(`audio/${id}.m4a`);if(!r.ok)throw new Error(id);const b=await ctx.decodeAudioData(await r.arrayBuffer());if(b.duration<.25)throw new Error(id);}await ctx.close();return{count:Object.keys(lines).length,meta};});assert.equal(audio.count,108);assert.equal(audio.meta.voice,'Zoey / 03-curious');assert.equal(Object.keys(audio.meta.recordings).length,108);assert.deepEqual(errors,[]);assert.deepEqual(failed,[]);assert.deepEqual(external,[]);console.log('PASS 108 Zoey curious clips decoded; no device speech, external requests, missing assets or JS errors');
- fs.writeFileSync(path.join(output,'report.json'),JSON.stringify({browser:browserName,errors,failed,external,audioClips:audio.count,voice:audio.meta.voice},null,2));console.log('Screenshots and report:',output);
+ const audio=await page.evaluate(async()=>{const lines=await(await fetch('audio/narration.json')).json(),meta=await(await fetch('audio/recording-info.json')).json(),ctx=new(window.AudioContext||window.webkitAudioContext)();for(const id of Object.keys(lines)){const r=await fetch(`audio/${id}.m4a`);if(!r.ok)throw new Error(id);const b=await ctx.decodeAudioData(await r.arrayBuffer());if(b.duration<.25)throw new Error(id);}await ctx.close();return{count:Object.keys(lines).length,meta};});assert.equal(audio.count,108);assert.equal(audio.meta.voice,'Zoey / 03-curious');assert.equal(Object.keys(audio.meta.recordings).length,108);assert.deepEqual(errors,[]);assert.deepEqual(failed,[]);assert.deepEqual(external,[]);console.log('PASS 108 Zoey curious clips decoded; all external requests blocked, no device speech, unexpected dependencies, missing assets or JS errors');
+ fs.writeFileSync(path.join(output,'report.json'),JSON.stringify({browser:browserName,errors,failed,external,blockedInfrastructure:[...new Set(blockedInfrastructure)],audioClips:audio.count,voice:audio.meta.voice},null,2));console.log('Screenshots and report:',output);
  }finally{await browser.close();server.close();}
 })().catch(e=>{console.error(e);server.close();process.exitCode=1;});
