@@ -41,7 +41,7 @@ def main():
     info_path = AUDIO / 'recording-info.json'
     old = json.loads(info_path.read_text()) if info_path.exists() else {}
     info = {'guide': 'Zoey', 'voice': 'Zoey / 03-curious', 'style': profile['style'],
-            'locale': 'en-US', 'format': 'bundled prerecorded AAC', 'model': profile['model'],
+            'locale': 'en-US', 'languages': ['English', 'Chinese'], 'format': 'bundled prerecorded AAC', 'model': profile['model'],
             'model_revision': revision, 'reference_sha256': profile['reference_sha256'],
             'clips': len(lines), 'recordings': old.get('recordings', {})}
     todo = []
@@ -66,7 +66,8 @@ def main():
             started = time.monotonic()
             seed = profile['seed'] + int(hashlib.sha256(key.encode()).hexdigest()[:6], 16)
             mx.random.seed(seed)
-            results = list(model.generate(text=text, ref_audio=str(reference), ref_text=profile['reference_text'], lang_code='English',
+            language = 'Chinese' if any('\u4e00' <= c <= '\u9fff' for c in text) else 'English'
+            results = list(model.generate(text=text, ref_audio=str(reference), ref_text=profile['reference_text'], lang_code=language,
                                           temperature=profile['temperature'], top_p=profile['top_p'], max_tokens=800, verbose=False))
             audio = np.concatenate([np.asarray(r.audio).reshape(-1) for r in results])
             sr = results[0].sample_rate
@@ -87,7 +88,7 @@ def main():
             audio *= min(1, .88 / max(.001, float(max(abs(audio)))))
             sf.write(temp / 'combined.wav', audio, sr, subtype='PCM_16')
             subprocess.run(['afconvert', str(temp / 'combined.wav'), str(AUDIO / f'{key}.m4a'), '-f', 'm4af', '-d', 'aac', '-b', '64000'], check=True)
-            info['recordings'][key] = {'fingerprint': fingerprint, 'seed': seed, 'speech_seconds': round(speech_seconds, 3),
+            info['recordings'][key] = {'fingerprint': fingerprint, 'seed': seed, 'language': language, 'speech_seconds': round(speech_seconds, 3),
                                       'duration_seconds': round(len(audio) / sr, 3), 'sha256': hashlib.sha256((AUDIO / f'{key}.m4a').read_bytes()).hexdigest()}
             info_path.write_text(json.dumps(info, indent=2) + '\n')
             mx.clear_cache()

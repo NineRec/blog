@@ -973,6 +973,564 @@
       "expected": "Water!",
       "transcribed": "Water?",
       "similarity": 1.0
+    },
+    {
+      "key": "traffic-intro",
+      "sha256": "81b034b364240f3147bc1cb4e0455ca8798cab5b294620da0da3eafd31c55dd3",
+      "duration_seconds": 3.84,
+      "rms": 0.0839,
+      "expected": "Let us walk with a grown-up. Wait for the green walking person.",
+      "transcribed": "Let us walk with a grown-up. Wait for the green walking person.",
+      "similarity": 1.0
+    },
+    {
+      "key": "traffic-wait",
+      "sha256": "703b8acf4bcf732766993be89d59aa7c946a1bd00a1e5ffe2cc633a6992cc417",
+      "duration_seconds": 3.44,
+      "rms": 0.0663,
+      "expected": "Red means wait. Press the crossing button, and wait together.",
+      "transcribed": "Red means wait. Press the crossing button and wait together.",
+      "similarity": 1.0
+    },
+    {
+      "key": "traffic-look",
+      "sha256": "6fea7df5590f479c72bf228d9f14f8fad77ab66dbd940377af502fbb267ce638",
+      "duration_seconds": 4.88,
+      "rms": 0.0828,
+      "expected": "Green is here. Look right, left, and right again. Check that cars have stopped.",
+      "transcribed": "Green is here. Look right, left and right again. Check that cars have stopped.",
+      "similarity": 1.0
+    },
+    {
+      "key": "traffic-wrong",
+      "sha256": "9b9e20e2682e76fc5232b539a4fd45a31cb2603e567402c736f76f8331692eb4",
+      "duration_seconds": 4.0,
+      "rms": 0.0769,
+      "expected": "Wait, little explorer. We need green, and we must look first.",
+      "transcribed": "Wait, little explorer. We need green, and we must look first.",
+      "similarity": 1.0
+    },
+    {
+      "key": "traffic-right",
+      "sha256": "4aa650809cf7b33ea84c6b14509d9735175bfdbe927f80a1be9423045c56cc7b",
+      "duration_seconds": 1.68,
+      "rms": 0.0698,
+      "expected": "Look right. Is it clear?",
+      "transcribed": "Look right, is it clear?",
+      "similarity": 1.0
+    },
+    {
+      "key": "traffic-left",
+      "sha256": "af8e88ec5d4da96a7cc1cda65de6fb0948182533c327562c78e833136c1adcec",
+      "duration_seconds": 1.6,
+      "rms": 0.08,
+      "expected": "Look left. Is it clear?",
+      "transcribed": "Look left. Is it clear?",
+      "similarity": 1.0
+    },
+    {
+      "key": "traffic-cross",
+      "sha256": "240c948fb70b8ef85f084f9b9059fde1ed6f2647fdecce8ded6b877389fabdce",
+      "duration_seconds": 3.6,
+      "rms": 0.0624,
+      "expected": "The cars have stopped. Hold a grown-up\u2019s hand, and walk together.",
+      "transcribed": "The cars have stopped. Hold a grown-up's hand and walk together.",
+      "similarity": 1.0
+    },
+    {
+      "key": "traffic-done",
+      "sha256": "4b7154dc59b44faea6b76cdeda520021b9254b976b0c4ec2201c9cdec8cc0e65",
+      "duration_seconds": 3.2,
+      "rms": 0.0804,
+      "expected": "We arrived! You waited and looked so carefully.",
+      "transcribed": "We arrived. You waited and looked so carefully.",
+      "similarity": 1.0
+    },
+    {
+      "key": "counting-intro",
+      "sha256": "23932ad4fec955f2f7d6abc73104eaeeb76aa0fd82d8c44e1b9fb3e28f300f30",
+      "duration_seconds": 4.4,
+      "rms": 0.0871,
+      "expected": "A picnic for our animal friends! Give each friend the number of snacks on the card.",
+      "transcribed": "A picnic for our animal friends. Give each friend the number of snacks on the card.",
+      "similarity": 1.0
+    },
+    {
+      "key": "counting-wrong",
+      "sha256": "8401e086ce1228e61638a0f035e7e3bff8d7ff784da1105d12c087c938bcf3c1",
+      "duration_seconds": 3.28,
+      "rms": 0.0986,
+      "expected": "Let us count again. Match the number on our picnic card.",
+      "transcribed": "Let us count again. Match the number on our picnic card.",
+      "similarity": 1.0
+    },
+    {
+      "key": "counting-done",
+      "sha256": "a74ab72e13e5423a92ee98106e20df2af78775a6e3049dc4b974999e18e87cda",
+      "duration_seconds": 3.28,
+      "rms": 0.0944,
+      "expected": "The numbers match! Our little friend is ready for a picnic.",
+      "transcribed": "The numbers match! Our little friend is ready for a picnic!",
+      "similarity": 1.0
+    },
+    {
+      "key": "letters-intro",
+      "sha256": "f1c11e2d565126f88497f46f9b6c7a3432963178bb167cd5354063c833d3b1f7",
+      "duration_seconds": 4.56,
+      "rms": 0.0845,
+      "expected": "Welcome to our letter post office! Match the letter, and deliver a little picture.",
+      "transcribed": "Welcome to our letter post office. Match the letter and deliver a little picture.",
+      "similarity": 1.0
+    },
+    {
+      "key": "letters-wrong",
+      "sha256": "393be6c30e9624576da69dd76531afb4e542f3f3b793040505ad5275a97430bd",
+      "duration_seconds": 4.24,
+      "rms": 0.0933,
+      "expected": "Almost! Look at the letter on our envelope. Try another postbox.",
+      "transcribed": "Almost! Look at the letter on our envelope! Try another post box!",
+      "similarity": 1.0
+    },
+    {
+      "key": "letters-done",
+      "sha256": "41cf743aa084fbc84603c7d5237704a84e7608297244f53fc05e8352a1e2ce13",
+      "duration_seconds": 3.44,
+      "rms": 0.0851,
+      "expected": "A lovely delivery! You found the matching letter.",
+      "transcribed": "A lovely delivery! You found the matching letter!",
+      "similarity": 1.0
+    },
+    {
+      "key": "seedling-intro",
+      "sha256": "b3dc72f6be85a8de23792cfa3b6e09cc242e4c6897f40ac00b8b6e26205c5764",
+      "duration_seconds": 4.539,
+      "rms": 0.0906,
+      "expected": "\u6765\u79cd\u82b1\u5427\uff01\u5148\u6316\u571f\uff0c\u518d\u653e\u79cd\u5b50\u3002\u6211\u4eec\u4e00\u8d77\u7167\u987e\u5c0f\u82b1\u3002",
+      "transcribed": "\u6765\u79cd\u82b1\u5427\u3002\u5148\u6316\u571f\u518d\u653e\u79cd\u5b50\u3002\u6211\u4eec\u4e00\u8d77\u7167\u987e\u5c0f\u82b1\u3002",
+      "similarity": 1.0
+    },
+    {
+      "key": "seedling-dig",
+      "sha256": "7118818ee2ff87e88941f60dd5dd255f86b4fda1a63d28056ab14a90fb315411",
+      "duration_seconds": 3.68,
+      "rms": 0.0705,
+      "expected": "\u62ff\u8d77\u5c0f\u94f2\u5b50\uff0c\u6316\u4e00\u4e2a\u5c0f\u5751\u3002\u8f7b\u8f7b\u6316\u4e09\u4e0b\u3002",
+      "transcribed": "\u62ff\u8d77\u5c0f\u94f2\u5b50\u6316\u4e00\u4e2a\u5c0f\u5751,\u8f7b\u8f7b\u6316\u4e09\u4e0b\u3002",
+      "similarity": 1.0
+    },
+    {
+      "key": "seedling-seed",
+      "sha256": "1a3d3231c06c450ba533d43dbd40052bf37cd623c59d6592e21c661c27777187",
+      "duration_seconds": 2.72,
+      "rms": 0.0751,
+      "expected": "\u5c0f\u5751\u51c6\u5907\u597d\u4e86\uff01\u653e\u8fdb\u4e00\u9897\u79cd\u5b50\u3002",
+      "transcribed": "\u5c0f\u5751\u51c6\u5907\u597d\u4e86,\u653e\u8fdb\u4e00\u9897\u79cd\u5b50\u3002",
+      "similarity": 1.0
+    },
+    {
+      "key": "seedling-cover",
+      "sha256": "2be1cdd294c8125edf2ba3e96c13a13ee55676dce76470fec9fc67e6ae5c0683",
+      "duration_seconds": 3.76,
+      "rms": 0.0657,
+      "expected": "\u73b0\u5728\u76d6\u4e0a\u4e00\u70b9\u571f\u3002\u7ed9\u5c0f\u79cd\u5b50\u76d6\u597d\u88ab\u5b50\u3002",
+      "transcribed": "\u73b0\u5728\u76d6\u4e0a\u4e00\u70b9\u56fe,\u7ed9\u5c0f\u79cd\u5b50\u76d6\u597d\u88ab\u5b50\u3002",
+      "similarity": 0.933
+    },
+    {
+      "key": "seedling-water",
+      "sha256": "958c076e6d3787b76658cb7a541d1107030912d1328f0101b6768817002d5b72",
+      "duration_seconds": 4.0,
+      "rms": 0.0821,
+      "expected": "\u5c0f\u79cd\u5b50\u53e3\u6e34\u5566\uff01\u6d47\u4e00\u70b9\u6c34\uff0c\u6162\u6162\u6d47\u4e24\u6b21\u3002",
+      "transcribed": "\u5c0f\u79cd\u5b50\u53e3\u6e34\u5566,\u6d47\u4e00\u70b9\u6c34,\u6162\u6162\u6d47\u4e24\u6b21\u3002",
+      "similarity": 1.0
+    },
+    {
+      "key": "seedling-sun",
+      "sha256": "5cf583bcec170d2f153fe621218cd449cb684d6eeb1b1ba5f8f4296b6c122453",
+      "duration_seconds": 3.12,
+      "rms": 0.0933,
+      "expected": "\u8bf7\u592a\u9633\u51fa\u6765\u5427\uff01\u9633\u5149\u5e2e\u52a9\u5c0f\u82b1\u957f\u5927\u3002",
+      "transcribed": "\u8bf7\u592a\u9633\u51fa\u6765\u5427,\u9633\u5149\u5e2e\u52a9\u5c0f\u82b1\u957f\u5927\u3002",
+      "similarity": 1.0
+    },
+    {
+      "key": "seedling-wrong",
+      "sha256": "bc0958fe478a80fc9fb3f375d52ebf47a48fa2481bca8ab836f271e0d61dd48f",
+      "duration_seconds": 2.56,
+      "rms": 0.0927,
+      "expected": "\u5148\u7b49\u7b49\uff0c\u770b\u770b\u4e0b\u4e00\u6b65\u8981\u505a\u4ec0\u4e48\u3002",
+      "transcribed": "\u5148\u7b49\u7b49,\u770b\u770b\u4e0b\u4e00\u6b65\u8981\u505a\u4ec0\u4e48\u3002",
+      "similarity": 1.0
+    },
+    {
+      "key": "seedling-done",
+      "sha256": "c0dc391230ddb3f4b4222d60d764d9708472a6dd171bf50cb64515144ef39b3e",
+      "duration_seconds": 4.72,
+      "rms": 0.08,
+      "expected": "\u5f00\u82b1\u5566\uff01\u4f60\u7167\u987e\u5f97\u771f\u597d\uff01\u5c0f\u82b1\u9001\u4f60\u4e00\u4efd\u5f69\u8272\u60ca\u559c\u3002",
+      "transcribed": "\u5f00\u82b1\u5566,\u4f60\u7167\u987e\u5f97\u771f\u597d\u3002\u5c0f\u82b1\u9001\u4f60\u4e00\u4efd\u5f69\u8272\u60ca\u559c\u3002",
+      "similarity": 1.0
+    },
+    {
+      "key": "seedling-small",
+      "sha256": "42ac03ef559da2c6d9f770627ec4f8367581baca4c3357e9ebbe02338c82a8e4",
+      "duration_seconds": 3.423,
+      "rms": 0.071,
+      "expected": "\u8fd9\u662f\u5c0f\u82b1\u56ed\u3002\u79cd\u4e00\u6735\u5c0f\u82b1\uff0c\u4ed4\u7ec6\u7167\u987e\u5b83\u3002",
+      "transcribed": "\u8fd9\u662f\u5c0f\u82b1\u56ed,\u79cd\u4e00\u6735\u5c0f\u82b1\u4ed4\u7ec6\u7167\u987e\u5b83\u3002",
+      "similarity": 1.0
+    },
+    {
+      "key": "seedling-medium",
+      "sha256": "a33aa26b338d3a5774b9ab2424e2ba03e3dae0644fd807aa30a593e628ac91f9",
+      "duration_seconds": 3.901,
+      "rms": 0.0809,
+      "expected": "\u8fd9\u662f\u4e2d\u82b1\u56ed\u3002\u4e09\u9897\u79cd\u5b50\uff0c\u4e00\u8d77\u957f\u51fa\u4e09\u6735\u82b1\u3002",
+      "transcribed": "\u8fd9\u662f\u4e2d\u82b1\u56ed,\u4e09\u9897\u79cd\u5b50\u4e00\u8d77\u957f\u51fa\u4e09\u6735\u82b1\u3002",
+      "similarity": 1.0
+    },
+    {
+      "key": "seedling-large",
+      "sha256": "99a735013eeff1b78738638dba324ed072593f26aedbe99ae55032fc3522ec26",
+      "duration_seconds": 3.76,
+      "rms": 0.0822,
+      "expected": "\u8fd9\u662f\u5927\u82b1\u56ed\u3002\u4e94\u9897\u79cd\u5b50\uff0c\u5f00\u51fa\u4e94\u6735\u6f02\u4eae\u7684\u82b1\u3002",
+      "transcribed": "\u8fd9\u662f\u5927\u82b1\u56ed,\u4e94\u9897\u79cd\u5b50\u5f00\u51fa\u4e94\u6735\u6f02\u4eae\u7684\u82b1\u3002",
+      "similarity": 1.0
+    },
+    {
+      "key": "seedling-fact",
+      "sha256": "27f4f5961cf0941ec885327613d3aec1a764aedad05b1fd5c18bb2659a71d6aa",
+      "duration_seconds": 4.88,
+      "rms": 0.0822,
+      "expected": "\u79cd\u5b50\u9700\u8981\u9002\u91cf\u7684\u6c34\u3001\u9633\u5149\u548c\u65f6\u95f4\u3002\u6bcf\u79cd\u690d\u7269\u957f\u5927\u7684\u901f\u5ea6\u90fd\u4e0d\u4e00\u6837\u3002",
+      "transcribed": "\u79cd\u5b50\u9700\u8981\u9002\u91cf\u7684\u6c34\u3001\u9633\u5149\u548c\u65f6\u95f4,\u6bcf\u79cd\u690d\u7269\u957f\u5927\u7684\u901f\u5ea6\u90fd\u4e0d\u4e00\u6837\u3002",
+      "similarity": 1.0
+    },
+    {
+      "key": "number-1",
+      "sha256": "93282112888fe6a60f7f7a0f2c66d07dd7a8b1c1cc592bb1a8b8c34ffd557428",
+      "duration_seconds": 1.36,
+      "rms": 0.0953,
+      "expected": "One. One little piece.",
+      "transcribed": "One, one little piece.",
+      "similarity": 1.0
+    },
+    {
+      "key": "number-2",
+      "sha256": "2bef8037bb30bcfebe567068d9db8cc0989bb559b9f29e4255cf4067aaed9b98",
+      "duration_seconds": 2.16,
+      "rms": 0.0673,
+      "expected": "Two. Two little pieces.",
+      "transcribed": "Two, two little pieces.",
+      "similarity": 1.0
+    },
+    {
+      "key": "number-3",
+      "sha256": "b13d4c31bc03d8a4fe5426aca26151cccc65f6b5defb2bb3f314ef2eec1fc3b6",
+      "duration_seconds": 2.16,
+      "rms": 0.0918,
+      "expected": "Three. Three little pieces.",
+      "transcribed": "Three. Three little pieces.",
+      "similarity": 1.0
+    },
+    {
+      "key": "number-4",
+      "sha256": "713efc23312964dfbe3cdd368205e2331e6234031ae694355c1de86b985dcbe0",
+      "duration_seconds": 2.24,
+      "rms": 0.0962,
+      "expected": "Four. Four little pieces.",
+      "transcribed": "Four. Four little pieces.",
+      "similarity": 1.0
+    },
+    {
+      "key": "number-5",
+      "sha256": "323c44b7ec039a0062f50cd98e0f67c3b2309a8eb5b9a8e86aa428d35e5d0fab",
+      "duration_seconds": 2.24,
+      "rms": 0.091,
+      "expected": "Five. Five little pieces.",
+      "transcribed": "Five. Five little pieces.",
+      "similarity": 1.0
+    },
+    {
+      "key": "number-6",
+      "sha256": "721b4bd2362e2257cf99f9ffaeffde42e4d7fcb0a35d466701fe24a7b60fda71",
+      "duration_seconds": 2.48,
+      "rms": 0.0441,
+      "expected": "Six. Six little pieces.",
+      "transcribed": "Six? Six little pieces!",
+      "similarity": 1.0
+    },
+    {
+      "key": "number-7",
+      "sha256": "be37dd4eba2f90bac38419273b140aa9dfc3b99449b3ea66a1f5af76cea57cb6",
+      "duration_seconds": 1.84,
+      "rms": 0.0945,
+      "expected": "Seven. Seven little pieces.",
+      "transcribed": "Seven, seven little pieces.",
+      "similarity": 1.0
+    },
+    {
+      "key": "number-8",
+      "sha256": "ba8387ff29dd17902f622461c6000b0540717b32b27aaae6a0e20b17fe037505",
+      "duration_seconds": 2.16,
+      "rms": 0.0569,
+      "expected": "Eight. Eight little pieces.",
+      "transcribed": "Eight! Eight little pieces!",
+      "similarity": 1.0
+    },
+    {
+      "key": "number-9",
+      "sha256": "9a94fd8f423d765c9a0fbee62e94758c21b731b62105e47b13490e5cb38b9199",
+      "duration_seconds": 2.08,
+      "rms": 0.0803,
+      "expected": "Nine. Nine little pieces.",
+      "transcribed": "Nine! Nine little pieces-",
+      "similarity": 1.0
+    },
+    {
+      "key": "number-10",
+      "sha256": "65af64ce75b648cc6755b99656b0b46aaa239852e248375fe76f5f49714ec0d0",
+      "duration_seconds": 2.08,
+      "rms": 0.0664,
+      "expected": "Ten. Ten little pieces.",
+      "transcribed": "10. 10 little pieces.",
+      "similarity": 1.0
+    },
+    {
+      "key": "letter-a",
+      "sha256": "f652fe2ca333a14da13384283f8fbc81db0f52ee09963c4c8607c8b61d301f3d",
+      "duration_seconds": 1.92,
+      "rms": 0.0701,
+      "expected": "A. Apple starts with A.",
+      "transcribed": "A. Apple starts with A.",
+      "similarity": 1.0
+    },
+    {
+      "key": "letter-b",
+      "sha256": "b4982faeb9ec041646492edaf67de60751a7299ebb555b02a375f0df404a0c6e",
+      "duration_seconds": 1.92,
+      "rms": 0.0812,
+      "expected": "B. Banana starts with B.",
+      "transcribed": "Bee Banana starts with B.",
+      "similarity": 0.947
+    },
+    {
+      "key": "letter-c",
+      "sha256": "250471b269235b9c699a10d32ba804590943b697d886ab516ac10ce1f3130a30",
+      "duration_seconds": 2.64,
+      "rms": 0.0697,
+      "expected": "This letter is C. C is for cow.",
+      "transcribed": "This letter is C. C is for cow.",
+      "similarity": 1.0
+    },
+    {
+      "key": "letter-d",
+      "sha256": "629748fbc343c10808ec17891c5847fba3af9f2d8b94425d556e8649187d672b",
+      "duration_seconds": 1.76,
+      "rms": 0.0649,
+      "expected": "D. Duck starts with D.",
+      "transcribed": "Did Duck starts with D?",
+      "similarity": 0.941
+    },
+    {
+      "key": "letter-e",
+      "sha256": "f792a7b8b4cf5791a6fc5af03322527ea8ae43961a23634d1260f6c2ef820aba",
+      "duration_seconds": 1.68,
+      "rms": 0.075,
+      "expected": "E. Elephant starts with E.",
+      "transcribed": "Elephant starts with E.",
+      "similarity": 0.974
+    },
+    {
+      "key": "letter-f",
+      "sha256": "402fd8d49030ab9576a0bc03956eba1bae014e0d6d75b57eb8d02efd829f238a",
+      "duration_seconds": 1.52,
+      "rms": 0.0725,
+      "expected": "F. Frog starts with F.",
+      "transcribed": "F-Frog starts with F.",
+      "similarity": 1.0
+    },
+    {
+      "key": "letter-g",
+      "sha256": "fbb185534a85271e44f5590f56dcf72c2508d9c07cc5e60d6f3565a819750a93",
+      "duration_seconds": 2.88,
+      "rms": 0.0551,
+      "expected": "This letter is G. G is for giraffe.",
+      "transcribed": "This letter is G. G is for giraffe.",
+      "similarity": 1.0
+    },
+    {
+      "key": "letter-h",
+      "sha256": "e7c9ecfaf36a5597aff4cb98dfb4a6793f3942ec0da9de1d506a3a63b92f65e7",
+      "duration_seconds": 1.68,
+      "rms": 0.0776,
+      "expected": "H. Hippo starts with H.",
+      "transcribed": "Hippo starts with H.",
+      "similarity": 0.97
+    },
+    {
+      "key": "letter-i",
+      "sha256": "82706333e51b85d92cb8cccbe3434c381722ec088359e0a87ced4b6ab71309b7",
+      "duration_seconds": 1.92,
+      "rms": 0.0778,
+      "expected": "I. Ice cream starts with I.",
+      "transcribed": "Eye ice cream starts with I.",
+      "similarity": 0.905
+    },
+    {
+      "key": "letter-j",
+      "sha256": "e178f3746119cd2883bedfa837b0fc3ea7009d20d8fddd08749e46a7fee1fa58",
+      "duration_seconds": 1.84,
+      "rms": 0.0828,
+      "expected": "J. Jellyfish starts with J.",
+      "transcribed": "Jet Jellyfish starts with J.",
+      "similarity": 0.955
+    },
+    {
+      "key": "letter-k",
+      "sha256": "77df76980888d43458f0e41f53a9665fc0fbc74e3ecd4f194d0b2ca0ce1df51a",
+      "duration_seconds": 2.48,
+      "rms": 0.0832,
+      "expected": "K. Kangaroo starts with K.",
+      "transcribed": "K! Kangaroo starts with K!",
+      "similarity": 1.0
+    },
+    {
+      "key": "letter-l",
+      "sha256": "eb0f149e108ea1c84857db418f228ccc35223050eb0d1eeb402103f722da2f05",
+      "duration_seconds": 1.76,
+      "rms": 0.1091,
+      "expected": "L. Lion starts with L.",
+      "transcribed": "L-Lion starts with L-",
+      "similarity": 1.0
+    },
+    {
+      "key": "letter-m",
+      "sha256": "e417d8bc851c6b259a845c6790312e84df1127ee3d02fc60bfab4c9deb34fbab",
+      "duration_seconds": 1.28,
+      "rms": 0.0889,
+      "expected": "M. Monkey starts with M.",
+      "transcribed": "Monkey starts with M-",
+      "similarity": 0.971
+    },
+    {
+      "key": "letter-n",
+      "sha256": "67bd49b92faf2e433a9c8d8ffbfe3a65b94bfe7538bce257072e2a3b457f291a",
+      "duration_seconds": 1.68,
+      "rms": 0.0787,
+      "expected": "N. Nest starts with N.",
+      "transcribed": "Nest starts with N.",
+      "similarity": 0.968
+    },
+    {
+      "key": "letter-o",
+      "sha256": "4c1df0cc9cde2a8249fbd73a44a4347a00dccc1ded00e385446106b894927af2",
+      "duration_seconds": 2.48,
+      "rms": 0.089,
+      "expected": "O. Otter starts with O.",
+      "transcribed": "O, otter starts with O.",
+      "similarity": 1.0
+    },
+    {
+      "key": "letter-p",
+      "sha256": "53ce3f5544df56961b7b798142085c759ecc0f12b4f87ead8169c9e7c6c72cc6",
+      "duration_seconds": 1.44,
+      "rms": 0.0764,
+      "expected": "P. Panda starts with P.",
+      "transcribed": "Panda starts with P.",
+      "similarity": 0.97
+    },
+    {
+      "key": "letter-q",
+      "sha256": "af2c9ce99ef45fd4b8cba27792850a490894eea1852120a170cbc461bc7fbc98",
+      "duration_seconds": 1.76,
+      "rms": 0.0695,
+      "expected": "Q. Queen starts with Q.",
+      "transcribed": "Queue Queen starts with Q.",
+      "similarity": 0.895
+    },
+    {
+      "key": "letter-r",
+      "sha256": "7cae1051d04a2d810b4428d76dfb8a052fecf7a43c0c7ff89310e3aacf7c4896",
+      "duration_seconds": 1.76,
+      "rms": 0.0981,
+      "expected": "R. Rabbit starts with R.",
+      "transcribed": "Rabbit starts with R.",
+      "similarity": 0.971
+    },
+    {
+      "key": "letter-s",
+      "sha256": "9c4663d4a382e99081c5d2dd976297fcaeab1969cdcba74d63797e7b08410184",
+      "duration_seconds": 1.6,
+      "rms": 0.1153,
+      "expected": "S. Strawberry starts with S.",
+      "transcribed": "Strawberry starts with S.",
+      "similarity": 0.977
+    },
+    {
+      "key": "letter-t",
+      "sha256": "02b8341ec2677afddd57ab7d413f80a34d13f8d6c965267ecffdeb106c75a6f9",
+      "duration_seconds": 1.68,
+      "rms": 0.0679,
+      "expected": "T. Turtle starts with T.",
+      "transcribed": "Turtle starts with T.",
+      "similarity": 0.971
+    },
+    {
+      "key": "letter-u",
+      "sha256": "a4fe5c86ea0b1144dfc4f7867b82d605da59714985b3cf40781990690cfd9e85",
+      "duration_seconds": 1.6,
+      "rms": 0.0982,
+      "expected": "U. Umbrella starts with U.",
+      "transcribed": "Umbrella starts with you.",
+      "similarity": 0.927
+    },
+    {
+      "key": "letter-v",
+      "sha256": "a4e8014aae544814bd6f777e8d88ffe23212a25872f9b593bff54b77497161ee",
+      "duration_seconds": 1.76,
+      "rms": 0.0744,
+      "expected": "V. Vegetables starts with V.",
+      "transcribed": "Vegetables starts with V.",
+      "similarity": 0.977
+    },
+    {
+      "key": "letter-w",
+      "sha256": "9fbc4e0a21f0a672f0fd3e89e0dcb4cede2ed361a01f373265cdbce9101cfddc",
+      "duration_seconds": 3.12,
+      "rms": 0.0697,
+      "expected": "This letter is W. W is for whale.",
+      "transcribed": "This letter is W. W is for whale.",
+      "similarity": 1.0
+    },
+    {
+      "key": "letter-x",
+      "sha256": "e129fa979ebf83d57ca4ff22243f39af31a21b94bf1321b0caeb9d3dca85ddd3",
+      "duration_seconds": 2.56,
+      "rms": 0.0824,
+      "expected": "X. Xylophone starts with X.",
+      "transcribed": "X. Psilophone starts with X.",
+      "similarity": 0.884
+    },
+    {
+      "key": "letter-y",
+      "sha256": "fbfb89ac836419a6e3920432021a429dff4c624c21d1159ba0593cffe5635197",
+      "duration_seconds": 1.76,
+      "rms": 0.0818,
+      "expected": "Y. Yo-yo starts with Y.",
+      "transcribed": "Yo-Yo starts with Y.",
+      "similarity": 0.968
+    },
+    {
+      "key": "letter-z",
+      "sha256": "1ec58ab238cc5697845d9e675a5af1c320438d4ed47499db55386cace3ae5977",
+      "duration_seconds": 1.68,
+      "rms": 0.0705,
+      "expected": "Z. Zebra starts with Z.",
+      "transcribed": "Zebra starts with Z.",
+      "similarity": 0.97
     }
   ]
 }
