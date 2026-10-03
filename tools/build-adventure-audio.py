@@ -1,11 +1,12 @@
 """Rebuild bundled English recordings on macOS; no speech synthesis runs in the browser.
 
-Requires the Daniel voice and afconvert. Existing animal-call source recordings are
+Requires the Samantha voice and afconvert. Existing animal-call source recordings are
 kept in static/butterfly-adventure/audio. See credits.html for their licenses.
 """
 import array
 import json
 import math
+import random
 from pathlib import Path
 import subprocess
 import sys
@@ -15,6 +16,7 @@ import wave
 ROOT = Path(__file__).resolve().parents[1]
 AUDIO = ROOT / 'static/butterfly-adventure/audio'
 RATE = 22050
+VOICE = 'Samantha'
 
 
 def pcm(path, target):
@@ -43,11 +45,26 @@ def main():
         with wave.open(str(AUDIO / 'owl-call.wav'), 'w') as out:
             out.setparams((1, 2, RATE, 0, 'NONE', 'not compressed'))
             out.writeframes(samples.tobytes())
+        # A gentle, original tiger growl effect; not a wildlife recording.
+        noise = random.Random(42)
+        samples = array.array('h')
+        phase = 0
+        for index in range(RATE * 3):
+            t = index / RATE
+            local = t % 1.5
+            envelope = math.sin(math.pi * min(local, 1.1) / 1.1) ** 2 if local < 1.1 else 0
+            phase += 2 * math.pi * (105 + 12 * math.sin(t * 5)) / RATE
+            tone = sum(math.sin(phase * harmonic) / harmonic for harmonic in range(1, 9)) / 2
+            value = .36 * envelope * (tone + .13 * noise.uniform(-1, 1))
+            samples.append(int(value * 32767))
+        with wave.open(str(AUDIO / 'tiger-call.wav'), 'w') as out:
+            out.setparams((1, 2, RATE, 0, 'NONE', 'not compressed'))
+            out.writeframes(samples.tobytes())
         for key, text in lines.items():
             if len(sys.argv) > 1 and key not in sys.argv[1:]:
                 continue
             spoken = temp / 'spoken.aiff'
-            subprocess.run(['say', '-v', 'Daniel', '-r', '158', '-o', str(spoken), text], check=True)
+            subprocess.run(['say', '-v', VOICE, '-r', '158', '-o', str(spoken), text], check=True)
             frames = pcm(spoken, temp / 'voice.wav')
             call = next(iter(sorted(AUDIO.glob(f'{key}-call.*'))), None)
             if call:
@@ -65,6 +82,11 @@ def main():
                 out.writeframes(frames)
             subprocess.run(['afconvert', str(temp / 'combined.wav'), str(AUDIO / f'{key}.m4a'), '-f', 'm4af', '-d', 'aac', '-b', '64000'], check=True)
             print(f'Recorded {key}', flush=True)
+    if len(sys.argv) == 1:
+        (AUDIO / 'recording-info.json').write_text(json.dumps({
+            'guide': 'Zoey', 'voice': VOICE, 'locale': 'en-US',
+            'format': 'bundled prerecorded AAC', 'clips': len(lines),
+        }, indent=2) + '\n')
 
 
 if __name__ == '__main__':

@@ -22,17 +22,20 @@ const server = http.createServer((req,res) => {
 });
 async function waitIdle(page) {await page.waitForFunction(() => document.getElementById('book').getAttribute('aria-busy') === 'false',null,{timeout:15000});}
 async function advance(page) {await page.locator('#action').tap();await waitIdle(page);}
-async function pointerDrag(page, browserName) {
-  const box=await page.locator('#viewport').boundingBox();
-  const x=box.x+box.width*.7,y=box.y+box.height*.47;
+async function pointerDrag(page, browserName, {dx=-200,dy=0,selector='#viewport'}={}) {
+  const box=await page.locator(selector).boundingBox();
+  const x=box.x+box.width*(selector==='#viewport'?.7:.5),y=box.y+box.height*.47;
   if(browserName==='chromium'){
     const cdp=await page.context().newCDPSession(page);
     await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x,y,id:1}]});
-    for(let i=1;i<=8;i++) await cdp.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x:x-i*25,y,id:1}]});
+    for(let i=1;i<=8;i++){
+      await cdp.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x:x+dx*i/8,y:y+dy*i/8,id:1}]});
+      await page.waitForTimeout(25);
+    }
     await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});await cdp.detach();
   }else{
     // WebKit exposes native touchscreen taps; use its pointer input for a drag.
-    await page.mouse.move(x,y);await page.mouse.down();await page.mouse.move(x-200,y,{steps:8});await page.mouse.up();
+    await page.mouse.move(x,y);await page.mouse.down();await page.mouse.move(x+dx,y+dy,{steps:8});await page.mouse.up();
   }
 }
 (async()=>{
@@ -50,7 +53,8 @@ async function pointerDrag(page, browserName) {
     await page.goto(url);await page.locator('.life-stop').first().waitFor();
     await page.screenshot({path:path.join(output,`${browserName}-ipad-garden.png`),fullPage:true});
     assert.equal(await page.locator('html').getAttribute('lang'),'en');
-    await page.locator('#garden-guide').tap();assert.equal(await page.locator('#garden-guide').evaluate(e=>e.classList.contains('wave')),true,'Pip responds to a touch greeting');
+    await page.locator('#garden-guide').tap();assert.equal(await page.locator('#garden-guide').evaluate(e=>e.classList.contains('wave')),true,'Zoey responds to a touch greeting');
+    assert.equal(await page.locator('#garden-guide').getAttribute('aria-label'),'Say hello to Zoey');
     assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true,'No horizontal page overflow');
     // Actual touch taps, with the real transition timeline enabled.
     await advance(page);await advance(page);
@@ -88,10 +92,29 @@ async function pointerDrag(page, browserName) {
       await page.locator(`[data-world="${world}"]`).tap();
       assert.equal(await page.locator('#explore-panel').isVisible(),true);
       const before=await page.locator('#viewport').evaluate(e=>e.scrollLeft);
-      await pointerDrag(page,browserName);await page.waitForTimeout(150);
+      await pointerDrag(page,browserName);await page.waitForTimeout(550);
       assert.ok(await page.locator('#viewport').evaluate(e=>e.scrollLeft)>before+80,'Drag moves panorama');
-      assert.equal(await page.locator('#discovery-count').textContent(),'0 of 6 friends discovered','Drag must not activate an animal');
+      assert.equal(await page.locator('#discovery-count').textContent(),'0 of 10 friends discovered','Drag must not activate an animal');
+      const forward=await page.locator('#viewport').evaluate(e=>e.scrollLeft);
+      await pointerDrag(page,browserName,{dx:160,dy:22});await page.waitForTimeout(550);
+      assert.ok(await page.locator('#viewport').evaluate(e=>e.scrollLeft)<forward-60,'Reverse diagonal swipe moves scene left');
+      const touchAction=await page.locator('.animal').first().evaluate(e=>getComputedStyle(e).touchAction);
+      assert.ok(touchAction==='manipulation'||touchAction.includes('pan-x'),'Animals permit native horizontal touch scrolling');
+      await page.locator('#viewport').evaluate(e=>e.scrollLeft=0);await page.waitForTimeout(150);
+      const startAnimal=world==='zoo'?'elephant':'clownfish';
+      await pointerDrag(page,browserName,{dx:-170,dy:26,selector:`[data-animal="${startAnimal}"]`});await page.waitForTimeout(550);
+      assert.ok(await page.locator('#viewport').evaluate(e=>e.scrollLeft)>70,'Swipe starting on an animal scrolls');
+      assert.equal(await page.locator('.animal.discovered').count(),0,'Animal-started swipe never becomes a tap');
+      await page.locator('#pan-position').focus();await page.keyboard.press('End');
+      assert.equal(await page.locator('#pan-position').inputValue(),'100');
+      assert.ok(await page.locator('#viewport').evaluate(e=>Math.abs(e.scrollLeft-(e.scrollWidth-e.clientWidth)))<2,'Slider reaches scene end');
+      await page.keyboard.press('Home');assert.equal(await page.locator('#viewport').evaluate(e=>e.scrollLeft),0);
+      const sliderBox=await page.locator('#pan-position').boundingBox();
+      await page.touchscreen.tap(sliderBox.x+sliderBox.width*.7,sliderBox.y+sliderBox.height/2);
+      assert.ok(await page.locator('#viewport').evaluate(e=>e.scrollLeft)>100,'Slider can be positioned by touch');
+      assert.ok(sliderBox.height>=44,'Slider has a full-height touch area');
       const ids=await page.locator('.animal').evaluateAll(items=>items.map(e=>e.dataset.animal));
+      assert.equal(ids.length,10,'Ten friends in each panorama');
       for(const id of ids){
         await page.locator(`[data-animal="${id}"]`).evaluate(e=>e.scrollIntoView({block:'nearest',inline:'center'}));
         await page.waitForTimeout(370);
@@ -108,16 +131,16 @@ async function pointerDrag(page, browserName) {
           assert.equal(await page.locator(`[data-animal="${id}"] .animal-art`).evaluate(e=>e.style.animation),'','Ambient movement resumes after returning');
         }
       }
-      assert.equal(await page.locator('#discovery-count').textContent(),'6 of 6 friends discovered');
-      assert.equal(await page.locator('.animal-index .found').count(),6);
+      assert.equal(await page.locator('#discovery-count').textContent(),'10 of 10 friends discovered');
+      assert.equal(await page.locator('.animal-index .found').count(),10);
       await page.locator('#sound-toggle').tap();assert.equal(await page.locator('#sound-label').textContent(),'Sound off');assert.equal(await page.locator('#listen').evaluate(e=>e.classList.contains('playing')),false);
       await page.locator('#listen').tap();assert.equal(await page.locator('#sound-label').textContent(),'Sound on');
       await page.screenshot({path:path.join(output,`${browserName}-ipad-${world}.png`),fullPage:true});
-      console.log(`PASS ${world}: six touch interactions, sound, drag/tap separation, discoveries`);
+      console.log(`PASS ${world}: ten touch interactions, sound, drag/tap separation, discoveries`);
     }
     // Switching worlds cancels a swim. Saved discovery state survives revisiting.
     await page.locator('[data-find=turtle]').tap();await page.locator('[data-world=zoo]').tap();
-    assert.equal(await page.locator('#discovery-count').textContent(),'6 of 6 friends discovered');
+    assert.equal(await page.locator('#discovery-count').textContent(),'10 of 10 friends discovered');
     await page.locator('[data-world=sea]').tap();assert.equal(await page.locator('.animal.acting').count(),0);
     await page.locator('#viewport').focus();const scrollBefore=await page.locator('#viewport').evaluate(e=>e.scrollLeft);await page.keyboard.press('ArrowRight');await page.waitForTimeout(700);assert.ok(await page.locator('#viewport').evaluate(e=>e.scrollLeft)>=scrollBefore);
     await page.locator('#restart').tap();assert.equal(await page.locator('#progress-count').textContent(),'0 / 3');
@@ -133,7 +156,9 @@ async function pointerDrag(page, browserName) {
       const lines=await (await fetch('audio/narration.json')).json();const ctx=new (window.AudioContext||window.webkitAudioContext)();const decoded=[];
       for(const id of Object.keys(lines)){const response=await fetch(`audio/${id}.m4a`);if(!response.ok)throw new Error(`Missing audio ${id}`);const buffer=await ctx.decodeAudioData(await response.arrayBuffer());if(buffer.duration<.2)throw new Error(`Empty audio ${id}`);decoded.push(id);}
       await ctx.close();return decoded;
-    });assert.equal(audioCheck.length,33);console.log(`PASS ${audioCheck.length} bundled clips load and decode in ${browserName}`);
+    });assert.equal(audioCheck.length,41);
+    const recording=await page.evaluate(async()=>await (await fetch('audio/recording-info.json')).json());
+    assert.equal(recording.voice,'Samantha');assert.equal(recording.guide,'Zoey');console.log(`PASS ${audioCheck.length} bundled clips load and decode in ${browserName}`);
     for(const size of [{width:1194,height:834},{width:390,height:844},{width:1440,height:1100}]){
       await page.setViewportSize(size);await page.locator('[data-world=garden]').tap();
       assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true,`No overflow at ${size.width}`);
@@ -141,6 +166,16 @@ async function pointerDrag(page, browserName) {
       await page.locator('[data-world=sea]').tap();assert.equal(await page.locator('#pan-right').boundingBox().then(b=>b.width>=44&&b.height>=44),true);
       await page.locator('[data-find=turtle]').tap();assert.match(await page.locator('#animal-bubble').textContent(),/sea turtle/,'Touch interaction works after a viewport change');
       await page.screenshot({path:path.join(output,`${browserName}-${size.width}-sea.png`),fullPage:true});
+    }
+    if(browserName==='chromium'){
+      await page.setViewportSize({width:834,height:834});
+      await page.locator('#viewport').evaluate(e=>{e.scrollLeft=700;e.scrollIntoView({block:'center'});});
+      await page.waitForTimeout(200);
+      const pageBefore=await page.evaluate(()=>scrollY), sceneBefore=await page.locator('#viewport').evaluate(e=>e.scrollLeft);
+      await pointerDrag(page,browserName,{dx:10,dy:-160});await page.waitForTimeout(550);
+      assert.ok(await page.evaluate(()=>scrollY)>pageBefore+60,'Vertical swipe scrolls the page');
+      assert.ok(Math.abs(await page.locator('#viewport').evaluate(e=>e.scrollLeft)-sceneBefore)<30,'Vertical swipe does not move the scene');
+      console.log('PASS native touch scrolling in both directions, diagonal/animal starts, vertical page scrolling and scene slider');
     }
     assert.deepEqual(errors,[],'No browser JS errors');assert.deepEqual(failed,[],'No missing assets');assert.deepEqual(external,[],'No runtime external dependencies');
     console.log('PASS portrait, landscape, phone and desktop layouts; no missing assets or external requests');
