@@ -625,11 +625,11 @@
     },
     {
       "key": "market-pay",
-      "sha256": "8fa39c22f3a56bc9cc33d094fd6dc10691d43372b9973d022522d2215013cce0",
-      "duration_seconds": 5.84,
-      "rms": 0.0713,
-      "expected": "Our basket is ready! Count the food. Now put the same number of gold coins on the tray.",
-      "transcribed": "Our basket is ready. Count the food. Now put the same number of gold coins on the tray.",
+      "sha256": "d427b6167419062777d49ab4caf11bf59303900e2007d49871fb5c868aff3a4b",
+      "duration_seconds": 6.64,
+      "rms": 0.0712,
+      "expected": "Our basket is ready! Put one gold coin for each piece on the tray. Then tap the big green tick.",
+      "transcribed": "Our basket is ready! Put one gold coin for each piece on the tray. Then tap the big green tick.",
       "similarity": 1.0
     },
     {
@@ -643,12 +643,12 @@
     },
     {
       "key": "market-done",
-      "sha256": "08765e1757fb439cf93a6e07c3f760339e4891b134353c5b5bfefc2a053c7806",
-      "duration_seconds": 4.48,
-      "rms": 0.0775,
-      "expected": "We did it! The food and the coins match. Thank you for shopping with me!",
-      "transcribed": "We did it! The food and the coins match. Thank you for shopping with me!",
-      "similarity": 1.0
+      "sha256": "06b47250f6a33d1f735496cfe9ac06753a140ed93e93578aab1678c16cdcda8e",
+      "duration_seconds": 4.16,
+      "rms": 0.0751,
+      "expected": "Perfect! Thank you! Here is your shopping bag. See you again!",
+      "transcribed": "Perfect! Thank you! Here's your shopping bag! See you again!",
+      "similarity": 0.989
     },
     {
       "key": "kitchen-intro",
@@ -976,20 +976,20 @@
     },
     {
       "key": "traffic-intro",
-      "sha256": "81b034b364240f3147bc1cb4e0455ca8798cab5b294620da0da3eafd31c55dd3",
-      "duration_seconds": 3.84,
-      "rms": 0.0839,
-      "expected": "Let us walk with a grown-up. Wait for the green walking person.",
-      "transcribed": "Let us walk with a grown-up. Wait for the green walking person.",
+      "sha256": "88a15bbc902525140b06be0263b6b2881d62d0188133a16a98b4f47e42a2460c",
+      "duration_seconds": 6.0,
+      "rms": 0.0856,
+      "expected": "Let us walk with a grown-up! Choose a turn. Wait for green, then walk together.",
+      "transcribed": "Let us walk with a grown-up. Choose a turn. Wait for green, then walk together.",
       "similarity": 1.0
     },
     {
       "key": "traffic-wait",
-      "sha256": "703b8acf4bcf732766993be89d59aa7c946a1bd00a1e5ffe2cc633a6992cc417",
-      "duration_seconds": 3.44,
-      "rms": 0.0663,
-      "expected": "Red means wait. Press the crossing button, and wait together.",
-      "transcribed": "Red means wait. Press the crossing button and wait together.",
+      "sha256": "ba367f130dfccba3905dc2c137a7a35a2ac798012d50af4ee49660c35d642a8e",
+      "duration_seconds": 4.08,
+      "rms": 0.0742,
+      "expected": "Red means wait. The cars are moving. We stay on the pavement.",
+      "transcribed": "Red means wait, the cars are moving. We stay on the pavement.",
       "similarity": 1.0
     },
     {
@@ -1003,11 +1003,11 @@
     },
     {
       "key": "traffic-wrong",
-      "sha256": "9b9e20e2682e76fc5232b539a4fd45a31cb2603e567402c736f76f8331692eb4",
-      "duration_seconds": 4.0,
-      "rms": 0.0769,
-      "expected": "Wait, little explorer. We need green, and we must look first.",
-      "transcribed": "Wait, little explorer. We need green, and we must look first.",
+      "sha256": "3ad59cccd6bb8b41e771187245f82550ace75e95ed02a1dab4a3a8d2a087435b",
+      "duration_seconds": 3.76,
+      "rms": 0.0805,
+      "expected": "Wait with me. We can walk when it is green and the cars have stopped.",
+      "transcribed": "Wait with me! We can walk when it is green and the cars have stopped.",
       "similarity": 1.0
     },
     {
@@ -1039,11 +1039,11 @@
     },
     {
       "key": "traffic-done",
-      "sha256": "4b7154dc59b44faea6b76cdeda520021b9254b976b0c4ec2201c9cdec8cc0e65",
-      "duration_seconds": 3.2,
-      "rms": 0.0804,
-      "expected": "We arrived! You waited and looked so carefully.",
-      "transcribed": "We arrived. You waited and looked so carefully.",
+      "sha256": "02bde1e8ca204cf228e290feacd1f3418eb0d4f5eac7c795b4d812d5d274250a",
+      "duration_seconds": 2.96,
+      "rms": 0.0907,
+      "expected": "We arrived! What a lovely walk together!",
+      "transcribed": "We arrived! What a lovely walk together!",
       "similarity": 1.0
     },
     {
@@ -1531,6 +1531,105 @@
       "expected": "Z. Zebra starts with Z.",
       "transcribed": "Zebra starts with Z.",
       "similarity": 0.97
+    },
+    {
+      "key": "traffic-turn-left",
+      "sha256": "2b5e85e50d9c72b23db7491fa6c04401678b18823fedd797b7d87e1dd396146e",
+      "duration_seconds": 1.2,
+      "rms": 0.1133,
+      "expected": "Let us turn left!",
+      "transcribed": "Let us turn left.",
+      "similarity": 1.0
+    },
+    {
+      "key": "traffic-turn-right",
+      "sha256": "b0c5c5ecbbeb291a2a6dc996b912da6846f92b9c8a50e81a4cb29a0896b6cc3c",
+      "duration_seconds": 1.2,
+      "rms": 0.1025,
+      "expected": "Let us turn right!",
+      "transcribed": "Let us turn right!",
+      "similarity": 1.0
+    },
+    {
+      "key": "traffic-green",
+      "sha256": "3f2517b8605f12e395302c424e01c78ea1ac19264345358791ee32c4131d3432",
+      "duration_seconds": 3.68,
+      "rms": 0.0883,
+      "expected": "Green! The cars have stopped. Hold hands and walk together.",
+      "transcribed": "Green! The cars have stopped! Hold hands and walk together.",
+      "similarity": 1.0
+    },
+    {
+      "key": "traffic-park",
+      "sha256": "b3e8836b46c54c2baee5a89de27a537e0f6bdee5487a5f6044175d1f13c49346",
+      "duration_seconds": 2.56,
+      "rms": 0.0946,
+      "expected": "Let us visit the park. Which way shall we go?",
+      "transcribed": "Let us visit the park. Which way shall we go?",
+      "similarity": 1.0
+    },
+    {
+      "key": "traffic-market",
+      "sha256": "7f3be5f18f6631342b7810a9ce22605bf3e2ec9a40d32af90c35ea10c73030cb",
+      "duration_seconds": 2.96,
+      "rms": 0.0869,
+      "expected": "Let us visit the market. Which way shall we go?",
+      "transcribed": "Let us visit the market. Which way shall we go?",
+      "similarity": 1.0
+    },
+    {
+      "key": "traffic-library",
+      "sha256": "37104b6df9237de64d2d6bc9e06ded195f7181a21a143cdfcab1474bfcf474a5",
+      "duration_seconds": 3.52,
+      "rms": 0.0923,
+      "expected": "Let us visit the library. Which way shall we go?",
+      "transcribed": "Let us visit the library. Which way shall we go?",
+      "similarity": 1.0
+    },
+    {
+      "key": "traffic-next",
+      "sha256": "bba7f4281ce361c4201fbae7638d54d2085e65f6fc0c394bc64f4f906de02b0b",
+      "duration_seconds": 2.64,
+      "rms": 0.0737,
+      "expected": "Here is another crossing. Choose our next turn.",
+      "transcribed": "Here is another crossing. Choose our next turn.",
+      "similarity": 1.0
+    },
+    {
+      "key": "market-cashier",
+      "sha256": "9ad4a00a1704a74a9b946cf60b1fc30fed1efa2461ba8fdc4c6a88161ea9dc5a",
+      "duration_seconds": 4.48,
+      "rms": 0.085,
+      "expected": "Hello! Welcome to our little market. Here is your picture shopping list.",
+      "transcribed": "Hello! Welcome to our little market. Here is your picture shopping list.",
+      "similarity": 1.0
+    },
+    {
+      "key": "market-checkout",
+      "sha256": "d95ba21f09ee2dcc360a8eb3ce416b09510d3c794dd0ef011d02c4aed04eb9ad",
+      "duration_seconds": 4.08,
+      "rms": 0.069,
+      "expected": "The coins match! Tap the big green tick to give them to our cashier.",
+      "transcribed": "The coins match. Tap the big green tick to give them to our cashier.",
+      "similarity": 1.0
+    },
+    {
+      "key": "kitchen-next",
+      "sha256": "b2ab23a0ba35fd2a38f09e10ebd89efd26f25b0c29441cda26a24017d2ef0839",
+      "duration_seconds": 3.84,
+      "rms": 0.0784,
+      "expected": "Another little dish! Match the next picture and put it in our bowl.",
+      "transcribed": "Another little dish, match the next picture and put it in our bowl.",
+      "similarity": 1.0
+    },
+    {
+      "key": "play-tap",
+      "sha256": "5940a5e453faec312983b1b7ba074c59078f7173846520ded17baa6a274ce03f",
+      "duration_seconds": 2.64,
+      "rms": 0.0881,
+      "expected": "Tap the picture. Let us try it together!",
+      "transcribed": "Tap the picture? Let us try it together.",
+      "similarity": 1.0
     }
   ]
 }
