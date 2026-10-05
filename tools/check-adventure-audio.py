@@ -13,7 +13,10 @@ def normalized(text):
     replacements={'zoey':'zoe','peace':'peas','0':'zero','1':'one','2':'two','3':'three','4':'four','5':'five','6':'six','7':'seven','8':'eight','9':'nine','10':'ten','12':'twelve','15':'fifteen','16':'sixteen','18':'eighteen','20':'twenty','21':'twentyone'}
     chinese=any('\u4e00'<=c<='\u9fff' for c in text)
     if chinese:replacements.update({str(i):c for i,c in enumerate('零一二三四五六七八九')})
-    return ''.join(replacements.get(w,w) for w in re.findall(r'[a-z0-9]+|[\u4e00-\u9fff]',text.lower()))
+    result=''.join(replacements.get(w,w) for w in re.findall(r'[a-z0-9]+|[\u4e00-\u9fff]',text.lower()))
+    # Small Whisper mishears the uncommon word 蚯蚓 as these near-homophones; compare them as the intended word.
+    for heard in ('丘影','丘迎','丘引','邱影','秋影','球影','蚯影','蚯迎'):result=result.replace(heard,'蚯蚓')
+    return result
 def main():
     parser=argparse.ArgumentParser();parser.add_argument('--transcribe',action='store_true');parser.add_argument('--report',default=str(ROOT/'tools/voice/production-qa.json'));args=parser.parse_args()
     lines=json.loads((AUDIO/'narration.json').read_text());info=json.loads((AUDIO/'recording-info.json').read_text());profile=json.loads((ROOT/'tools/voice/zoey-curious.json').read_text())

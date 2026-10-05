@@ -24,7 +24,7 @@ async function pan(page,points){
    const results=[];window.jointPoses=[];
    for(const id of [...CreatureCatalog.zoo,...CreatureCatalog.sea].map(a=>a.id)){
     const node=document.querySelector(`[data-material=${id}]`),svg=node.querySelector('svg');
-    const limbs={octopus:['.octopus-arm',8],turtle:['.animal-fin',4],crab:['.animal-leg',8],lobster:['.animal-leg',8],bear:['.animal-foot',2],panda:['.animal-foot',2],crocodile:['.animal-leg',4]};
+    const limbs={octopus:['.octopus-arm',8],turtle:['.animal-fin',3],tiger:['.animal-leg',4],elephant:['.animal-leg',4],rhino:['.animal-leg',4],cow:['.animal-leg',4],fox:['.animal-leg',4],giraffe:['.animal-leg',4],gorilla:['.animal-paw',2],hermitcrab:['.animal-claw',2],crab:['.animal-leg',8],lobster:['.animal-leg',8],bear:['.animal-foot',2],panda:['.animal-foot',2],crocodile:['.animal-leg',4]};
     if(limbs[id]&&svg.querySelectorAll(limbs[id][0]).length!==limbs[id][1])throw Error(`${id}: missing characteristic limbs`);
     for(let variant=0;variant<3;variant++){
      const h=CreatureMotion.play(node,id,variant),motions=node.getAnimations({subtree:true}).filter(a=>a.effect.getComputedTiming().iterations!==Infinity);
@@ -71,7 +71,7 @@ async function pan(page,points){
        if(queue.length>12)sizes.push(queue.length);
       }
       if(sizes.length!==1)throw Error(`${id} variant ${variant} pose ${fraction}: disconnected silhouette ${sizes}`);
-      if(['bear','panda','fox','rabbit','crocodile','turtle','clownfish','dolphin','octopus','whale','jellyfish','shark','stingray','manta','seahorse','mermaid','giraffe'].includes(id)&&variant===0&&[0,.45,1].includes(fraction))window.jointPoses.push({id,fraction,xml});
+      if(['bear','panda','fox','rabbit','crocodile','turtle','clownfish','dolphin','octopus','whale','jellyfish','shark','stingray','manta','seahorse','mermaid','giraffe','tiger','elephant','kangaroo','flamingo','rhino','frog','gorilla','shrimp','squid','hermitcrab','peacock'].includes(id)&&variant===0&&[0,.45,1].includes(fraction))window.jointPoses.push({id,fraction,xml});
       results.push(`${id}/${variant}/${fraction}`);
      }
      motions.forEach(a=>a.finish());await h.finished;
@@ -81,18 +81,20 @@ async function pan(page,points){
    }
    return results;
   });
-  assert.equal(results.length,630);console.log('PASS 630 rasterized poses: connected silhouettes, fixed pivots, characteristic limb counts, visible planted feet, replay and cancellation');
+  assert.equal(results.length,900);console.log('PASS 900 rasterized poses: connected silhouettes, fixed pivots, characteristic limb counts, visible planted feet, replay and cancellation');
   await page.evaluate(()=>{document.body.innerHTML=`<main style="display:grid;grid-template-columns:repeat(3,300px);gap:20px;padding:24px;background:#f6f2e7">${jointPoses.map(({id,fraction,xml})=>`<article><div style="width:280px;height:240px">${xml.replace('width="520" height="440"','width="280" height="240"')}</div><p>${id} · ${fraction===0?'Rest':fraction===1?'Return':'Mid-motion'}</p></article>`).join('')}</main>`;});
   await page.screenshot({path:path.join(output,`${name}-poses.png`),fullPage:true});
   await page.setViewportSize({width:834,height:1194});
   for(const game of ['zoo','sea']){
    await page.goto(base+`play.html?game=${game}`);await page.locator('#sound-toggle').tap();await page.waitForFunction(()=>!document.getElementById('sound-start'));
    const box=await page.locator('#viewport').boundingBox(),x=box.x+box.width*.7,y=box.y+box.height*.5;
-   await pan(page,Array.from({length:9},(_,i)=>({x:x-190*i/8,y:y-155*i/8})));
-   const first=await page.locator('#viewport').evaluate(e=>[e.scrollLeft,e.scrollTop]);assert.ok(first[0]>70&&first[1]>50);
-   await pan(page,Array.from({length:9},(_,i)=>({x:x+150*i/8,y:y+120*i/8})));
-   const back=await page.locator('#viewport').evaluate(e=>[e.scrollLeft,e.scrollTop]);assert.ok(back[0]<first[0]-35&&back[1]<first[1]-25);assert.equal(await page.evaluate(()=>scrollY),0);
-   const ids=await page.locator('[data-animal]').evaluateAll(es=>es.map(e=>e.dataset.animal));assert.equal(ids.length,game==='zoo'?24:18);
+   const sign=game==='zoo'?1:-1,pos=()=>page.locator('#viewport').evaluate(e=>[e.scrollLeft,e.scrollTop]),start=await pos();
+   // The zoo opens at its gate (bottom centre) and the sea at the surface (top centre); pan toward the middle, then back along each axis.
+   await pan(page,Array.from({length:9},(_,i)=>({x:x+sign*160*i/8,y:y+sign*130*i/8})));
+   const first=await pos();assert.ok(sign>0?first[0]<start[0]-35&&first[1]<start[1]-25:first[0]>start[0]+35&&first[1]>start[1]+25);
+   await pan(page,Array.from({length:9},(_,i)=>({x:x-sign*150*i/8,y})));const across=await pos();assert.ok(sign>0?across[0]>first[0]+30:across[0]<first[0]-30);
+   await pan(page,Array.from({length:9},(_,i)=>({x,y:y-sign*120*i/8})));const back=await pos();assert.ok(sign>0?back[1]>across[1]+20:back[1]<across[1]-20);assert.equal(await page.evaluate(()=>scrollY),0);
+   const ids=await page.locator('[data-animal]').evaluateAll(es=>es.map(e=>e.dataset.animal));assert.equal(ids.length,game==='zoo'?34:26);
    for(const id of ids){
     const animal=page.locator(`[data-animal=${id}]`);await animal.evaluate(e=>e.scrollIntoView({block:'center',inline:'center'}));await animal.tap();const action=await animal.getAttribute('data-action');assert.equal(await animal.getAttribute('aria-pressed'),'true');
     if(['bear','panda','fox','giraffe','octopus','turtle','manta','jellyfish','shark','mermaid'].includes(id)){await page.waitForTimeout(550);await page.screenshot({path:path.join(output,`${name}-${id}-ipad.png`)});}
@@ -109,6 +111,6 @@ async function pan(page,points){
   }
   await page.emulateMedia({reducedMotion:'reduce'});await page.goto(base+'materials.html');await page.locator('[data-material=mermaid]').waitFor();
   const reduced=await page.evaluate(async()=>{for(const id of [...CreatureCatalog.zoo,...CreatureCatalog.sea].map(a=>a.id)){const node=document.querySelector(`[data-material=${id}]`);await CreatureMotion.play(node,id,0).finished;if(node.getAnimations({subtree:true}).some(a=>a.effect.getComputedTiming().iterations!==Infinity))return false;}return true;});assert.ok(reduced);assert.deepEqual(errors,[]);
-  console.log(`PASS all 42 scene taps, varied actions, two-axis pan, automatic progression, phone/iPad layout and reduced motion (${name}); previews: ${output}`);
+  console.log(`PASS all 60 scene taps, varied actions, two-axis pan, automatic progression, phone/iPad layout and reduced motion (${name}); previews: ${output}`);
  }finally{await browser.close();}
 })().catch(e=>{console.error(e);process.exitCode=1;});

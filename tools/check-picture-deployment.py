@@ -27,18 +27,21 @@ assert version in get(base).decode(), 'Stale game-selection page'
 assert version in get(base + 'materials.html').decode(), 'Stale material gallery'
 html = get(base + 'play.html').decode()
 assert f'picture-play.css?v={version}' in html and f'play-flow.js?v={version}' in html
-for name in ['app.js', 'art.js', 'materials.js', 'mini-art.js', 'creatures.js', 'games.js', 'mini-games.js',
-             'materials-preview.js', 'play-flow.js', 'picture-play.css', 'club.css',
-             'audio/narration.json', 'audio/recording-info.json']:
+assets_checked = ['app.js', 'art.js', 'materials.js', 'zoo-animals.js', 'sea-animals.js', 'mini-art.js', 'creatures.js',
+                  'world-maps.js', 'games.js', 'mini-games.js', 'hub.js', 'materials-preview.js', 'play-flow.js',
+                  'picture-play.css', 'club.css', 'learning.css', 'world-map.css',
+                  'audio/narration.json', 'audio/recording-info.json']
+for name in assets_checked:
     verify(name)
 meta = json.loads((assets / 'audio' / 'recording-info.json').read_text())
 assert meta['voice'] == 'Zoey / 03-curious'
 lines = json.loads((assets / 'audio' / 'narration.json').read_text())
 assert len(meta['recordings']) == len(lines)
-changed = ['market-pay','market-done','market-cashier','market-checkout','kitchen-next','play-tap',
-           'traffic-intro','traffic-wait','traffic-wrong','traffic-done','traffic-turn-left','traffic-turn-right',
-           'traffic-green','traffic-park','traffic-market','traffic-library','traffic-next']
+candidates = dict.fromkeys(re.findall(r"\['([a-z]+)','[A-Za-z ']+','", (assets / 'creatures.js').read_text()))
+zoo_sea = [key for key in candidates if key in lines]
+assert len(zoo_sea) >= 60, 'Every zoo and sea animal needs its own spoken introduction'
+changed = ['zoo-intro', 'sea-intro'] + [key for key in lines if key.startswith('seedling-')] + zoo_sea
 for name in changed:
     verify(f'audio/{name}.m4a')
-print(f'PASS live HTML + 13 versioned assets + {len(changed)} voice clips match this checkout; {len(lines)} bundled Zoey recordings')
+print(f'PASS live HTML + {len(assets_checked)} versioned assets + {len(changed)} voice clips match this checkout; {len(lines)} bundled Zoey recordings')
 print(base)
