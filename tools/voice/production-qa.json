@@ -1774,6 +1774,276 @@
       "expected": "\u8001\u7237\u7237\u6765\u8015\u8018\uff0c\u6240\u6709\u53f6\u5b50\u957f\u51fa\u6765\u3002",
       "transcribed": "\u8001\u7237\u7237\u6765\u8015\u4e91\u6240\u6709\u53f6\u5b50\u957f\u51fa\u6765\u3002",
       "similarity": 0.923
+    },
+    {
+      "key": "connect-intro",
+      "sha256": "1f8a0100e86be8935cd953bb7c6b69ca1216a6dad855f7e15a328864ffd4daf5",
+      "duration_seconds": 5.76,
+      "rms": 0.0682,
+      "expected": "\u7ed9\u597d\u670b\u53cb\u8fde\u4e00\u8fde\u7ebf\u5427\uff01\u62d6\u4e00\u62d6\uff0c\u6216\u8005\u5148\u70b9\u4e00\u4e2a\uff0c\u518d\u70b9\u5b83\u7684\u597d\u670b\u53cb\u3002",
+      "transcribed": "\u7ed9\u597d\u670b\u53cb\u8fde\u4e00\u8fde\u7ebf\u5427\u3002\u6258\u4e00\u6258,\u6216\u8005\u5148\u70b9\u4e00\u4e2a,\u518d\u70b9\u5b83\u7684\u597d\u670b\u53cb\u3002",
+      "similarity": 0.92
+    },
+    {
+      "key": "connect-wrong",
+      "sha256": "76d98be610c5152226da24e58629cfdcff6114681e86b5ce6756fc62abe25adb",
+      "duration_seconds": 2.32,
+      "rms": 0.0872,
+      "expected": "\u518d\u627e\u627e\u770b\uff0c\u8c01\u662f\u5b83\u7684\u597d\u670b\u53cb\u5462\uff1f",
+      "transcribed": "\u518d\u627e\u627e\u770b,\u8c01\u662f\u4ed6\u7684\u597d\u670b\u53cb\u5462?",
+      "similarity": 0.917
+    },
+    {
+      "key": "connect-done",
+      "sha256": "86d67209999fe699c59f6b7c424326a2e2a24546dda084100181d5fcf277fb80",
+      "duration_seconds": 2.24,
+      "rms": 0.087,
+      "expected": "\u5168\u90fd\u8fde\u597d\u5566\uff01\u4f60\u771f\u68d2\uff01",
+      "transcribed": "\u5168\u90fd\u8fde\u597d\u4e86,\u4f60\u771f\u68d2!",
+      "similarity": 0.875
+    },
+    {
+      "key": "connect-monkey-banana",
+      "sha256": "9983ceeb71fde5c93af4cc505943344c48c5af23f8a96446024c95e310f715b7",
+      "duration_seconds": 1.6,
+      "rms": 0.0923,
+      "expected": "\u5c0f\u7334\u5b50\u7231\u5403\u9999\u8549\uff01",
+      "transcribed": "\u5c0f\u7334\u5b50\u7231\u5403\u9999\u8549?",
+      "similarity": 1.0
+    },
+    {
+      "key": "connect-rabbit-carrot",
+      "sha256": "c5b3651317ed327374d478ff0d8c338ffb740c19eec4242f61c6459d8e17c01a",
+      "duration_seconds": 1.6,
+      "rms": 0.1031,
+      "expected": "\u5c0f\u5154\u5b50\u7231\u5403\u80e1\u841d\u535c\uff01",
+      "transcribed": "\u5c0f\u5154\u5b50\u7231\u5403\u80e1\u841d\u535c\u3002",
+      "similarity": 1.0
+    },
+    {
+      "key": "connect-cow-milk",
+      "sha256": "892ab3a339e26b5be7adf5fab8db2df62a5177ea3de35131ab656d0044cd6225",
+      "duration_seconds": 1.68,
+      "rms": 0.098,
+      "expected": "\u5976\u725b\u4f1a\u7ed9\u6211\u4eec\u725b\u5976\uff01",
+      "transcribed": "\u5976\u725b\u4f1a\u7ed9\u6211\u4eec\u725b\u5976\u3002",
+      "similarity": 1.0
+    },
+    {
+      "key": "connect-panda-bamboo",
+      "sha256": "27c490f3316fd395f2d613be26a04886faf1b0d4c041f89da32c31f1bbe9afe5",
+      "duration_seconds": 1.68,
+      "rms": 0.0827,
+      "expected": "\u5927\u718a\u732b\u7231\u5403\u7af9\u5b50\uff01",
+      "transcribed": "\u5927\u718a\u732b\u7231\u5403\u7af9\u5b50\u3002",
+      "similarity": 1.0
+    },
+    {
+      "key": "connect-bear-honey",
+      "sha256": "cef3f9fd11691bf94fdb39e92400a76dd6c50d1a7f163985859c4473bd82a4e2",
+      "duration_seconds": 2.0,
+      "rms": 0.0613,
+      "expected": "\u5c0f\u718a\u7231\u5403\u751c\u751c\u7684\u8702\u871c\uff01",
+      "transcribed": "\u5c0f\u718a\u7231\u5403\u751c\u751c\u7684\u8702\u871c\u3002",
+      "similarity": 1.0
+    },
+    {
+      "key": "connect-giraffe-leaf",
+      "sha256": "4e8b29f0a60139247cce5fbc594bd8662c1273a7c712e2e457af51c6504fb0e3",
+      "duration_seconds": 2.56,
+      "rms": 0.0595,
+      "expected": "\u957f\u9888\u9e7f\u4f38\u957f\u8116\u5b50\u5403\u6811\u53f6\uff01",
+      "transcribed": "\u957f\u9888\u9e7f\u4f38\u957f\u8116\u5b50\u5403\u6811\u53f6\u3002",
+      "similarity": 1.0
+    },
+    {
+      "key": "connect-elephant-peanut",
+      "sha256": "19887f5892daa3f4f758efd552265231767ca08667773538e536a24dd5e65ea8",
+      "duration_seconds": 1.36,
+      "rms": 0.1008,
+      "expected": "\u5927\u8c61\u7231\u5403\u82b1\u751f\uff01",
+      "transcribed": "\u5927\u8c61\u7231\u5403\u82b1\u751f\u3002",
+      "similarity": 1.0
+    },
+    {
+      "key": "connect-firetruck-flame",
+      "sha256": "4113b4199fce766521b0346aa99c7cbca7155565271aea45ca702cd14e475166",
+      "duration_seconds": 2.32,
+      "rms": 0.0911,
+      "expected": "\u6d88\u9632\u8f66\u6765\u5566\uff0c\u5feb\u5feb\u706d\u706b\uff01",
+      "transcribed": "\u6d88\u9632\u8f66\u6765\u4e86,\u5feb\u5feb\u706d\u706b\u3002",
+      "similarity": 0.889
+    },
+    {
+      "key": "connect-police-policecar",
+      "sha256": "da0a72253ba155697e375eb1fa211ef1e9b01e9a0296d02832632cd2b58ec105",
+      "duration_seconds": 1.92,
+      "rms": 0.0656,
+      "expected": "\u8b66\u5bdf\u53d4\u53d4\u5f00\u7740\u8b66\u8f66\uff01",
+      "transcribed": "\u8b66\u5bdf\u53d4\u53d4\u5f00\u7740\u8b66\u8f66\u3002",
+      "similarity": 1.0
+    },
+    {
+      "key": "connect-butterfly-flower",
+      "sha256": "36d7777671874adb9d2788e8d8db6edeac0000fc632affeda5a1ac2ccd7bf1f6",
+      "duration_seconds": 1.6,
+      "rms": 0.1034,
+      "expected": "\u8774\u8776\u98de\u5230\u4e86\u82b1\u6735\u4e0a\uff01",
+      "transcribed": "\u8774\u8776\u98de\u5230\u4e86\u82b1\u6735\u4e0a\u3002",
+      "similarity": 1.0
+    },
+    {
+      "key": "connect-rain-umbrella",
+      "sha256": "a5d7671ac8e502fa6f088574a7bcc798d785f90b08142e595c18927fd9f40274",
+      "duration_seconds": 2.16,
+      "rms": 0.0894,
+      "expected": "\u4e0b\u96e8\u5566\uff0c\u5feb\u6491\u8d77\u5c0f\u96e8\u4f1e\uff01",
+      "transcribed": "\u4e0b\u96e8\u5566,\u5feb\u6491\u8d77\u5c0f\u96e8\u4f1e\u3002",
+      "similarity": 1.0
+    },
+    {
+      "key": "connect-spade-soil",
+      "sha256": "2e6f925913c06caf61c0223ed9c02da2192ad387180bfd9f3bf372d3ac3fdeca",
+      "duration_seconds": 1.52,
+      "rms": 0.0673,
+      "expected": "\u5c0f\u94f2\u5b50\u6765\u6316\u6ce5\u571f\uff01",
+      "transcribed": "\u5c0f\u94f2\u5b50\u6765\u6316\u6ce5\u571f\u3002",
+      "similarity": 1.0
+    },
+    {
+      "key": "connect-owl-moon",
+      "sha256": "e0b840fd7501a0c48be6657cbf87a803cef74d55bd1b746a6173e7b47b45cfcd",
+      "duration_seconds": 2.16,
+      "rms": 0.0732,
+      "expected": "\u591c\u665a\uff0c\u732b\u5934\u9e70\u770b\u6708\u4eae\u3002",
+      "transcribed": "\u591c\u665a,\u732b\u5934\u9634\u770b\u6708\u4eae\u3002",
+      "similarity": 0.875
+    },
+    {
+      "key": "connect-seal-ball",
+      "sha256": "7c26cb48c80fcfee6fbb6fc4c10b717957fc61a1c390645273b13532b8a20ab6",
+      "duration_seconds": 2.0,
+      "rms": 0.1179,
+      "expected": "\u5c0f\u6d77\u8c79\u7231\u73a9\u76ae\u7403\uff01",
+      "transcribed": "\u5c0f\u6d77\u8c79\u7231\u73a9\u76ae\u7403",
+      "similarity": 1.0
+    },
+    {
+      "key": "connect-penguin-clownfish",
+      "sha256": "ad983b4679d3299db7c8535979c42f4e2cee8174bb53145795251dc8c438bc0b",
+      "duration_seconds": 1.6,
+      "rms": 0.0684,
+      "expected": "\u5c0f\u4f01\u9e45\u7231\u5403\u5c0f\u9c7c\uff01",
+      "transcribed": "\u5c0f\u4f01\u9e45\u7231\u5403\u5c0f\u9c7c\u3002",
+      "similarity": 1.0
+    },
+    {
+      "key": "connect-sun-tulip",
+      "sha256": "d0594995512a3ab7f7cc10886a4ae177a102ec95a71b5fc0888b48aabc3b1c3d",
+      "duration_seconds": 1.84,
+      "rms": 0.0909,
+      "expected": "\u592a\u9633\u516c\u516c\u7167\u7740\u90c1\u91d1\u9999\uff01",
+      "transcribed": "\u592a\u9633\u516c\u516c\u7167\u7740\u7389\u91d1\u9999\u3002",
+      "similarity": 0.889
+    },
+    {
+      "key": "match-intro",
+      "sha256": "f3279b9f8e69697a692854ee79c690d4a5fd1a231fe2c9f55dfbba1a7a7bca2c",
+      "duration_seconds": 3.84,
+      "rms": 0.0846,
+      "expected": "\u627e\u5230\u4e24\u4e2a\u4e00\u6837\u7684\uff0c\u8f7b\u8f7b\u70b9\u4e00\u70b9\uff0c\u5b83\u4eec\u5c31\u4f1a\u6d88\u9664\u5566\uff01",
+      "transcribed": "\u627e\u5230\u4e24\u4e2a\u4e00\u6837\u7684,\u8f7b\u8f7b\u70b9\u4e00\u70b9,\u4ed6\u4eec\u5c31\u4f1a\u6d88\u9664\u5566\u3002",
+      "similarity": 0.947
+    },
+    {
+      "key": "match-theme-animals",
+      "sha256": "984a5348d44ede26753f6867d6254cc881a14e0cda2e97008bc99523778a7b40",
+      "duration_seconds": 2.0,
+      "rms": 0.063,
+      "expected": "\u627e\u4e00\u627e\uff0c\u4e00\u6837\u7684\u5c0f\u52a8\u7269\uff01",
+      "transcribed": "\u627e\u4e00\u627e\u4e00\u6837\u7684\u5c0f\u52a8\u7269\u3002",
+      "similarity": 1.0
+    },
+    {
+      "key": "match-theme-fruit",
+      "sha256": "e173beb014558fedd4ecd6df158e1d95cb6be42b13ea09457af4c7d659c298d5",
+      "duration_seconds": 1.84,
+      "rms": 0.0914,
+      "expected": "\u627e\u4e00\u627e\uff0c\u4e00\u6837\u7684\u6c34\u679c\uff01",
+      "transcribed": "\u627e\u4e00\u627e,\u4e00\u6837\u7684\u6c34\u679c\u3002",
+      "similarity": 1.0
+    },
+    {
+      "key": "match-theme-veg",
+      "sha256": "c385820c46276c4fc67633d7225cbdef611f7c4045e3f7c9a0aada281622924d",
+      "duration_seconds": 1.92,
+      "rms": 0.0728,
+      "expected": "\u627e\u4e00\u627e\uff0c\u4e00\u6837\u7684\u852c\u83dc\uff01",
+      "transcribed": "\u627e\u4e00\u627e\u4e00\u6837\u7684\u852c\u83dc\u3002",
+      "similarity": 1.0
+    },
+    {
+      "key": "match-theme-vehicle",
+      "sha256": "064d497a83eba51b3fd0453d5e613a6e3145bb203b97477f1119f6d749355d2a",
+      "duration_seconds": 2.24,
+      "rms": 0.0663,
+      "expected": "\u627e\u4e00\u627e\uff0c\u4e00\u6837\u7684\u4ea4\u901a\u5de5\u5177\uff01",
+      "transcribed": "\u627e\u4e00\u627e\u4e00\u6837\u7684\u4ea4\u901a\u5de5\u5177\u3002",
+      "similarity": 1.0
+    },
+    {
+      "key": "match-theme-sea",
+      "sha256": "36d60bf93f15bf5ce9a47009344646641d79a5b9487ee40dabe5a28331a813d9",
+      "duration_seconds": 2.24,
+      "rms": 0.0936,
+      "expected": "\u627e\u4e00\u627e\uff0c\u4e00\u6837\u7684\u6d77\u6d0b\u670b\u53cb\uff01",
+      "transcribed": "\u627e\u4e00\u627e \u4e00\u6837\u7684\u6d77\u6d0b\u670b\u53cb\u3002",
+      "similarity": 1.0
+    },
+    {
+      "key": "match-praise-1",
+      "sha256": "b2eb32897b9b3c4176d8402fd2dfa44c60003cad1a9cd1a3ef1b4efa96227444",
+      "duration_seconds": 0.96,
+      "rms": 0.0778,
+      "expected": "\u4f60\u771f\u68d2\uff01",
+      "transcribed": "\u4f60\u771f\u68d2!",
+      "similarity": 1.0
+    },
+    {
+      "key": "match-praise-2",
+      "sha256": "1eeb6b0f57d291f31035c24212bfa30c6e2fd903ee809314cab5fa6bc409efd2",
+      "duration_seconds": 1.04,
+      "rms": 0.0693,
+      "expected": "\u592a\u5389\u5bb3\u4e86\uff01",
+      "transcribed": "\u592a\u5389\u5bb3\u4e86!",
+      "similarity": 1.0
+    },
+    {
+      "key": "match-praise-3",
+      "sha256": "6a7624d1b3cfa4d91cc7a15c6c7c02b0bf9386ef6ce9972609f8262c8eb0fb1d",
+      "duration_seconds": 1.12,
+      "rms": 0.0539,
+      "expected": "\u627e\u5f97\u771f\u51c6\uff01",
+      "transcribed": "\u627e\u5f97\u771f\u51c6\u3002",
+      "similarity": 1.0
+    },
+    {
+      "key": "match-wrong",
+      "sha256": "a9f22ea6fba4d76c6196cbb8e1ab2cf11efde6c7da19a47751f27cf85d6eead5",
+      "duration_seconds": 2.0,
+      "rms": 0.1233,
+      "expected": "\u4e0d\u4e00\u6837\u54e6\uff0c\u518d\u627e\u627e\u770b\u3002",
+      "transcribed": "\u4e0d\u4e00\u6837\u54e6,\u518d\u627e\u627e\u770b\u3002",
+      "similarity": 1.0
+    },
+    {
+      "key": "match-done",
+      "sha256": "48937949d283803f8ef00566d30bba11bbfe73f9d378ca245fff9b7368bc7fcd",
+      "duration_seconds": 1.84,
+      "rms": 0.1049,
+      "expected": "\u5168\u90fd\u6d88\u9664\u5566\uff01\u4f60\u771f\u68d2\uff01",
+      "transcribed": "\u5168\u90fd\u6d88\u9664\u5566!\u4f60\u771f\u68d2!",
+      "similarity": 1.0
     }
   ]
 }
