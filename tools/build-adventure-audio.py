@@ -60,16 +60,28 @@ def main():
     model = load_model(str(model_path))
     mx.eval(model.parameters())
     assert model.config.tts_model_type == 'base'
+    failures = []
     with tempfile.TemporaryDirectory(prefix='zoey-production-') as directory:
         temp = Path(directory)
         for index, (key, text, call, fingerprint) in enumerate(todo):
             started = time.monotonic()
             seed = profile['seed'] + int(hashlib.sha256(key.encode()).hexdigest()[:6], 16)
-            mx.random.seed(seed)
             language = 'Chinese' if any('\u4e00' <= c <= '\u9fff' for c in text) else 'English'
-            results = list(model.generate(text=text, ref_audio=str(reference), ref_text=profile['reference_text'], lang_code=language,
-                                          temperature=profile['temperature'], top_p=profile['top_p'], max_tokens=800, verbose=False))
-            audio = np.concatenate([np.asarray(r.audio).reshape(-1) for r in results])
+            # Very short clips ("Apple!") occasionally come back empty for one seed, so try a few nearby seeds.
+            for attempt in range(6):
+                mx.random.seed(seed + attempt * 7919)
+                results = list(model.generate(text=text, ref_audio=str(reference), ref_text=profile['reference_text'], lang_code=language,
+                                              temperature=profile['temperature'], top_p=profile['top_p'], max_tokens=800, verbose=False))
+                pieces = [np.asarray(r.audio).reshape(-1) for r in results if np.asarray(r.audio).size]
+                heard = np.concatenate(pieces) if pieces else np.zeros(0)
+                if heard.size and np.isfinite(heard).all() and heard.size >= results[0].sample_rate * .3 and max(abs(heard)) >= .003:
+                    seed += attempt * 7919
+                    break
+            else:
+                print(f'{index+1}/{len(todo)} {key}: NO AUDIO for {text!r}; reword this line', flush=True)
+                failures.append(key)
+                continue
+            audio = np.concatenate(pieces)
             sr = results[0].sample_rate
             if not np.isfinite(audio).all() or len(audio) < sr * .25 or max(abs(audio)) < .003:
                 raise RuntimeError(f'Invalid or silent voice clip: {key}')
@@ -93,6 +105,9 @@ def main():
             info_path.write_text(json.dumps(info, indent=2) + '\n')
             mx.clear_cache()
             print(f'{index+1}/{len(todo)} {key}: {speech_seconds:.2f}s voice, {time.monotonic()-started:.1f}s render', flush=True)
+    if failures:
+        print('Reword and rerun:', ' '.join(failures), flush=True)
+        raise SystemExit(1)
     print('All recordings use Zoey / 03-curious', flush=True)
 
 

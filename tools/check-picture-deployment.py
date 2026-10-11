@@ -29,11 +29,12 @@ html = get(base + 'play.html').decode()
 assert f'picture-play.css?v={version}' in html and f'play-flow.js?v={version}' in html
 assert f'puzzle-games.js?v={version}' in html and f'sfx.js?v={version}' in html and f'puzzle.css?v={version}' in html, 'Stale game page'
 hub = get(base).decode()
-assert 'game=connect' in hub and 'game=match' in hub, 'The new puzzle doors are missing'
+assert all(f'game={name}' in hub for name in ('connect', 'match', 'icecream', 'letters')), 'A game door is missing'
 assets_checked = ['app.js', 'art.js', 'materials.js', 'zoo-animals.js', 'sea-animals.js', 'mini-art.js', 'creatures.js',
                   'world-maps.js', 'games.js', 'mini-games.js', 'hub.js', 'materials-preview.js', 'play-flow.js',
                   'picture-play.css', 'club.css', 'learning.css', 'world-map.css',
                   'puzzle-art.js', 'puzzle-games.js', 'puzzle.css', 'sfx.js', 'celebration.js',
+                  'icecream-art.js', 'icecream-game.js', 'icecream.css', 'words.js', 'letter-game.js', 'letters.css',
                   'audio/narration.json', 'audio/recording-info.json']
 for name in assets_checked:
     verify(name)
@@ -44,7 +45,7 @@ assert len(meta['recordings']) == len(lines)
 candidates = dict.fromkeys(re.findall(r"\['([a-z]+)','[A-Za-z ']+','", (assets / 'creatures.js').read_text()))
 zoo_sea = [key for key in candidates if key in lines]
 assert len(zoo_sea) >= 60, 'Every zoo and sea animal needs its own spoken introduction'
-changed = (['zoo-intro', 'sea-intro'] + [key for key in lines if key.startswith(('seedling-', 'connect-', 'match-'))] + zoo_sea)
+changed = (['zoo-intro', 'sea-intro'] + [key for key in lines if key.startswith(('seedling-', 'match-', 'lb-', 'ls-', 'wd-', 'cn-', 'col-', 'ic-', 'fl-', 'tp-'))] + zoo_sea)
 for name in changed:
     verify(f'audio/{name}.m4a')
 print(f'PASS live HTML + {len(assets_checked)} versioned assets + {len(changed)} voice clips match this checkout; {len(lines)} bundled Zoey recordings')

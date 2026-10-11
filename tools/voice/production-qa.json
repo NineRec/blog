@@ -813,78 +813,6 @@
       "similarity": 0.989
     },
     {
-      "key": "kitchen-intro",
-      "sha256": "7b6b0dd2409b59ee363df47846786f15e516a2227f9e55ec0cd1018239e67f65",
-      "duration_seconds": 6.72,
-      "rms": 0.0842,
-      "expected": "Welcome to my little kitchen! First look at our finished dish. Then follow the recipe, one ingredient at a time.",
-      "transcribed": "Welcome to my little kitchen. First look at our finished dish. Then follow the recipe, one ingredient at a time.",
-      "similarity": 1.0
-    },
-    {
-      "key": "kitchen-wrong",
-      "sha256": "d0607fd52a855fb974e405d535f169d705678494883a0113667b033cab7a4067",
-      "duration_seconds": 4.56,
-      "rms": 0.0741,
-      "expected": "Not yet, little chef! Let us look at the next ingredient and try again.",
-      "transcribed": "Not yet, little chef. Let us look at the next ingredient and try again.",
-      "similarity": 1.0
-    },
-    {
-      "key": "kitchen-stir",
-      "sha256": "cc415e57e1b363455e4ad947c57a45e3f26ba014d595a59efc979ea4f8dd6b86",
-      "duration_seconds": 4.16,
-      "rms": 0.0819,
-      "expected": "Now stir it around! Three little circles, nice and gentle.",
-      "transcribed": "Now stir it around. Three little circles, nice and gentle.",
-      "similarity": 1.0
-    },
-    {
-      "key": "kitchen-wait",
-      "sha256": "41255be30cfffb6b5d61cd4035d07015539a8c75d274b6a68457461efaf7c589",
-      "duration_seconds": 4.0,
-      "rms": 0.0798,
-      "expected": "Listen! Our soup is bubbling. Let us give it a little time.",
-      "transcribed": "Listen, our soup is bubbling. Let us give it a little time.",
-      "similarity": 1.0
-    },
-    {
-      "key": "kitchen-done",
-      "sha256": "c1f3fbefa6999f58d7a7c48f2cb8bc2b282472b30c8c474de0119cb80d7906d6",
-      "duration_seconds": 4.32,
-      "rms": 0.1009,
-      "expected": "We made it! What a lovely dish. You are a wonderful little chef!",
-      "transcribed": "We made it! What a lovely dish! You are a wonderful little chef!",
-      "similarity": 1.0
-    },
-    {
-      "key": "recipe-boat",
-      "sha256": "46c1a4aee67ed105f0cba019c88e9145679d1a4053d8d40a5178fd15905674b8",
-      "duration_seconds": 5.36,
-      "rms": 0.0785,
-      "expected": "A fruit boat! First the banana, then strawberries, then blueberries.",
-      "transcribed": "A fruit boat. First the banana, then strawberries, then blueberries.",
-      "similarity": 1.0
-    },
-    {
-      "key": "recipe-soup",
-      "sha256": "8d913b2fd2e7f1b2354436f1e77bbd8cf5419e5b0ad7767a5264e85df93b7cda",
-      "duration_seconds": 6.08,
-      "rms": 0.083,
-      "expected": "Vegetable soup! Carrot, broccoli, tomato, and water. Then stir and wait for the bubbles.",
-      "transcribed": "vegetable soup, carrot, broccoli, tomato, and water, then stir and wait for the bubbles.",
-      "similarity": 1.0
-    },
-    {
-      "key": "recipe-milk",
-      "sha256": "2c4cc1cbbea16fe2ad90bc479312601f40fae81c5b1939ad86e5c1f32c74d304",
-      "duration_seconds": 4.48,
-      "rms": 0.0889,
-      "expected": "Strawberry milk! Strawberries first, then milk. Give it a little stir.",
-      "transcribed": "Strawberry milk, strawberries first, then milk. Give it a little stir.",
-      "similarity": 1.0
-    },
-    {
       "key": "clock-8",
       "sha256": "6d1c32ab7d4dfe3a4d75f619cc12fe0c960d4ee2205036e6e7f56a0f650c635a",
       "duration_seconds": 2.88,
@@ -1236,33 +1164,6 @@
       "similarity": 1.0
     },
     {
-      "key": "letters-intro",
-      "sha256": "f1c11e2d565126f88497f46f9b6c7a3432963178bb167cd5354063c833d3b1f7",
-      "duration_seconds": 4.56,
-      "rms": 0.0845,
-      "expected": "Welcome to our letter post office! Match the letter, and deliver a little picture.",
-      "transcribed": "Welcome to our letter post office. Match the letter and deliver a little picture.",
-      "similarity": 1.0
-    },
-    {
-      "key": "letters-wrong",
-      "sha256": "393be6c30e9624576da69dd76531afb4e542f3f3b793040505ad5275a97430bd",
-      "duration_seconds": 4.24,
-      "rms": 0.0933,
-      "expected": "Almost! Look at the letter on our envelope. Try another postbox.",
-      "transcribed": "Almost! Look at the letter on our envelope! Try another post box!",
-      "similarity": 1.0
-    },
-    {
-      "key": "letters-done",
-      "sha256": "41cf743aa084fbc84603c7d5237704a84e7608297244f53fc05e8352a1e2ce13",
-      "duration_seconds": 3.44,
-      "rms": 0.0851,
-      "expected": "A lovely delivery! You found the matching letter.",
-      "transcribed": "A lovely delivery! You found the matching letter!",
-      "similarity": 1.0
-    },
-    {
       "key": "seedling-intro",
       "sha256": "9b4e5161360b54cda652f39e6305b117e1cd4638d251f71f34b88e05b002bdd3",
       "duration_seconds": 5.84,
@@ -1416,240 +1317,6 @@
       "similarity": 1.0
     },
     {
-      "key": "letter-a",
-      "sha256": "f652fe2ca333a14da13384283f8fbc81db0f52ee09963c4c8607c8b61d301f3d",
-      "duration_seconds": 1.92,
-      "rms": 0.0701,
-      "expected": "A. Apple starts with A.",
-      "transcribed": "A. Apple starts with A.",
-      "similarity": 1.0
-    },
-    {
-      "key": "letter-b",
-      "sha256": "b4982faeb9ec041646492edaf67de60751a7299ebb555b02a375f0df404a0c6e",
-      "duration_seconds": 1.92,
-      "rms": 0.0812,
-      "expected": "B. Banana starts with B.",
-      "transcribed": "Bee Banana starts with B.",
-      "similarity": 0.947
-    },
-    {
-      "key": "letter-c",
-      "sha256": "250471b269235b9c699a10d32ba804590943b697d886ab516ac10ce1f3130a30",
-      "duration_seconds": 2.64,
-      "rms": 0.0697,
-      "expected": "This letter is C. C is for cow.",
-      "transcribed": "This letter is C. C is for cow.",
-      "similarity": 1.0
-    },
-    {
-      "key": "letter-d",
-      "sha256": "629748fbc343c10808ec17891c5847fba3af9f2d8b94425d556e8649187d672b",
-      "duration_seconds": 1.76,
-      "rms": 0.0649,
-      "expected": "D. Duck starts with D.",
-      "transcribed": "Did Duck starts with D?",
-      "similarity": 0.941
-    },
-    {
-      "key": "letter-e",
-      "sha256": "f792a7b8b4cf5791a6fc5af03322527ea8ae43961a23634d1260f6c2ef820aba",
-      "duration_seconds": 1.68,
-      "rms": 0.075,
-      "expected": "E. Elephant starts with E.",
-      "transcribed": "Elephant starts with E.",
-      "similarity": 0.974
-    },
-    {
-      "key": "letter-f",
-      "sha256": "402fd8d49030ab9576a0bc03956eba1bae014e0d6d75b57eb8d02efd829f238a",
-      "duration_seconds": 1.52,
-      "rms": 0.0725,
-      "expected": "F. Frog starts with F.",
-      "transcribed": "F-Frog starts with F.",
-      "similarity": 1.0
-    },
-    {
-      "key": "letter-g",
-      "sha256": "fbb185534a85271e44f5590f56dcf72c2508d9c07cc5e60d6f3565a819750a93",
-      "duration_seconds": 2.88,
-      "rms": 0.0551,
-      "expected": "This letter is G. G is for giraffe.",
-      "transcribed": "This letter is G. G is for giraffe.",
-      "similarity": 1.0
-    },
-    {
-      "key": "letter-h",
-      "sha256": "e7c9ecfaf36a5597aff4cb98dfb4a6793f3942ec0da9de1d506a3a63b92f65e7",
-      "duration_seconds": 1.68,
-      "rms": 0.0776,
-      "expected": "H. Hippo starts with H.",
-      "transcribed": "Hippo starts with H.",
-      "similarity": 0.97
-    },
-    {
-      "key": "letter-i",
-      "sha256": "82706333e51b85d92cb8cccbe3434c381722ec088359e0a87ced4b6ab71309b7",
-      "duration_seconds": 1.92,
-      "rms": 0.0778,
-      "expected": "I. Ice cream starts with I.",
-      "transcribed": "Eye ice cream starts with I.",
-      "similarity": 0.905
-    },
-    {
-      "key": "letter-j",
-      "sha256": "e178f3746119cd2883bedfa837b0fc3ea7009d20d8fddd08749e46a7fee1fa58",
-      "duration_seconds": 1.84,
-      "rms": 0.0828,
-      "expected": "J. Jellyfish starts with J.",
-      "transcribed": "Jet Jellyfish starts with J.",
-      "similarity": 0.955
-    },
-    {
-      "key": "letter-k",
-      "sha256": "77df76980888d43458f0e41f53a9665fc0fbc74e3ecd4f194d0b2ca0ce1df51a",
-      "duration_seconds": 2.48,
-      "rms": 0.0832,
-      "expected": "K. Kangaroo starts with K.",
-      "transcribed": "K! Kangaroo starts with K!",
-      "similarity": 1.0
-    },
-    {
-      "key": "letter-l",
-      "sha256": "eb0f149e108ea1c84857db418f228ccc35223050eb0d1eeb402103f722da2f05",
-      "duration_seconds": 1.76,
-      "rms": 0.1091,
-      "expected": "L. Lion starts with L.",
-      "transcribed": "L-Lion starts with L-",
-      "similarity": 1.0
-    },
-    {
-      "key": "letter-m",
-      "sha256": "e417d8bc851c6b259a845c6790312e84df1127ee3d02fc60bfab4c9deb34fbab",
-      "duration_seconds": 1.28,
-      "rms": 0.0889,
-      "expected": "M. Monkey starts with M.",
-      "transcribed": "Monkey starts with M-",
-      "similarity": 0.971
-    },
-    {
-      "key": "letter-n",
-      "sha256": "67bd49b92faf2e433a9c8d8ffbfe3a65b94bfe7538bce257072e2a3b457f291a",
-      "duration_seconds": 1.68,
-      "rms": 0.0787,
-      "expected": "N. Nest starts with N.",
-      "transcribed": "Nest starts with N.",
-      "similarity": 0.968
-    },
-    {
-      "key": "letter-o",
-      "sha256": "4c1df0cc9cde2a8249fbd73a44a4347a00dccc1ded00e385446106b894927af2",
-      "duration_seconds": 2.48,
-      "rms": 0.089,
-      "expected": "O. Otter starts with O.",
-      "transcribed": "O, otter starts with O.",
-      "similarity": 1.0
-    },
-    {
-      "key": "letter-p",
-      "sha256": "53ce3f5544df56961b7b798142085c759ecc0f12b4f87ead8169c9e7c6c72cc6",
-      "duration_seconds": 1.44,
-      "rms": 0.0764,
-      "expected": "P. Panda starts with P.",
-      "transcribed": "Panda starts with P.",
-      "similarity": 0.97
-    },
-    {
-      "key": "letter-q",
-      "sha256": "af2c9ce99ef45fd4b8cba27792850a490894eea1852120a170cbc461bc7fbc98",
-      "duration_seconds": 1.76,
-      "rms": 0.0695,
-      "expected": "Q. Queen starts with Q.",
-      "transcribed": "Queue Queen starts with Q.",
-      "similarity": 0.895
-    },
-    {
-      "key": "letter-r",
-      "sha256": "7cae1051d04a2d810b4428d76dfb8a052fecf7a43c0c7ff89310e3aacf7c4896",
-      "duration_seconds": 1.76,
-      "rms": 0.0981,
-      "expected": "R. Rabbit starts with R.",
-      "transcribed": "Rabbit starts with R.",
-      "similarity": 0.971
-    },
-    {
-      "key": "letter-s",
-      "sha256": "9c4663d4a382e99081c5d2dd976297fcaeab1969cdcba74d63797e7b08410184",
-      "duration_seconds": 1.6,
-      "rms": 0.1153,
-      "expected": "S. Strawberry starts with S.",
-      "transcribed": "Strawberry starts with S.",
-      "similarity": 0.977
-    },
-    {
-      "key": "letter-t",
-      "sha256": "02b8341ec2677afddd57ab7d413f80a34d13f8d6c965267ecffdeb106c75a6f9",
-      "duration_seconds": 1.68,
-      "rms": 0.0679,
-      "expected": "T. Turtle starts with T.",
-      "transcribed": "Turtle starts with T.",
-      "similarity": 0.971
-    },
-    {
-      "key": "letter-u",
-      "sha256": "a4fe5c86ea0b1144dfc4f7867b82d605da59714985b3cf40781990690cfd9e85",
-      "duration_seconds": 1.6,
-      "rms": 0.0982,
-      "expected": "U. Umbrella starts with U.",
-      "transcribed": "Umbrella starts with you.",
-      "similarity": 0.927
-    },
-    {
-      "key": "letter-v",
-      "sha256": "a4e8014aae544814bd6f777e8d88ffe23212a25872f9b593bff54b77497161ee",
-      "duration_seconds": 1.76,
-      "rms": 0.0744,
-      "expected": "V. Vegetables starts with V.",
-      "transcribed": "Vegetables starts with V.",
-      "similarity": 0.977
-    },
-    {
-      "key": "letter-w",
-      "sha256": "9fbc4e0a21f0a672f0fd3e89e0dcb4cede2ed361a01f373265cdbce9101cfddc",
-      "duration_seconds": 3.12,
-      "rms": 0.0697,
-      "expected": "This letter is W. W is for whale.",
-      "transcribed": "This letter is W. W is for whale.",
-      "similarity": 1.0
-    },
-    {
-      "key": "letter-x",
-      "sha256": "e129fa979ebf83d57ca4ff22243f39af31a21b94bf1321b0caeb9d3dca85ddd3",
-      "duration_seconds": 2.56,
-      "rms": 0.0824,
-      "expected": "X. Xylophone starts with X.",
-      "transcribed": "X. Psilophone starts with X.",
-      "similarity": 0.884
-    },
-    {
-      "key": "letter-y",
-      "sha256": "fbfb89ac836419a6e3920432021a429dff4c624c21d1159ba0593cffe5635197",
-      "duration_seconds": 1.76,
-      "rms": 0.0818,
-      "expected": "Y. Yo-yo starts with Y.",
-      "transcribed": "Yo-Yo starts with Y.",
-      "similarity": 0.968
-    },
-    {
-      "key": "letter-z",
-      "sha256": "1ec58ab238cc5697845d9e675a5af1c320438d4ed47499db55386cace3ae5977",
-      "duration_seconds": 1.68,
-      "rms": 0.0705,
-      "expected": "Z. Zebra starts with Z.",
-      "transcribed": "Zebra starts with Z.",
-      "similarity": 0.97
-    },
-    {
       "key": "traffic-turn-left",
       "sha256": "2b5e85e50d9c72b23db7491fa6c04401678b18823fedd797b7d87e1dd396146e",
       "duration_seconds": 1.2,
@@ -1731,15 +1398,6 @@
       "similarity": 1.0
     },
     {
-      "key": "kitchen-next",
-      "sha256": "b2ab23a0ba35fd2a38f09e10ebd89efd26f25b0c29441cda26a24017d2ef0839",
-      "duration_seconds": 3.84,
-      "rms": 0.0784,
-      "expected": "Another little dish! Match the next picture and put it in our bowl.",
-      "transcribed": "Another little dish, match the next picture and put it in our bowl.",
-      "similarity": 1.0
-    },
-    {
       "key": "play-tap",
       "sha256": "5940a5e453faec312983b1b7ba074c59078f7173846520ded17baa6a274ce03f",
       "duration_seconds": 2.64,
@@ -1774,177 +1432,6 @@
       "expected": "\u8001\u7237\u7237\u6765\u8015\u8018\uff0c\u6240\u6709\u53f6\u5b50\u957f\u51fa\u6765\u3002",
       "transcribed": "\u8001\u7237\u7237\u6765\u8015\u4e91\u6240\u6709\u53f6\u5b50\u957f\u51fa\u6765\u3002",
       "similarity": 0.923
-    },
-    {
-      "key": "connect-intro",
-      "sha256": "1f8a0100e86be8935cd953bb7c6b69ca1216a6dad855f7e15a328864ffd4daf5",
-      "duration_seconds": 5.76,
-      "rms": 0.0682,
-      "expected": "\u7ed9\u597d\u670b\u53cb\u8fde\u4e00\u8fde\u7ebf\u5427\uff01\u62d6\u4e00\u62d6\uff0c\u6216\u8005\u5148\u70b9\u4e00\u4e2a\uff0c\u518d\u70b9\u5b83\u7684\u597d\u670b\u53cb\u3002",
-      "transcribed": "\u7ed9\u597d\u670b\u53cb\u8fde\u4e00\u8fde\u7ebf\u5427\u3002\u6258\u4e00\u6258,\u6216\u8005\u5148\u70b9\u4e00\u4e2a,\u518d\u70b9\u5b83\u7684\u597d\u670b\u53cb\u3002",
-      "similarity": 0.92
-    },
-    {
-      "key": "connect-wrong",
-      "sha256": "76d98be610c5152226da24e58629cfdcff6114681e86b5ce6756fc62abe25adb",
-      "duration_seconds": 2.32,
-      "rms": 0.0872,
-      "expected": "\u518d\u627e\u627e\u770b\uff0c\u8c01\u662f\u5b83\u7684\u597d\u670b\u53cb\u5462\uff1f",
-      "transcribed": "\u518d\u627e\u627e\u770b,\u8c01\u662f\u4ed6\u7684\u597d\u670b\u53cb\u5462?",
-      "similarity": 0.917
-    },
-    {
-      "key": "connect-done",
-      "sha256": "86d67209999fe699c59f6b7c424326a2e2a24546dda084100181d5fcf277fb80",
-      "duration_seconds": 2.24,
-      "rms": 0.087,
-      "expected": "\u5168\u90fd\u8fde\u597d\u5566\uff01\u4f60\u771f\u68d2\uff01",
-      "transcribed": "\u5168\u90fd\u8fde\u597d\u4e86,\u4f60\u771f\u68d2!",
-      "similarity": 0.875
-    },
-    {
-      "key": "connect-monkey-banana",
-      "sha256": "9983ceeb71fde5c93af4cc505943344c48c5af23f8a96446024c95e310f715b7",
-      "duration_seconds": 1.6,
-      "rms": 0.0923,
-      "expected": "\u5c0f\u7334\u5b50\u7231\u5403\u9999\u8549\uff01",
-      "transcribed": "\u5c0f\u7334\u5b50\u7231\u5403\u9999\u8549?",
-      "similarity": 1.0
-    },
-    {
-      "key": "connect-rabbit-carrot",
-      "sha256": "c5b3651317ed327374d478ff0d8c338ffb740c19eec4242f61c6459d8e17c01a",
-      "duration_seconds": 1.6,
-      "rms": 0.1031,
-      "expected": "\u5c0f\u5154\u5b50\u7231\u5403\u80e1\u841d\u535c\uff01",
-      "transcribed": "\u5c0f\u5154\u5b50\u7231\u5403\u80e1\u841d\u535c\u3002",
-      "similarity": 1.0
-    },
-    {
-      "key": "connect-cow-milk",
-      "sha256": "892ab3a339e26b5be7adf5fab8db2df62a5177ea3de35131ab656d0044cd6225",
-      "duration_seconds": 1.68,
-      "rms": 0.098,
-      "expected": "\u5976\u725b\u4f1a\u7ed9\u6211\u4eec\u725b\u5976\uff01",
-      "transcribed": "\u5976\u725b\u4f1a\u7ed9\u6211\u4eec\u725b\u5976\u3002",
-      "similarity": 1.0
-    },
-    {
-      "key": "connect-panda-bamboo",
-      "sha256": "27c490f3316fd395f2d613be26a04886faf1b0d4c041f89da32c31f1bbe9afe5",
-      "duration_seconds": 1.68,
-      "rms": 0.0827,
-      "expected": "\u5927\u718a\u732b\u7231\u5403\u7af9\u5b50\uff01",
-      "transcribed": "\u5927\u718a\u732b\u7231\u5403\u7af9\u5b50\u3002",
-      "similarity": 1.0
-    },
-    {
-      "key": "connect-bear-honey",
-      "sha256": "cef3f9fd11691bf94fdb39e92400a76dd6c50d1a7f163985859c4473bd82a4e2",
-      "duration_seconds": 2.0,
-      "rms": 0.0613,
-      "expected": "\u5c0f\u718a\u7231\u5403\u751c\u751c\u7684\u8702\u871c\uff01",
-      "transcribed": "\u5c0f\u718a\u7231\u5403\u751c\u751c\u7684\u8702\u871c\u3002",
-      "similarity": 1.0
-    },
-    {
-      "key": "connect-giraffe-leaf",
-      "sha256": "4e8b29f0a60139247cce5fbc594bd8662c1273a7c712e2e457af51c6504fb0e3",
-      "duration_seconds": 2.56,
-      "rms": 0.0595,
-      "expected": "\u957f\u9888\u9e7f\u4f38\u957f\u8116\u5b50\u5403\u6811\u53f6\uff01",
-      "transcribed": "\u957f\u9888\u9e7f\u4f38\u957f\u8116\u5b50\u5403\u6811\u53f6\u3002",
-      "similarity": 1.0
-    },
-    {
-      "key": "connect-elephant-peanut",
-      "sha256": "19887f5892daa3f4f758efd552265231767ca08667773538e536a24dd5e65ea8",
-      "duration_seconds": 1.36,
-      "rms": 0.1008,
-      "expected": "\u5927\u8c61\u7231\u5403\u82b1\u751f\uff01",
-      "transcribed": "\u5927\u8c61\u7231\u5403\u82b1\u751f\u3002",
-      "similarity": 1.0
-    },
-    {
-      "key": "connect-firetruck-flame",
-      "sha256": "4113b4199fce766521b0346aa99c7cbca7155565271aea45ca702cd14e475166",
-      "duration_seconds": 2.32,
-      "rms": 0.0911,
-      "expected": "\u6d88\u9632\u8f66\u6765\u5566\uff0c\u5feb\u5feb\u706d\u706b\uff01",
-      "transcribed": "\u6d88\u9632\u8f66\u6765\u4e86,\u5feb\u5feb\u706d\u706b\u3002",
-      "similarity": 0.889
-    },
-    {
-      "key": "connect-police-policecar",
-      "sha256": "da0a72253ba155697e375eb1fa211ef1e9b01e9a0296d02832632cd2b58ec105",
-      "duration_seconds": 1.92,
-      "rms": 0.0656,
-      "expected": "\u8b66\u5bdf\u53d4\u53d4\u5f00\u7740\u8b66\u8f66\uff01",
-      "transcribed": "\u8b66\u5bdf\u53d4\u53d4\u5f00\u7740\u8b66\u8f66\u3002",
-      "similarity": 1.0
-    },
-    {
-      "key": "connect-butterfly-flower",
-      "sha256": "36d7777671874adb9d2788e8d8db6edeac0000fc632affeda5a1ac2ccd7bf1f6",
-      "duration_seconds": 1.6,
-      "rms": 0.1034,
-      "expected": "\u8774\u8776\u98de\u5230\u4e86\u82b1\u6735\u4e0a\uff01",
-      "transcribed": "\u8774\u8776\u98de\u5230\u4e86\u82b1\u6735\u4e0a\u3002",
-      "similarity": 1.0
-    },
-    {
-      "key": "connect-rain-umbrella",
-      "sha256": "a5d7671ac8e502fa6f088574a7bcc798d785f90b08142e595c18927fd9f40274",
-      "duration_seconds": 2.16,
-      "rms": 0.0894,
-      "expected": "\u4e0b\u96e8\u5566\uff0c\u5feb\u6491\u8d77\u5c0f\u96e8\u4f1e\uff01",
-      "transcribed": "\u4e0b\u96e8\u5566,\u5feb\u6491\u8d77\u5c0f\u96e8\u4f1e\u3002",
-      "similarity": 1.0
-    },
-    {
-      "key": "connect-spade-soil",
-      "sha256": "2e6f925913c06caf61c0223ed9c02da2192ad387180bfd9f3bf372d3ac3fdeca",
-      "duration_seconds": 1.52,
-      "rms": 0.0673,
-      "expected": "\u5c0f\u94f2\u5b50\u6765\u6316\u6ce5\u571f\uff01",
-      "transcribed": "\u5c0f\u94f2\u5b50\u6765\u6316\u6ce5\u571f\u3002",
-      "similarity": 1.0
-    },
-    {
-      "key": "connect-owl-moon",
-      "sha256": "e0b840fd7501a0c48be6657cbf87a803cef74d55bd1b746a6173e7b47b45cfcd",
-      "duration_seconds": 2.16,
-      "rms": 0.0732,
-      "expected": "\u591c\u665a\uff0c\u732b\u5934\u9e70\u770b\u6708\u4eae\u3002",
-      "transcribed": "\u591c\u665a,\u732b\u5934\u9634\u770b\u6708\u4eae\u3002",
-      "similarity": 0.875
-    },
-    {
-      "key": "connect-seal-ball",
-      "sha256": "7c26cb48c80fcfee6fbb6fc4c10b717957fc61a1c390645273b13532b8a20ab6",
-      "duration_seconds": 2.0,
-      "rms": 0.1179,
-      "expected": "\u5c0f\u6d77\u8c79\u7231\u73a9\u76ae\u7403\uff01",
-      "transcribed": "\u5c0f\u6d77\u8c79\u7231\u73a9\u76ae\u7403",
-      "similarity": 1.0
-    },
-    {
-      "key": "connect-penguin-clownfish",
-      "sha256": "ad983b4679d3299db7c8535979c42f4e2cee8174bb53145795251dc8c438bc0b",
-      "duration_seconds": 1.6,
-      "rms": 0.0684,
-      "expected": "\u5c0f\u4f01\u9e45\u7231\u5403\u5c0f\u9c7c\uff01",
-      "transcribed": "\u5c0f\u4f01\u9e45\u7231\u5403\u5c0f\u9c7c\u3002",
-      "similarity": 1.0
-    },
-    {
-      "key": "connect-sun-tulip",
-      "sha256": "d0594995512a3ab7f7cc10886a4ae177a102ec95a71b5fc0888b48aabc3b1c3d",
-      "duration_seconds": 1.84,
-      "rms": 0.0909,
-      "expected": "\u592a\u9633\u516c\u516c\u7167\u7740\u90c1\u91d1\u9999\uff01",
-      "transcribed": "\u592a\u9633\u516c\u516c\u7167\u7740\u7389\u91d1\u9999\u3002",
-      "similarity": 0.889
     },
     {
       "key": "match-intro",
@@ -2043,6 +1530,1491 @@
       "rms": 0.1049,
       "expected": "\u5168\u90fd\u6d88\u9664\u5566\uff01\u4f60\u771f\u68d2\uff01",
       "transcribed": "\u5168\u90fd\u6d88\u9664\u5566!\u4f60\u771f\u68d2!",
+      "similarity": 1.0
+    },
+    {
+      "key": "lb-intro",
+      "sha256": "f128bf3957fdc2c42c48d9a719035be1bfd11addbbf46e312e78ff5337596a80",
+      "duration_seconds": 2.96,
+      "rms": 0.0778,
+      "expected": "Welcome to the balloon sky! Let's find some letters.",
+      "transcribed": "Welcome to the balloon sky. Let's find some letters.",
+      "similarity": 1.0
+    },
+    {
+      "key": "lb-ask",
+      "sha256": "4ca7a48c5673dd3860082b70ea709a08e9d333dbd899f8f64db1037428b95ea6",
+      "duration_seconds": 1.52,
+      "rms": 0.1012,
+      "expected": "What letter does it start with?",
+      "transcribed": "What letter does it start with?",
+      "similarity": 1.0
+    },
+    {
+      "key": "lb-wrong",
+      "sha256": "5438b1a17aad267647e1bd2bd3ea8d905ab121fceea5b4d9a5d1b531596008b4",
+      "duration_seconds": 2.4,
+      "rms": 0.1015,
+      "expected": "Not that one. Try another balloon!",
+      "transcribed": "Not that one. Try another balloon.",
+      "similarity": 1.0
+    },
+    {
+      "key": "ls-a",
+      "sha256": "b6c36397426e31076783e0a3e5a1b87aee3dc768622524585503f7b243546486",
+      "duration_seconds": 1.04,
+      "rms": 0.0819,
+      "expected": "A is for",
+      "transcribed": "A is for",
+      "similarity": 1.0
+    },
+    {
+      "key": "ls-b",
+      "sha256": "4e3403c41ac15fcb9e0fe7c6aa666a0ef221877bfe9011d42ae9829de7e32de9",
+      "duration_seconds": 1.12,
+      "rms": 0.093,
+      "expected": "B is for",
+      "transcribed": "B is for",
+      "similarity": 1.0
+    },
+    {
+      "key": "ls-c",
+      "sha256": "3e3e8ae1cf6568847ae73ef7bb25f6ac265a61d3c8bfd66314ebc0e968e2803c",
+      "duration_seconds": 1.04,
+      "rms": 0.079,
+      "expected": "C is for",
+      "transcribed": "C is for...",
+      "similarity": 1.0
+    },
+    {
+      "key": "ls-d",
+      "sha256": "b4369034342c45fbdb0890e299c833a3a09524fffdb56905f4cb309d2794aa5b",
+      "duration_seconds": 1.04,
+      "rms": 0.1098,
+      "expected": "D is for",
+      "transcribed": "Did is for",
+      "similarity": 0.857
+    },
+    {
+      "key": "ls-e",
+      "sha256": "fc6ca75f8c9c44027fe5ae8c73bb26f71cee232982baf0d040c6c74ebafb1f0b",
+      "duration_seconds": 0.8,
+      "rms": 0.0942,
+      "expected": "E is for",
+      "transcribed": "E is for",
+      "similarity": 1.0
+    },
+    {
+      "key": "ls-f",
+      "sha256": "f3a961751f83600219f7a597686b10ef5d08de03caadb78f6915dafceab1fecc",
+      "duration_seconds": 0.64,
+      "rms": 0.0666,
+      "expected": "F is for",
+      "transcribed": "F is for...",
+      "similarity": 1.0
+    },
+    {
+      "key": "ls-g",
+      "sha256": "2eccb68acfd896e6b725906b3656ddd75a020e4aa53cd235707ecf121ebd2001",
+      "duration_seconds": 0.88,
+      "rms": 0.0831,
+      "expected": "G is for",
+      "transcribed": "G is for",
+      "similarity": 1.0
+    },
+    {
+      "key": "ls-h",
+      "sha256": "f0cb34590a6d27c01c565f5077c8888f7eb424f610cab96ada5291aa7ab42981",
+      "duration_seconds": 1.52,
+      "rms": 0.1024,
+      "expected": "The letter H is for",
+      "transcribed": "The letter H is 4.",
+      "similarity": 0.968
+    },
+    {
+      "key": "ls-i",
+      "sha256": "2e5db1b2888d420fb56379b5165e58eb33fc65854c4e1e59f3f9923bf74371b8",
+      "duration_seconds": 1.36,
+      "rms": 0.0894,
+      "expected": "I is for",
+      "transcribed": "I is for",
+      "similarity": 1.0
+    },
+    {
+      "key": "ls-j",
+      "sha256": "be575126061eb4cacbfae3caadb39c49485251b3b03720d69d1431d29cbe0528",
+      "duration_seconds": 0.88,
+      "rms": 0.1006,
+      "expected": "J is for",
+      "transcribed": "J is for",
+      "similarity": 1.0
+    },
+    {
+      "key": "ls-k",
+      "sha256": "4fb42ba501ea8fec0c690354b7c6d2dd9c9073315730adbaccf400948e840097",
+      "duration_seconds": 0.96,
+      "rms": 0.0938,
+      "expected": "K is for",
+      "transcribed": "K is for...",
+      "similarity": 1.0
+    },
+    {
+      "key": "ls-l",
+      "sha256": "8535b112555407d45ea3cf1e6a807cf104affecf0af08328a511276d0e3337c8",
+      "duration_seconds": 0.56,
+      "rms": 0.109,
+      "expected": "L is for",
+      "transcribed": "L is for...",
+      "similarity": 1.0
+    },
+    {
+      "key": "ls-m",
+      "sha256": "8f0435a335c1144dff9a8a6d524c3dbdb261032de64dc1259ff6208c7397f837",
+      "duration_seconds": 0.56,
+      "rms": 0.0816,
+      "expected": "M is for",
+      "transcribed": "M is for",
+      "similarity": 1.0
+    },
+    {
+      "key": "ls-n",
+      "sha256": "61e286ab80fb38be786d17c1eb82296a92223c2d24e2b317c0d76c83ac460a1b",
+      "duration_seconds": 1.6,
+      "rms": 0.085,
+      "expected": "The letter N is for",
+      "transcribed": "The letter N is for...",
+      "similarity": 1.0
+    },
+    {
+      "key": "ls-o",
+      "sha256": "1117fde5ff6a8bb4e6c448151e93ed73453c6329e2866b2c72af562e9f101c06",
+      "duration_seconds": 0.64,
+      "rms": 0.129,
+      "expected": "O is for",
+      "transcribed": "O is for...",
+      "similarity": 1.0
+    },
+    {
+      "key": "ls-p",
+      "sha256": "530305bb0abe3fee4de342e9d87305d857bcd41ddc6db9736cb42f015ff77163",
+      "duration_seconds": 0.96,
+      "rms": 0.0969,
+      "expected": "P is for",
+      "transcribed": "P is for...",
+      "similarity": 1.0
+    },
+    {
+      "key": "ls-r",
+      "sha256": "8d272b36f5fe56f2a8f339c82fa58fdfb878a8d10c86a4dbb2a3bbe2ae89714b",
+      "duration_seconds": 1.6,
+      "rms": 0.1215,
+      "expected": "The letter R is for",
+      "transcribed": "The letter R is for",
+      "similarity": 1.0
+    },
+    {
+      "key": "ls-s",
+      "sha256": "8e5b959e86f396c79f5745ceffb295efe87b3d0300e4c1d2d42150f2d15fd1dd",
+      "duration_seconds": 0.64,
+      "rms": 0.0747,
+      "expected": "S is for",
+      "transcribed": "S is for...",
+      "similarity": 1.0
+    },
+    {
+      "key": "ls-t",
+      "sha256": "966512712655a48defb5859113a167194b3ac3b617ac005f5f1c9c076acaf499",
+      "duration_seconds": 1.44,
+      "rms": 0.1165,
+      "expected": "The letter T is for",
+      "transcribed": "The letter T is for...",
+      "similarity": 1.0
+    },
+    {
+      "key": "ls-u",
+      "sha256": "cd4b0a319b8a130b0cf27ffab99d2aa47f168dabb7afd8fef1fa897c0c72fdc4",
+      "duration_seconds": 0.88,
+      "rms": 0.0962,
+      "expected": "U is for",
+      "transcribed": "You is for!",
+      "similarity": 0.857
+    },
+    {
+      "key": "ls-w",
+      "sha256": "bb0b8112f93db4aacae87c1bede3f5097bef040edb73028467f7f962be3af624",
+      "duration_seconds": 0.96,
+      "rms": 0.1145,
+      "expected": "Double U is for",
+      "transcribed": "W is for",
+      "similarity": 1.0
+    },
+    {
+      "key": "ls-x",
+      "sha256": "da8d0fdc9e982b0d4a4a354c9012db5271e4dcf8985332f063416d21fba9a885",
+      "duration_seconds": 1.04,
+      "rms": 0.0752,
+      "expected": "X is for",
+      "transcribed": "X is for?",
+      "similarity": 1.0
+    },
+    {
+      "key": "ls-y",
+      "sha256": "a0e18dd233efdea5ef321952ba860db2d9a14c33ad6c7aa11ab3016937f83d40",
+      "duration_seconds": 1.44,
+      "rms": 0.1096,
+      "expected": "The letter Y is for",
+      "transcribed": "The letter Y is for...",
+      "similarity": 1.0
+    },
+    {
+      "key": "ls-z",
+      "sha256": "5647124ce14522ccacb0eb846fff15688f1ac8e76fac3a6d4a36096df46cfe11",
+      "duration_seconds": 0.72,
+      "rms": 0.0844,
+      "expected": "Z is for",
+      "transcribed": "Z is for...",
+      "similarity": 1.0
+    },
+    {
+      "key": "wd-apple",
+      "sha256": "99189ea00805b08f5e368216b26e0c97cdcef7794bc4bed4d035eaff9c7c80c2",
+      "duration_seconds": 0.88,
+      "rms": 0.0791,
+      "expected": "Apple!",
+      "transcribed": "Apple!",
+      "similarity": 1.0
+    },
+    {
+      "key": "wd-airplane",
+      "sha256": "2479ff414df7b3fc2a774af842a0c2a0ed7be790674089c137704b2c4a48c494",
+      "duration_seconds": 0.8,
+      "rms": 0.0714,
+      "expected": "Airplane!",
+      "transcribed": "Airplane",
+      "similarity": 1.0
+    },
+    {
+      "key": "wd-ambulance",
+      "sha256": "a4edf1b72f59074ece2f81508695019734bd7e5604a4bff3abc77e33c504653f",
+      "duration_seconds": 0.96,
+      "rms": 0.0822,
+      "expected": "Ambulance!",
+      "transcribed": "Ambulance",
+      "similarity": 1.0
+    },
+    {
+      "key": "wd-angelfish",
+      "sha256": "b7ad61f31e2437c24f7f1c3a0cc3c53bd12e4716b11475dcb9f01bacb3e78b1e",
+      "duration_seconds": 0.96,
+      "rms": 0.0611,
+      "expected": "Angelfish!",
+      "transcribed": "Angelfish!",
+      "similarity": 1.0
+    },
+    {
+      "key": "wd-banana",
+      "sha256": "13846b56b2fdd154d469e353bf2732673d71b503667efc5d9f18eea65e6ed53e",
+      "duration_seconds": 0.88,
+      "rms": 0.0775,
+      "expected": "Banana!",
+      "transcribed": "banana",
+      "similarity": 1.0
+    },
+    {
+      "key": "wd-bear",
+      "sha256": "03bf867805bc9d2adc9224b0f7b0a8a9fab3b4896861531a91e2157e0960c75c",
+      "duration_seconds": 0.64,
+      "rms": 0.0948,
+      "expected": "Bear!",
+      "transcribed": "Bear!",
+      "similarity": 1.0
+    },
+    {
+      "key": "wd-bicycle",
+      "sha256": "597930300d1ca2279f8823749df4748f945f5c6ee1bdd7667a187d7b240de8c3",
+      "duration_seconds": 0.88,
+      "rms": 0.0706,
+      "expected": "Bicycle!",
+      "transcribed": "Bicycle",
+      "similarity": 1.0
+    },
+    {
+      "key": "wd-bus",
+      "sha256": "fe1e4c39e14a15a6d8f48a3325619f9516400ffbc9ea0df2d71b69a8801c8b14",
+      "duration_seconds": 0.64,
+      "rms": 0.1022,
+      "expected": "Bus!",
+      "transcribed": "Bus!",
+      "similarity": 1.0
+    },
+    {
+      "key": "wd-butterfly",
+      "sha256": "098a166e10557635c04b0b3ed75c639536087cf92f83f7c691ba36f72f73b53b",
+      "duration_seconds": 0.88,
+      "rms": 0.0959,
+      "expected": "Butterfly!",
+      "transcribed": "Butterfly",
+      "similarity": 1.0
+    },
+    {
+      "key": "wd-ball",
+      "sha256": "780d71bb6b4d9202fd3e4e2e56be295fac3cc59a4e27c0955fb6beb0f8bc5296",
+      "duration_seconds": 0.88,
+      "rms": 0.1146,
+      "expected": "A ball!",
+      "transcribed": "A ball!",
+      "similarity": 1.0
+    },
+    {
+      "key": "wd-bamboo",
+      "sha256": "c197f7a2fb2b40cc00a11eef6fd417ddf4846cf7098878e122b7024b56ab5b17",
+      "duration_seconds": 0.88,
+      "rms": 0.0998,
+      "expected": "Bamboo!",
+      "transcribed": "Bamboo!",
+      "similarity": 1.0
+    },
+    {
+      "key": "wd-blueberry",
+      "sha256": "057532e60ed3b90060c32e9d5d430939e78c929e35d322029f5568822ad479bc",
+      "duration_seconds": 0.96,
+      "rms": 0.0907,
+      "expected": "Blueberry!",
+      "transcribed": "Blueberry!",
+      "similarity": 1.0
+    },
+    {
+      "key": "wd-bluetang",
+      "sha256": "9dbb7d35951309803fcd9aa67167746b79f5781ce66800ae5163c1186a6b8884",
+      "duration_seconds": 0.96,
+      "rms": 0.0847,
+      "expected": "Blue tang!",
+      "transcribed": "Blue Tang",
+      "similarity": 1.0
+    },
+    {
+      "key": "wd-boat",
+      "sha256": "4fc92e2baea155da22dbe9fe0a11cdce08a14ceda438e0b8f1d2e3a08b7ae8df",
+      "duration_seconds": 0.64,
+      "rms": 0.0927,
+      "expected": "Boat!",
+      "transcribed": "BOAT!",
+      "similarity": 1.0
+    },
+    {
+      "key": "wd-broccoli",
+      "sha256": "a39d38c3bb3e013bdcc96cd7328be87d6e56a9b002aac5c49b646445d392250a",
+      "duration_seconds": 0.88,
+      "rms": 0.0906,
+      "expected": "Broccoli!",
+      "transcribed": "Broccoli",
+      "similarity": 1.0
+    },
+    {
+      "key": "wd-cow",
+      "sha256": "a47fd785e0b31b4a2d6cc540ba7d680d359c0886533bc62e98d4b6932d07a247",
+      "duration_seconds": 0.8,
+      "rms": 0.0869,
+      "expected": "A cow!",
+      "transcribed": "A cow!",
+      "similarity": 1.0
+    },
+    {
+      "key": "wd-crab",
+      "sha256": "7d9eee7a46685430bb53d8445450de67da6152c7a360d8887fe4a9feb7755947",
+      "duration_seconds": 0.8,
+      "rms": 0.0937,
+      "expected": "Crab!",
+      "transcribed": "Crab!",
+      "similarity": 1.0
+    },
+    {
+      "key": "wd-cherries",
+      "sha256": "12a65f5ce054226f54ed980c7eccb0fe3edc65150f04266b22bd10adb44cb017",
+      "duration_seconds": 0.8,
+      "rms": 0.078,
+      "expected": "Cherries!",
+      "transcribed": "Cherries",
+      "similarity": 1.0
+    },
+    {
+      "key": "wd-car",
+      "sha256": "640b9a6cba85f0c3693abf4cbe031bd45d151e047283539e261696ae32de8456",
+      "duration_seconds": 0.64,
+      "rms": 0.081,
+      "expected": "Car!",
+      "transcribed": "Car?",
+      "similarity": 1.0
+    },
+    {
+      "key": "wd-camel",
+      "sha256": "5c0049c74787acae1b525cd64bd70fe66dcd670971beb3086cd6f1f110ec233c",
+      "duration_seconds": 0.88,
+      "rms": 0.0649,
+      "expected": "Camel!",
+      "transcribed": "Camel",
+      "similarity": 1.0
+    },
+    {
+      "key": "wd-carrot",
+      "sha256": "a2ccc50a485cc185ad170841dc0d07ee666e86eee51a91f01da56e871c2cca99",
+      "duration_seconds": 0.8,
+      "rms": 0.0928,
+      "expected": "Carrot!",
+      "transcribed": "carrot",
+      "similarity": 1.0
+    },
+    {
+      "key": "wd-crocodile",
+      "sha256": "3ad1462efe66d109c089d7dd721d00db422b67a6741ac15953d2e97ef85a40f4",
+      "duration_seconds": 1.04,
+      "rms": 0.073,
+      "expected": "Crocodile!",
+      "transcribed": "Crocodile",
+      "similarity": 1.0
+    },
+    {
+      "key": "wd-corn",
+      "sha256": "826b44282a9aa17244f352b39aa74063e6d901d9079c705d5c7cbd052a237ffd",
+      "duration_seconds": 0.72,
+      "rms": 0.0885,
+      "expected": "Corn!",
+      "transcribed": "Corn?",
+      "similarity": 1.0
+    },
+    {
+      "key": "wd-cucumber",
+      "sha256": "b772604038fdad5cb2df56540a75429663bc476656f3d728c134841264127302",
+      "duration_seconds": 0.88,
+      "rms": 0.0892,
+      "expected": "Cucumber!",
+      "transcribed": "Cucumber",
+      "similarity": 1.0
+    },
+    {
+      "key": "wd-clownfish",
+      "sha256": "e648fae4196acf01ace28fb0905ffb020e76077f17cc3b02ba1a8c1612d0792b",
+      "duration_seconds": 1.04,
+      "rms": 0.0695,
+      "expected": "Clownfish!",
+      "transcribed": "Clownfish.",
+      "similarity": 1.0
+    },
+    {
+      "key": "wd-duck",
+      "sha256": "2981a0b7dae514371f859f48c8808d8eae11f320e2cda2f0382405722d5b7dda",
+      "duration_seconds": 0.56,
+      "rms": 0.0969,
+      "expected": "Duck!",
+      "transcribed": "Duck!",
+      "similarity": 1.0
+    },
+    {
+      "key": "wd-deer",
+      "sha256": "3cc848e927efea26e359544d5f03895d3360845d43e1c381c5236188f31767d2",
+      "duration_seconds": 0.72,
+      "rms": 0.0936,
+      "expected": "A deer!",
+      "transcribed": "A deer!",
+      "similarity": 1.0
+    },
+    {
+      "key": "wd-dolphin",
+      "sha256": "bdc412517104aab17038f708d3191766dfc41154d18168660b11e3515e89252b",
+      "duration_seconds": 0.8,
+      "rms": 0.1119,
+      "expected": "Dolphin!",
+      "transcribed": "Dolphin",
+      "similarity": 1.0
+    },
+    {
+      "key": "wd-elephant",
+      "sha256": "3dc33b13fb091e2f4734e2ded9a121c0209d0cb0256aca1d82c6b4bb25b50254",
+      "duration_seconds": 0.88,
+      "rms": 0.082,
+      "expected": "Elephant!",
+      "transcribed": "Elephant",
+      "similarity": 1.0
+    },
+    {
+      "key": "wd-eggplant",
+      "sha256": "cbda1faffd8504bc214f1eee39ff47fb3744b00733c2a89bf141d0a86cf3fb27",
+      "duration_seconds": 0.8,
+      "rms": 0.0701,
+      "expected": "Eggplant!",
+      "transcribed": "Eggplant!",
+      "similarity": 1.0
+    },
+    {
+      "key": "wd-frog",
+      "sha256": "33e82c3c05b81741038389d8f451fe9f1ea382f830220fdaab25496d4ca0bba1",
+      "duration_seconds": 0.88,
+      "rms": 0.1022,
+      "expected": "Frog!",
+      "transcribed": "Frog",
+      "similarity": 1.0
+    },
+    {
+      "key": "wd-fox",
+      "sha256": "2b6a1835ef456faeff4e4292e878402cbdf7b5096943c851e3d90fabc351ec67",
+      "duration_seconds": 0.8,
+      "rms": 0.1202,
+      "expected": "Fox!",
+      "transcribed": "Fox.",
+      "similarity": 1.0
+    },
+    {
+      "key": "wd-flamingo",
+      "sha256": "79df1102400eeab028bf28b0217e6c2b9b2971ba222fd38f28396444db08c920",
+      "duration_seconds": 1.04,
+      "rms": 0.0728,
+      "expected": "Flamingo!",
+      "transcribed": "Flamingo",
+      "similarity": 1.0
+    },
+    {
+      "key": "wd-flower",
+      "sha256": "f9017de13b7a43641099dc27693e97a8e788639f8f79d242b6010d2a62ed1860",
+      "duration_seconds": 0.96,
+      "rms": 0.0843,
+      "expected": "Flower!",
+      "transcribed": "Flower",
+      "similarity": 1.0
+    },
+    {
+      "key": "wd-firetruck",
+      "sha256": "ff1b056135406e20981a8bae124f91f6a8f98827fc2459a85cc7dc2d90f8fcbe",
+      "duration_seconds": 0.96,
+      "rms": 0.0949,
+      "expected": "Fire truck!",
+      "transcribed": "Fire truck.",
+      "similarity": 1.0
+    },
+    {
+      "key": "wd-giraffe",
+      "sha256": "038b2111662473e4733d3f1f5ff3f933b5c09bc727c350fb8732f54e95ae15f4",
+      "duration_seconds": 0.8,
+      "rms": 0.1161,
+      "expected": "Giraffe!",
+      "transcribed": "Giraffe?",
+      "similarity": 1.0
+    },
+    {
+      "key": "wd-gorilla",
+      "sha256": "fa276a7ddf6782a92a979350287f91ca940ebea38d45f2197deaf09e8e2eab14",
+      "duration_seconds": 0.88,
+      "rms": 0.0868,
+      "expected": "Gorilla!",
+      "transcribed": "Gorilla",
+      "similarity": 1.0
+    },
+    {
+      "key": "wd-grapes",
+      "sha256": "62719b3858b60906962083f5726b1e46364fe6dfce9c9c8b42fbeb20047dae0f",
+      "duration_seconds": 0.56,
+      "rms": 0.1032,
+      "expected": "Grapes!",
+      "transcribed": "Grapes!",
+      "similarity": 1.0
+    },
+    {
+      "key": "wd-hippo",
+      "sha256": "1320ac2a5a11d03030d852e6c359c0a855c188364b67064bebd6cb7a98a74db4",
+      "duration_seconds": 0.72,
+      "rms": 0.0727,
+      "expected": "Hippo!",
+      "transcribed": "Hippo!",
+      "similarity": 1.0
+    },
+    {
+      "key": "wd-horse",
+      "sha256": "5cfbf74f4b7a910dbcef333040ab7cbdbfa44c8f7b211abf3adcf7f70a6beaa9",
+      "duration_seconds": 0.96,
+      "rms": 0.0772,
+      "expected": "Horse!",
+      "transcribed": "Horse!",
+      "similarity": 1.0
+    },
+    {
+      "key": "wd-honey",
+      "sha256": "40c9554f0f6c4a769a814c26e1bfdd0947044ccd2b5232bcdeb86fae1bcbaa86",
+      "duration_seconds": 0.72,
+      "rms": 0.0886,
+      "expected": "Honey!",
+      "transcribed": "Honey!",
+      "similarity": 1.0
+    },
+    {
+      "key": "wd-icecream",
+      "sha256": "374569fae2893f3cff7ab36d60fd70fbc1185e89cd00f9a817c682f5aa26031b",
+      "duration_seconds": 0.88,
+      "rms": 0.0576,
+      "expected": "Ice cream!",
+      "transcribed": "Ice cream!",
+      "similarity": 1.0
+    },
+    {
+      "key": "wd-jellyfish",
+      "sha256": "d9226ccc8a187a4d648217f3797fe0e12c0e83833e7dcaa423bf11862e2641ab",
+      "duration_seconds": 1.12,
+      "rms": 0.0833,
+      "expected": "Jellyfish!",
+      "transcribed": "Jellyfish",
+      "similarity": 1.0
+    },
+    {
+      "key": "wd-kangaroo",
+      "sha256": "fbc3ed5b40bbbc95b03a0952e6bbbf34f85c8881276a486b3592a7a70cb635f6",
+      "duration_seconds": 1.04,
+      "rms": 0.0821,
+      "expected": "Kangaroo!",
+      "transcribed": "Kangaroo!",
+      "similarity": 1.0
+    },
+    {
+      "key": "wd-koala",
+      "sha256": "3e272b0c7c846200756430fe8c6871b007c9cee605df63706cbf05a47b575c3f",
+      "duration_seconds": 0.96,
+      "rms": 0.0959,
+      "expected": "Koala!",
+      "transcribed": "Koala",
+      "similarity": 1.0
+    },
+    {
+      "key": "wd-lion",
+      "sha256": "7c2a5a4a661cb91e9337ed316cfa39cbfddc3f25ce9352ff95cea95148ecf996",
+      "duration_seconds": 0.96,
+      "rms": 0.117,
+      "expected": "A lion!",
+      "transcribed": "A Lion!",
+      "similarity": 1.0
+    },
+    {
+      "key": "wd-lemon",
+      "sha256": "0a97d04af73509c99cc6cc174c065db34d7c8de7e54699d66ff952b3228486e4",
+      "duration_seconds": 0.8,
+      "rms": 0.0918,
+      "expected": "A lemon!",
+      "transcribed": "a lemon",
+      "similarity": 1.0
+    },
+    {
+      "key": "wd-lobster",
+      "sha256": "8e4156cec6f265bcc8a0ff92e6453d468a0e51716bda07b272aa5e9bbfa597d8",
+      "duration_seconds": 0.88,
+      "rms": 0.1137,
+      "expected": "Lobster!",
+      "transcribed": "Lobster",
+      "similarity": 1.0
+    },
+    {
+      "key": "wd-leaf",
+      "sha256": "3fa1c8b453c164aed493214e21591eb2a0ad81ece07e2b0d90edb17248681912",
+      "duration_seconds": 0.56,
+      "rms": 0.0992,
+      "expected": "A leaf!",
+      "transcribed": "A leaf!",
+      "similarity": 1.0
+    },
+    {
+      "key": "wd-lemur",
+      "sha256": "745235051fa25cd51fcad34fa223a5e8899cd2e126d88e53040a30537c46205b",
+      "duration_seconds": 0.8,
+      "rms": 0.0902,
+      "expected": "A lemur!",
+      "transcribed": "A lemur!",
+      "similarity": 1.0
+    },
+    {
+      "key": "wd-monkey",
+      "sha256": "40bc453caf68b107870e407fe5c74eca3804b301ca6ffbdaf875e990b4cb20f4",
+      "duration_seconds": 0.8,
+      "rms": 0.0696,
+      "expected": "Monkey!",
+      "transcribed": "monkey",
+      "similarity": 1.0
+    },
+    {
+      "key": "wd-mushroom",
+      "sha256": "43ad2f133a1a7048e24aa64314ad0a9b52dd0cfedea7c621d07037fc218c6a71",
+      "duration_seconds": 0.88,
+      "rms": 0.062,
+      "expected": "Mushroom!",
+      "transcribed": "mushroom",
+      "similarity": 1.0
+    },
+    {
+      "key": "wd-moon",
+      "sha256": "eacaea0cdbfaed9a6311d5e2fed8db864a1b8512381ff4b62fedcef81a61ffbc",
+      "duration_seconds": 0.88,
+      "rms": 0.0916,
+      "expected": "Moon!",
+      "transcribed": "Moon!",
+      "similarity": 1.0
+    },
+    {
+      "key": "wd-narwhal",
+      "sha256": "c77e76d6895479322b23de1067504e8e7584f16ec818d3fa449de0020ecabc26",
+      "duration_seconds": 1.2,
+      "rms": 0.0906,
+      "expected": "Narwhal!",
+      "transcribed": "Narwhal!",
+      "similarity": 1.0
+    },
+    {
+      "key": "wd-nest",
+      "sha256": "7bece299f6ab53ce25d21b2600803fec3c43ccb17634693f3f68f788831b6b6b",
+      "duration_seconds": 0.8,
+      "rms": 0.0933,
+      "expected": "A nest!",
+      "transcribed": "A nest!",
+      "similarity": 1.0
+    },
+    {
+      "key": "wd-owl",
+      "sha256": "a63b672c61d029a7ea51ba574cd434413fc3b143493acabaeddb1e6775c57309",
+      "duration_seconds": 0.96,
+      "rms": 0.1091,
+      "expected": "An owl!",
+      "transcribed": "An owl?",
+      "similarity": 1.0
+    },
+    {
+      "key": "wd-otter",
+      "sha256": "35d9739e3eafffdf4cd79e436350eba5493f28b3abac7934d0238333a358bc78",
+      "duration_seconds": 0.96,
+      "rms": 0.1354,
+      "expected": "An otter!",
+      "transcribed": "An otter!",
+      "similarity": 1.0
+    },
+    {
+      "key": "wd-octopus",
+      "sha256": "244d66ae60aea57e39cd539458958ab0ec8e6d19f7e368445ad72059c9f1c11c",
+      "duration_seconds": 0.88,
+      "rms": 0.0655,
+      "expected": "Octopus!",
+      "transcribed": "Octopus!",
+      "similarity": 1.0
+    },
+    {
+      "key": "wd-orange",
+      "sha256": "d4b971bec4b56e986ac83600fd80cf329022c81fc619ca4662d9fbfa231dc0ca",
+      "duration_seconds": 0.64,
+      "rms": 0.0839,
+      "expected": "Orange!",
+      "transcribed": "Orange",
+      "similarity": 1.0
+    },
+    {
+      "key": "wd-panda",
+      "sha256": "e6293d591ee6307fef8febc131a76f6fb0015b0915a6fc941155908b647524a1",
+      "duration_seconds": 0.8,
+      "rms": 0.0605,
+      "expected": "Panda!",
+      "transcribed": "Panda",
+      "similarity": 1.0
+    },
+    {
+      "key": "wd-penguin",
+      "sha256": "422153cfb2afcb8e9844f7da0964662e50d3438d164ee7731fe4ee41617f3688",
+      "duration_seconds": 1.04,
+      "rms": 0.0596,
+      "expected": "Penguin!",
+      "transcribed": "Penguin",
+      "similarity": 1.0
+    },
+    {
+      "key": "wd-pig",
+      "sha256": "684e272b820d7d64e21c95407f2bb7da38d5a282f1b04e015d9157e25da9dd1c",
+      "duration_seconds": 0.64,
+      "rms": 0.0817,
+      "expected": "Pig!",
+      "transcribed": "PIG!",
+      "similarity": 1.0
+    },
+    {
+      "key": "wd-pear",
+      "sha256": "d2f45b685d2c25af18d2a495203f9a177cdbfd9ead4e1ced1b37303c9df52a7f",
+      "duration_seconds": 0.88,
+      "rms": 0.0812,
+      "expected": "A pear!",
+      "transcribed": "A pair!",
+      "similarity": 1.0
+    },
+    {
+      "key": "wd-pumpkin",
+      "sha256": "c32bf3186237988e80eeae8f6cba33d2de0092a8bf7fc9b1efd7a582f0daaf79",
+      "duration_seconds": 0.64,
+      "rms": 0.088,
+      "expected": "Pumpkin!",
+      "transcribed": "Pumpkin",
+      "similarity": 1.0
+    },
+    {
+      "key": "wd-peas",
+      "sha256": "3b420900e5f391f2727a0465cb098ddc8ea32878cd68e7e4900d9758875167f8",
+      "duration_seconds": 0.88,
+      "rms": 0.0581,
+      "expected": "Peas!",
+      "transcribed": "Peace!",
+      "similarity": 1.0
+    },
+    {
+      "key": "wd-peanut",
+      "sha256": "8a44e9b5c6625807979eaae7eea0a60354722d7b5255bcdc3124e5afa5d4bd1b",
+      "duration_seconds": 0.64,
+      "rms": 0.0791,
+      "expected": "Peanut!",
+      "transcribed": "Peanut!",
+      "similarity": 1.0
+    },
+    {
+      "key": "wd-peacock",
+      "sha256": "480aab3964169f24325e9caec2c7668791e2a79da2492a58648a59643c83d17a",
+      "duration_seconds": 0.96,
+      "rms": 0.0437,
+      "expected": "Peacock!",
+      "transcribed": "Peacock",
+      "similarity": 1.0
+    },
+    {
+      "key": "wd-pufferfish",
+      "sha256": "8a10caf63f72fae4c7f5e95a36806f4680b1964196b79f156a612d092955aea9",
+      "duration_seconds": 0.8,
+      "rms": 0.0734,
+      "expected": "Pufferfish!",
+      "transcribed": "Puffer Fish",
+      "similarity": 1.0
+    },
+    {
+      "key": "wd-rabbit",
+      "sha256": "8a764f42c6bfdc730b012855da0a889dd17a51a130267af3b6f1fa691f19aef7",
+      "duration_seconds": 0.56,
+      "rms": 0.1208,
+      "expected": "Rabbit!",
+      "transcribed": "Rabbit!",
+      "similarity": 1.0
+    },
+    {
+      "key": "wd-rhino",
+      "sha256": "e3d47728a4a38286ebc0ec3624abf58e5919c28c47dd37edba21009f2ced43e2",
+      "duration_seconds": 0.96,
+      "rms": 0.0965,
+      "expected": "A rhino!",
+      "transcribed": "A Rhino!",
+      "similarity": 1.0
+    },
+    {
+      "key": "wd-radish",
+      "sha256": "13bb3981ec60267b2d90467fc7d54291ffb5e4a48cd98a0ac2dbe12e73fe050d",
+      "duration_seconds": 1.04,
+      "rms": 0.0913,
+      "expected": "Radish!",
+      "transcribed": "Radish!",
+      "similarity": 1.0
+    },
+    {
+      "key": "wd-seal",
+      "sha256": "bedc05d4cbfb875aa29baa003328b28b94ee480b9a7c38a832d9ed87f51156ab",
+      "duration_seconds": 0.72,
+      "rms": 0.0601,
+      "expected": "A seal!",
+      "transcribed": "a seal",
+      "similarity": 1.0
+    },
+    {
+      "key": "wd-shark",
+      "sha256": "6a3cbe91782b2e5d1dcc0d32a554e7b60a74b147c0a0ccded42bfe86bf329c4d",
+      "duration_seconds": 0.8,
+      "rms": 0.0694,
+      "expected": "Shark!",
+      "transcribed": "Shark!",
+      "similarity": 1.0
+    },
+    {
+      "key": "wd-sheep",
+      "sha256": "e9bb8ec34102660216ff9e49cb0bb7eaed739654ba833b9278ebc4e44c3de52b",
+      "duration_seconds": 0.72,
+      "rms": 0.058,
+      "expected": "Sheep!",
+      "transcribed": "Sheep!",
+      "similarity": 1.0
+    },
+    {
+      "key": "wd-snake",
+      "sha256": "fdb028399fe848ba8a22495e6823c7b95b1790aa1880ab1347c25ce168fe0e53",
+      "duration_seconds": 0.88,
+      "rms": 0.0766,
+      "expected": "Snake!",
+      "transcribed": "Snake",
+      "similarity": 1.0
+    },
+    {
+      "key": "wd-starfish",
+      "sha256": "688a26813a3343b22edf768674506b66f69c4d8f6366503528d3b166d4b7ec25",
+      "duration_seconds": 0.88,
+      "rms": 0.0752,
+      "expected": "Starfish!",
+      "transcribed": "Starfish!",
+      "similarity": 1.0
+    },
+    {
+      "key": "wd-strawberry",
+      "sha256": "672cf36465f736ca90cab6c25d3a19522c77693b05b144e69aa40732e34677aa",
+      "duration_seconds": 0.96,
+      "rms": 0.0902,
+      "expected": "Strawberry!",
+      "transcribed": "Strawberry",
+      "similarity": 1.0
+    },
+    {
+      "key": "wd-sun",
+      "sha256": "b89d4d421def9cf9f208d52500f200aa7a57a34654b95bc6f7a2b82fac668ea1",
+      "duration_seconds": 1.04,
+      "rms": 0.0551,
+      "expected": "The sun!",
+      "transcribed": "The sun?",
+      "similarity": 1.0
+    },
+    {
+      "key": "wd-seahorse",
+      "sha256": "9891ba44c9987514c8a1eaa0e2779b303e76416e7c75798e1227a54c03964e68",
+      "duration_seconds": 0.96,
+      "rms": 0.0658,
+      "expected": "Seahorse!",
+      "transcribed": "Seahorse",
+      "similarity": 1.0
+    },
+    {
+      "key": "wd-tiger",
+      "sha256": "400ce02d1c7d225b49f8d8c795c0dbb3c2e881fca50046feb324f385ed96b034",
+      "duration_seconds": 0.96,
+      "rms": 0.0874,
+      "expected": "Tiger!",
+      "transcribed": "Tiger!",
+      "similarity": 1.0
+    },
+    {
+      "key": "wd-turtle",
+      "sha256": "f2ca53a5035ca935f4f74f597a34a349806fdc1ed2075f146b84869030a3a562",
+      "duration_seconds": 0.8,
+      "rms": 0.1039,
+      "expected": "Turtle!",
+      "transcribed": "Turtle",
+      "similarity": 1.0
+    },
+    {
+      "key": "wd-tomato",
+      "sha256": "f0e6ff53c8bb20f6a708812ba972f71733f31780a1bcf881b7b25af2d210d86d",
+      "duration_seconds": 0.72,
+      "rms": 0.1295,
+      "expected": "Tomato!",
+      "transcribed": "Tomato",
+      "similarity": 1.0
+    },
+    {
+      "key": "wd-train",
+      "sha256": "65669528f013d23ad9d2cc29029eb41ffae4ec4cb437ff96bb96da017240b187",
+      "duration_seconds": 1.04,
+      "rms": 0.0753,
+      "expected": "Train!",
+      "transcribed": "Train!",
+      "similarity": 1.0
+    },
+    {
+      "key": "wd-tulip",
+      "sha256": "f5bbf690a8256507b6846b601788b3f1e45b6950acd696f4cca44b1f9cbaee31",
+      "duration_seconds": 0.72,
+      "rms": 0.0768,
+      "expected": "Tulip!",
+      "transcribed": "Tulip",
+      "similarity": 1.0
+    },
+    {
+      "key": "wd-umbrella",
+      "sha256": "99b3d2ef35be60681ba12d9bd575cb02318632576fe89ad0a022a5634c62059a",
+      "duration_seconds": 0.96,
+      "rms": 0.097,
+      "expected": "Umbrella!",
+      "transcribed": "Umbrella?",
+      "similarity": 1.0
+    },
+    {
+      "key": "wd-whale",
+      "sha256": "01d2e08089e9b03ce0ca3acdc8070ec5b58904a0c1e83ee65ec1e44c0af940ac",
+      "duration_seconds": 0.88,
+      "rms": 0.0913,
+      "expected": "A whale!",
+      "transcribed": "A whale!",
+      "similarity": 1.0
+    },
+    {
+      "key": "wd-watermelon",
+      "sha256": "3634190932c3fceced24e4e968632a675d1adb01ef3dcc19ed47c498b7daf113",
+      "duration_seconds": 0.96,
+      "rms": 0.101,
+      "expected": "Watermelon!",
+      "transcribed": "Watermelon",
+      "similarity": 1.0
+    },
+    {
+      "key": "wd-xylophone",
+      "sha256": "41a2bfd436c8a52fc9eed277be3ce15a3481212de0d3e955fe8a9d4091a955dd",
+      "duration_seconds": 1.2,
+      "rms": 0.0752,
+      "expected": "Xylophone!",
+      "transcribed": "Xylophone",
+      "similarity": 1.0
+    },
+    {
+      "key": "wd-yoyo",
+      "sha256": "02eb956ad0a67a807239f5ca2698699d0bf27f2c48310c4cb7bbc25af68be305",
+      "duration_seconds": 0.88,
+      "rms": 0.1338,
+      "expected": "Yo-yo!",
+      "transcribed": "Yo-Yo!",
+      "similarity": 1.0
+    },
+    {
+      "key": "wd-zebra",
+      "sha256": "d818e73c0a3d05d59dffdc79cf6749c7c95d5daf6d4a9587a3aaa2d7c4d5c2cd",
+      "duration_seconds": 0.96,
+      "rms": 0.0728,
+      "expected": "Zebra!",
+      "transcribed": "Zebra",
+      "similarity": 1.0
+    },
+    {
+      "key": "cn-1",
+      "sha256": "be8807a52dd948e4a002242a225485c32465ac46b3307b77d680693d258386bb",
+      "duration_seconds": 0.96,
+      "rms": 0.0981,
+      "expected": "Number one!",
+      "transcribed": "Number 1",
+      "similarity": 1.0
+    },
+    {
+      "key": "cn-2",
+      "sha256": "a7349729a7d08f5e9bec31dc98506f61e67e25036805cb320379fac1ba04436d",
+      "duration_seconds": 1.04,
+      "rms": 0.0788,
+      "expected": "Number two!",
+      "transcribed": "Number 2",
+      "similarity": 1.0
+    },
+    {
+      "key": "cn-3",
+      "sha256": "e42f23e42706f940ae14c544104740ea927b5d06092c0ca42422b9aa1820f0a9",
+      "duration_seconds": 1.04,
+      "rms": 0.0762,
+      "expected": "Number three!",
+      "transcribed": "Number 3",
+      "similarity": 1.0
+    },
+    {
+      "key": "cn-4",
+      "sha256": "e30305d90ce5e7b86d1f1b87d8171775da926ae8f35eeb6f6fcc674ef62d20ed",
+      "duration_seconds": 1.12,
+      "rms": 0.0936,
+      "expected": "Number four!",
+      "transcribed": "Number four.",
+      "similarity": 1.0
+    },
+    {
+      "key": "cn-5",
+      "sha256": "21855a79cd9c96b4f2fcce51a63e12050492353bb8bb3dc8dc1dd5d8d2ea208e",
+      "duration_seconds": 1.12,
+      "rms": 0.1313,
+      "expected": "Number five!",
+      "transcribed": "Number 5",
+      "similarity": 1.0
+    },
+    {
+      "key": "cn-6",
+      "sha256": "d5ea83bac67cd57e3e7fe59a3bba56ec70e3ca7408a1b9bf7eda7d3a4604bae3",
+      "duration_seconds": 1.04,
+      "rms": 0.074,
+      "expected": "Number six!",
+      "transcribed": "Number 6",
+      "similarity": 1.0
+    },
+    {
+      "key": "cn-7",
+      "sha256": "520aa5dfbef2d664b528fe94603aa00d258f5d3e7b13aaf55fcf395c70dd7898",
+      "duration_seconds": 1.12,
+      "rms": 0.0978,
+      "expected": "Number seven!",
+      "transcribed": "Number 7",
+      "similarity": 1.0
+    },
+    {
+      "key": "cn-8",
+      "sha256": "e26a870b476adec6cb0447a0e4587ea9ebc9f9f1a766ad34f06b03959f9481c5",
+      "duration_seconds": 0.96,
+      "rms": 0.0658,
+      "expected": "Number eight!",
+      "transcribed": "Number 8",
+      "similarity": 1.0
+    },
+    {
+      "key": "cn-9",
+      "sha256": "724e24bdc72bca606157526c0a05fa8e23d9fdf7bf0b5a3c0e2d73ebbd0d683e",
+      "duration_seconds": 0.96,
+      "rms": 0.1151,
+      "expected": "Number nine!",
+      "transcribed": "Number 9",
+      "similarity": 1.0
+    },
+    {
+      "key": "col-red",
+      "sha256": "9c9a53a5c18cf035920d3eb8326542d365a75d7373473347da0a331008718934",
+      "duration_seconds": 1.2,
+      "rms": 0.0991,
+      "expected": "Red, red!",
+      "transcribed": "Red! Red!",
+      "similarity": 1.0
+    },
+    {
+      "key": "col-yellow",
+      "sha256": "c784436d8ffad71c21ac05113cd3b14ddca645b5f522268247ab61b36cdba236",
+      "duration_seconds": 0.88,
+      "rms": 0.1071,
+      "expected": "Yellow!",
+      "transcribed": "Yellow",
+      "similarity": 1.0
+    },
+    {
+      "key": "col-orange",
+      "sha256": "7d716daceee0c261af6e17a7623aa6af1078caa12544be0fe19a25750ecfe508",
+      "duration_seconds": 0.88,
+      "rms": 0.1119,
+      "expected": "Orange!",
+      "transcribed": "Orange!",
+      "similarity": 1.0
+    },
+    {
+      "key": "col-green",
+      "sha256": "035cc980bf03dc67783fd4791fc60e9f885b91a1e0ee674c0be977fe0fa64de8",
+      "duration_seconds": 0.64,
+      "rms": 0.0849,
+      "expected": "Green!",
+      "transcribed": "Green!",
+      "similarity": 1.0
+    },
+    {
+      "key": "col-purple",
+      "sha256": "40b4f99d40121b39e65dfe26288499a0dc51385cf4e2700c693a033f857bc6c6",
+      "duration_seconds": 0.72,
+      "rms": 0.114,
+      "expected": "Purple!",
+      "transcribed": "Purple!",
+      "similarity": 1.0
+    },
+    {
+      "key": "col-blue",
+      "sha256": "92a48460b7e36634ac562332a676f191f29aa2ba8e2e7d66c8fa9d6e07e80c13",
+      "duration_seconds": 0.64,
+      "rms": 0.0857,
+      "expected": "Blue!",
+      "transcribed": "Blue!",
+      "similarity": 1.0
+    },
+    {
+      "key": "col-pink",
+      "sha256": "99898d599a39eb7fbb37dffe9f035629c35e1eb6822c4899e122412bc6fdd309",
+      "duration_seconds": 0.4,
+      "rms": 0.0508,
+      "expected": "Pink!",
+      "transcribed": "Pink!",
+      "similarity": 1.0
+    },
+    {
+      "key": "col-brown",
+      "sha256": "8d559ff928374d47f9d5d6a5b42b6be2e05dbef5dd39b322967139b02732d374",
+      "duration_seconds": 0.48,
+      "rms": 0.1503,
+      "expected": "Brown!",
+      "transcribed": "Brown",
+      "similarity": 1.0
+    },
+    {
+      "key": "cn-intro-shadow",
+      "sha256": "1ed214edfe3c635dfed4f1e063a9bfda8b92b7d0df28be3312160b8da58e0547",
+      "duration_seconds": 2.32,
+      "rms": 0.0698,
+      "expected": "Match each picture to its shadow!",
+      "transcribed": "Match each picture to its shadow.",
+      "similarity": 1.0
+    },
+    {
+      "key": "cn-intro-colour",
+      "sha256": "674351c2e4196851528ec403b067d733e08274b505022ee71112f3744ad30f6c",
+      "duration_seconds": 1.92,
+      "rms": 0.0797,
+      "expected": "Match each picture to its colour!",
+      "transcribed": "Match each picture to its color.",
+      "similarity": 0.981
+    },
+    {
+      "key": "cn-intro-mixed",
+      "sha256": "ba310326770207cf33b6a93b2bffaa113652b210368c59e48d8ac53a17fbd94a",
+      "duration_seconds": 1.92,
+      "rms": 0.1052,
+      "expected": "Draw a line to match each pair!",
+      "transcribed": "Draw a line to match each pair.",
+      "similarity": 1.0
+    },
+    {
+      "key": "cn-wrong",
+      "sha256": "6e4d136cd8c53f0edd8d2eaa398b55f67611fd0733e1a023205363f1362d9308",
+      "duration_seconds": 1.84,
+      "rms": 0.1015,
+      "expected": "Not quite. Try another one!",
+      "transcribed": "Not quite. Try another one.",
+      "similarity": 1.0
+    },
+    {
+      "key": "cn-done",
+      "sha256": "78a0719396a18c7937bce34e846832d0ca4c8cad1124dff1a5550834450485a5",
+      "duration_seconds": 2.0,
+      "rms": 0.1163,
+      "expected": "You matched them all! Hooray!",
+      "transcribed": "You match them all! Hooray!",
+      "similarity": 0.955
+    },
+    {
+      "key": "ic-intro",
+      "sha256": "73a21bca370c5514d94217936f3f309d6e9896d1b55aa1030323818a6be9af00",
+      "duration_seconds": 1.52,
+      "rms": 0.0991,
+      "expected": "Welcome to the ice cream shop!",
+      "transcribed": "Welcome to the ice cream shop.",
+      "similarity": 1.0
+    },
+    {
+      "key": "ic-hi-cone",
+      "sha256": "8fb07ea3478e29b7ecaffedc883dd3b3b91c6225a76279f61b10dddf09aee2fe",
+      "duration_seconds": 1.84,
+      "rms": 0.0989,
+      "expected": "Hello! A cone with",
+      "transcribed": "Hello! A cone with-",
+      "similarity": 1.0
+    },
+    {
+      "key": "ic-hi-cup",
+      "sha256": "861c658ebb041da6174dffe52c31bed6671f18ba7a2f855072c6824b78014378",
+      "duration_seconds": 1.68,
+      "rms": 0.0858,
+      "expected": "Hello! A cup with",
+      "transcribed": "Hello? A cop with-",
+      "similarity": 0.923
+    },
+    {
+      "key": "fl-vanilla",
+      "sha256": "6bee3a1473994c413645f6bff1800dc5f2d6e7158d7b96a6491d082eae0810eb",
+      "duration_seconds": 0.8,
+      "rms": 0.0771,
+      "expected": "Vanilla!",
+      "transcribed": "Vanilla",
+      "similarity": 1.0
+    },
+    {
+      "key": "fl-chocolate",
+      "sha256": "4a39d31003c9aea815ea764cd3b57b57f80c888be040f37bbb297c90e519c7b5",
+      "duration_seconds": 0.64,
+      "rms": 0.0787,
+      "expected": "Chocolate!",
+      "transcribed": "Chocolate.",
+      "similarity": 1.0
+    },
+    {
+      "key": "fl-strawberry",
+      "sha256": "742b4f8a0cb3a8232d8c4f0a6f7a1ea7b28852b6fd3d2225b8df0f547b4c60ad",
+      "duration_seconds": 0.96,
+      "rms": 0.0948,
+      "expected": "Strawberry!",
+      "transcribed": "Strawberry",
+      "similarity": 1.0
+    },
+    {
+      "key": "fl-mint",
+      "sha256": "fa717f8d416e48fd1c3db2894fd6826f7fbb9ea51fca57c2a67d75f43476a9db",
+      "duration_seconds": 0.88,
+      "rms": 0.0812,
+      "expected": "Mint chip!",
+      "transcribed": "Mint Chip!",
+      "similarity": 1.0
+    },
+    {
+      "key": "fl-blueberry",
+      "sha256": "9da1e97721c2c5b28d4a76f2fac7f1479a81a5e5f653ac7127851974affb10c5",
+      "duration_seconds": 0.8,
+      "rms": 0.0805,
+      "expected": "Blueberry!",
+      "transcribed": "Blueberry",
+      "similarity": 1.0
+    },
+    {
+      "key": "fl-mango",
+      "sha256": "4d7d024a7d66992f73a2b7162e14f0562b95d9e85f02c5dd70c53e95237c8710",
+      "duration_seconds": 0.96,
+      "rms": 0.0881,
+      "expected": "Mango!",
+      "transcribed": "Mango",
+      "similarity": 1.0
+    },
+    {
+      "key": "ic-then",
+      "sha256": "ed9ea382f397cb2afb38b1cba49a1187de841ec29c88d18a6da927909d4f4861",
+      "duration_seconds": 0.48,
+      "rms": 0.1243,
+      "expected": "And then,",
+      "transcribed": "And then...",
+      "similarity": 1.0
+    },
+    {
+      "key": "ic-please",
+      "sha256": "a76b2a89ff7c8fc6a48bd7eda14e04cc2a710397d467c50d097b97c9d15eb1e5",
+      "duration_seconds": 0.8,
+      "rms": 0.0859,
+      "expected": "please!",
+      "transcribed": "Please!",
+      "similarity": 1.0
+    },
+    {
+      "key": "ic-top-cherry",
+      "sha256": "ad29791aaf84945d0b8abfe7b9422555ef8e136c6243bdc900e8fd4985cb4d2d",
+      "duration_seconds": 1.76,
+      "rms": 0.0919,
+      "expected": "and a cherry on top, please!",
+      "transcribed": "And a cherry on top, please?",
+      "similarity": 1.0
+    },
+    {
+      "key": "ic-top-sprinkles",
+      "sha256": "55e2706d66ccfe198dc7124680683beb3800e9662d3044f1160d39fd824ddc1a",
+      "duration_seconds": 1.76,
+      "rms": 0.0932,
+      "expected": "and sprinkles on top, please!",
+      "transcribed": "And sprinkles on top, please?",
+      "similarity": 1.0
+    },
+    {
+      "key": "ic-top-wafer",
+      "sha256": "e07ca010901146575a5e3fda6cd39593f9cdc7111d03cade74748cf666c27457",
+      "duration_seconds": 1.92,
+      "rms": 0.091,
+      "expected": "and a wafer on top, please!",
+      "transcribed": "And a wafer on top, please.",
+      "similarity": 1.0
+    },
+    {
+      "key": "ic-cone",
+      "sha256": "b3696ebdbd866dd12ef33168ac9eae490d6914ebd00d6cab10e90f0c21c52fe4",
+      "duration_seconds": 1.04,
+      "rms": 0.0717,
+      "expected": "A cone!",
+      "transcribed": "A cone!",
+      "similarity": 1.0
+    },
+    {
+      "key": "ic-cup",
+      "sha256": "8fec4e23beb13b5dd0c88537f7ee1eea4e52bab1a90b4b6be928a5b54e891b89",
+      "duration_seconds": 0.96,
+      "rms": 0.0517,
+      "expected": "A cup!",
+      "transcribed": "A cup!",
+      "similarity": 1.0
+    },
+    {
+      "key": "tp-cherry",
+      "sha256": "4a6308c4ff6790326ace9a141ae8cb5bdc69eb5c8f76b9076edc69db79f307f1",
+      "duration_seconds": 0.88,
+      "rms": 0.0682,
+      "expected": "A cherry!",
+      "transcribed": "A cherry!",
+      "similarity": 1.0
+    },
+    {
+      "key": "tp-sprinkles",
+      "sha256": "92d0cec1deea7537fe0feee7e10db6f8a3eb8f5fd41fd955051cb68c0072295b",
+      "duration_seconds": 0.96,
+      "rms": 0.0465,
+      "expected": "Sprinkles!",
+      "transcribed": "Sprinkles",
+      "similarity": 1.0
+    },
+    {
+      "key": "tp-wafer",
+      "sha256": "a3e8c0bfec3abba1763cdd03685b773dc98fa48f6dbc886ec485fb6dcf75471f",
+      "duration_seconds": 0.88,
+      "rms": 0.0703,
+      "expected": "A wafer!",
+      "transcribed": "A wafer!",
+      "similarity": 1.0
+    },
+    {
+      "key": "ic-wrong",
+      "sha256": "7234fbbbc10fc4ecd5c2c4cf8f6d685b60a8d185935495be8cdb4138787f9a9f",
+      "duration_seconds": 2.24,
+      "rms": 0.0824,
+      "expected": "Not that one. Look at the picture!",
+      "transcribed": "Not that one. Look at the picture.",
+      "similarity": 1.0
+    },
+    {
+      "key": "ic-ready",
+      "sha256": "7c85cd020f089bb5b4be94b55a5e57add5b34796ebf7da21103228e5d0b5fe2a",
+      "duration_seconds": 1.76,
+      "rms": 0.1346,
+      "expected": "All done! Ring the bell!",
+      "transcribed": "All done! Ring the bell!",
+      "similarity": 1.0
+    },
+    {
+      "key": "ic-notyet",
+      "sha256": "97f52a997439fe8844eac54cfb01ecd499b13b85226a1bcf2ce657fc1a1b3f47",
+      "duration_seconds": 2.48,
+      "rms": 0.0801,
+      "expected": "Not yet! Let's finish the ice cream first.",
+      "transcribed": "Not yet! Let's finish the ice cream first.",
+      "similarity": 1.0
+    },
+    {
+      "key": "ic-thanks-1",
+      "sha256": "27ea7922d44511580096760b11cebfaa7c270e871968b60169cfdbe000d0dc4c",
+      "duration_seconds": 1.44,
+      "rms": 0.0901,
+      "expected": "Yum! Thank you!",
+      "transcribed": "Yum! Thank you!",
+      "similarity": 1.0
+    },
+    {
+      "key": "ic-thanks-2",
+      "sha256": "3eec03ecf4f2fcf290cf615d711931ea395ac271abbecaa79256ca80571d1897",
+      "duration_seconds": 1.68,
+      "rms": 0.0626,
+      "expected": "Delicious! Thank you!",
+      "transcribed": "Delicious! Thank you!",
+      "similarity": 1.0
+    },
+    {
+      "key": "ic-thanks-3",
+      "sha256": "97541e5233c227411f3a5758488f660959593a5ca80ddbfbf6170f390a73273c",
+      "duration_seconds": 1.6,
+      "rms": 0.0853,
+      "expected": "Mmm, my favorite!",
+      "transcribed": "Mmm, my favorite!",
+      "similarity": 1.0
+    },
+    {
+      "key": "ic-done",
+      "sha256": "f279b94fd1b71c7eec497ebee23bd8b75ab5709887343bf8b86790c4f43c55d7",
+      "duration_seconds": 3.44,
+      "rms": 0.0859,
+      "expected": "Three happy customers! You are a super ice cream maker!",
+      "transcribed": "Three happy customers, you are a super ice cream maker.",
       "similarity": 1.0
     }
   ]

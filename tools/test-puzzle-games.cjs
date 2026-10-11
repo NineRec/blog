@@ -29,19 +29,19 @@ const tile=(pair,side)=>`.pz-tile[data-pair="${pair}"][data-side="${side}"]`;
  await page.goto(base);assert.equal(await page.locator('.game-door').count(),12);
  const hrefs=await page.locator('.game-door').evaluateAll(es=>es.map(e=>e.getAttribute('href').replace('play.html?game=','')));
  assert.deepEqual(hrefs.slice(0,6),['garden','zoo','sea','seedling','connect','match'],'the two new games follow 挖呀种花园');
- for(const art of['connect','match'])assert.ok(await page.locator(`[data-art=${art}]>svg`).count()===1&&await page.locator(`[data-art=${art}]`).evaluate(e=>e.getBoundingClientRect().width>80));
+ for(const art of['connect','match','icecream','letters'])assert.ok(await page.locator(`[data-art=${art}]>svg`).count()===1&&await page.locator(`[data-art=${art}]`).evaluate(e=>e.getBoundingClientRect().width>80));
  await page.screenshot({path:path.join(output,`${name}-hub.png`)});
  console.log('PASS twelve doors, connect and match come right after 挖呀种花园, each with its own picture');
 
  /* ---------- every sound effect renders, is audible, and never clips ---------- */
  await open('connect');
  const sounds=await page.evaluate(async()=>{const out=[];for(const n of SoundFX.names)out.push(await SoundFX.render(n));return out;});
- const expected=['tap','pick','drop','link','boing','pop','match','shuffle','star','chomp','siren','sizzle','splash','twinkle','flutter','bounce','moo','party','fanfare'];
+ const expected=['tap','pick','drop','link','boing','pop','match','shuffle','star','chomp','siren','sizzle','splash','twinkle','flutter','bounce','moo','party','fanfare','scoop','bell','sprinkle','crunch'];
  for(const n of expected)assert.ok(sounds.some(s=>s.name===n),`sound ${n} exists`);
  for(const s of sounds){assert.ok(s.peak>.04,`${s.name} is audible (peak ${s.peak.toFixed(3)})`);assert.ok(s.peak<=1,`${s.name} does not clip (${s.peak})`);assert.ok(s.rms>.003,`${s.name} has body`);assert.ok(s.seconds>.04&&s.seconds<(s.name==='fanfare'?2.9:1.6),`${s.name} is short (${s.seconds.toFixed(2)}s)`);}
  console.log(`PASS ${sounds.length} synthesized sound effects render offline: audible, unclipped, short`);
 
- /* ---------- connect: random friends, drag or tap, themed sounds ---------- */
+ /* ---------- connect: shadows, colours, numbers and halves; drag or tap; themed sounds ---------- */
  assert.equal(await page.locator('.pz-tile').count(),6);assert.equal(await page.locator('.pz-tile[data-side=a]').count(),3);
  const sets=[];
  const readPairs=async()=>(await data(page,'pairs')).split(',');
@@ -78,7 +78,7 @@ const tile=(pair,side)=>`.pz-tile[data-pair="${pair}"][data-side="${side}"]`;
  }else await solve(pairs,0);
  assert.equal(await page.locator('#pz-lines .pz-line').count(),3);assert.equal(await page.locator('.pz-tile[data-done]').count(),6);
  await phase(page,'done');
- const fx=await requested(page);assert.ok(fx.includes('link'),'a successful link rings');assert.ok(pairs.some(p=>{const kind=['chomp','siren','splash','twinkle','flutter','bounce','moo','drop'];return fx.some(n=>kind.includes(n));}),'each friendship has its own sound');
+ const fx=await requested(page),kindNow=await data(page,'kinds');assert.ok(fx.includes('link'),'a successful link rings');assert.ok(fx.includes(kindNow==='shadow'?'pop':'splash'),`each kind of match has its own sound (${kindNow}: ${fx.slice(-8)})`);
  assert.ok(fx.includes('fanfare')||await page.evaluate(()=>LittleCelebration.stats.bursts>0));
  console.log('PASS connect: wrong tap/drag refused with a boing, nothing left behind, rubber line follows the finger, three links, themed sounds, success');
 
@@ -99,17 +99,46 @@ const tile=(pair,side)=>`.pz-tile[data-pair="${pair}"][data-side="${side}"]`;
  await phase(page,'play');
  for(let r=0;r<3;r++){pairs=await readPairs();sets.push(pairs.join(','));await solve(pairs,r+1);await phase(page,'done');await phase(page,'play');}
  pairs=await readPairs();sets.push(pairs.join(','));
- for(let i=1;i<sets.length;i++)assert.notEqual(sets[i],sets[i-1],'a new set of friends every round');
+ for(let i=1;i<sets.length;i++)assert.notEqual(sets[i],sets[i-1],'a new set of pairs every round');
  assert.ok(new Set(sets).size>=4,`random sets: ${sets.join(' | ')}`);
  const seenPairs=new Set(sets.flatMap(s=>s.split(',')));
- console.log(`PASS connect: three more rounds solved by drag/tap/reverse-drag, every round a different random set (${seenPairs.size} different friendships seen)`);
+ console.log(`PASS connect: three more rounds solved by drag/tap/reverse-drag, every round a different random set (${seenPairs.size} different pairs seen)`);
  // levels
  for(const [level,count] of [[2,4],[3,5],[1,3]]){await page.locator(`.pz-levels [data-level="${level}"]`).tap();await page.waitForFunction(n=>document.getElementById('new-game').dataset.total==n,count);assert.equal(await page.locator('.pz-tile[data-side=a]').count(),count);assert.equal(await page.locator(`.pz-levels [data-level="${level}"]`).getAttribute('aria-pressed'),'true');}
  // gentle hint, and keyboard operation
  await open('connect','&hint=700');await page.waitForFunction(()=>document.querySelectorAll('.pz-tile.hint').length===2,null,{timeout:4000});
  const hinted=await page.locator('.pz-tile.hint').evaluateAll(es=>es.map(e=>e.dataset.pair));assert.equal(new Set(hinted).size,1,'a hint highlights the two halves of one friendship');
  const kp=(await readPairs())[0];await page.locator(partner(kp,'a')).focus();await page.keyboard.press('Enter');await page.locator(partner(kp,'b')).focus();await page.keyboard.press('Enter');await page.waitForFunction(()=>document.getElementById('new-game').dataset.connected==='1');
- console.log('PASS connect: three levels (3/4/5 friendships), idle hint, keyboard Enter works');
+ console.log('PASS connect: three levels (3/4/5 pairs), idle hint, keyboard Enter works');
+
+ /* ---------- every kind of match is built correctly, at every level ---------- */
+ await open('connect','&pace=250');
+ const catalog=await page.evaluate(()=>({colourItems:PuzzleGames.colourItems,words:Object.keys(WordBank.words)}));
+ async function inspect(){
+  const tiles=await page.locator('.pz-tile').evaluateAll(es=>es.map(e=>({pair:e.dataset.pair,side:e.dataset.side,kind:e.dataset.kind,piece:e.dataset.piece,label:e.getAttribute('aria-label'),shadow:!!e.querySelector('.pz-shadow'),filter:e.querySelector('.pz-shadow svg')?getComputedStyle(e.querySelector('.pz-shadow svg')).filter:'',swatch:!!e.querySelector('.pz-swatch'),dots:e.querySelectorAll('.pz-count i').length,numeral:!!e.querySelector('.pz-num'),half:e.querySelector('.pz-half-a')?'a':e.querySelector('.pz-half-b')?'b':''})));
+  const pairs=[...new Set(tiles.map(t=>t.pair))];
+  for(const id of pairs){
+   const a=tiles.find(t=>t.pair===id&&t.side==='a'),b=tiles.find(t=>t.pair===id&&t.side==='b');assert.ok(a&&b,`${id} has both sides`);assert.equal(a.kind,b.kind);
+   if(a.kind==='shadow'){assert.equal(a.piece,b.piece);assert.ok(b.shadow&&/brightness\(0\)/.test(b.filter),`${id}: the right tile is a black shadow`);assert.ok(!a.shadow);}
+   if(a.kind==='colour'){assert.ok(b.swatch);assert.ok(catalog.colourItems[b.piece].includes(a.piece),`${a.piece} really is ${b.piece}`);}
+   if(a.kind==='count'){const n=Number(id.split('-')[1]);assert.equal(a.dots,n,`${id}: ${n} pictures`);assert.ok(b.numeral);assert.equal(b.label,String(n));}
+   if(a.kind==='half'){assert.equal(a.piece,b.piece);assert.equal(a.half,'a');assert.equal(b.half,'b');}
+  }
+  const pieces=tiles.filter(t=>t.side==='a'&&t.kind!=='count').map(t=>t.piece);assert.equal(new Set(pieces).size,pieces.length,'no picture appears twice on one board');
+  for(const t of tiles)if(t.kind!=='colour'&&t.kind!=='count')assert.ok(catalog.words.includes(t.piece),`${t.piece} has a spoken name`);
+  return {kinds:(await data(page,'kinds')).split(','),pairs};
+ }
+ const seenKinds=new Set();let mixed=0;
+ for(const [level,count,minKinds,maxKinds] of [[1,3,1,1],[2,4,2,2],[3,5,3,3]]){
+  await page.locator(`.pz-levels [data-level="${level}"]`).tap();await page.waitForFunction(n=>document.getElementById('new-game').dataset.total==n,count);
+  for(let r=0;r<(level===1?3:5);r++){
+   const info=await inspect();assert.ok(info.kinds.length>=minKinds&&info.kinds.length<=maxKinds,`level ${level} uses ${info.kinds}`);info.kinds.forEach(k=>seenKinds.add(k));if(level===1)assert.ok(['shadow','colour'].includes(info.kinds[0]),'level one is the gentlest kind');
+   if(level===3&&info.kinds.includes('count'))assert.ok(info.pairs.filter(p=>p.startsWith('count-')).every(p=>Number(p.split('-')[1])>=2));
+   if(info.kinds.length>1)mixed++;await solve(info.pairs,r);await phase(page,'done');await phase(page,'play');
+  }
+ }
+ assert.deepEqual([...seenKinds].sort(),['colour','count','half','shadow'],'all four kinds of match appear');assert.ok(mixed>=6,'levels two and three mix kinds on one board');
+ console.log(`PASS connect: shadow/colour/number/half matches are built correctly (right partner, black shadow, exact dot count, real colours, matching halves); ${mixed} mixed boards solved by drag and tap`);
 
  /* ---------- match: tap two of a kind and they pop ---------- */
  await open('match');
@@ -189,18 +218,23 @@ const tile=(pair,side)=>`.pz-tile[data-pair="${pair}"][data-side="${side}"]`;
  await loud.close();
  console.log('PASS effects play after a tap and obey the mute button');
 
- /* ---------- Zoey's voice in the connect game: intro, each friendship, then the finish ---------- */
+ /* ---------- Zoey's voice in the connect game: intro, each pair's words, then the finish ---------- */
  const voice=await context.newPage();voice.on('pageerror',e=>errors.push(e.message));
  await voice.addInitScript(()=>{window.voiceEvents=[];const play=HTMLMediaElement.prototype.play;HTMLMediaElement.prototype.play=function(){if(!this.dataset.tracked){this.dataset.tracked='true';this.addEventListener('playing',()=>voiceEvents.push({file:this.src.split('/').pop().split('?')[0],at:performance.now()}));}return play.call(this);};});
  await voice.goto(base+'play.html?game=connect');await voice.locator('body[data-game=connect]').waitFor();if(await voice.locator('#sound-start').count())await voice.locator('#sound-start').tap();
- await voice.waitForFunction(()=>voiceEvents.some(e=>e.file==='connect-intro.m4a'),null,{timeout:8000});
- const vpairs=(await voice.locator('#new-game').getAttribute('data-pairs')).split(',');
- for(const [i,pair] of vpairs.entries()){await voice.locator(tile(pair,'a')).tap();await voice.locator(tile(pair,'b')).tap();await voice.waitForFunction(f=>voiceEvents.some(e=>e.file===f),`connect-${pair}.m4a`,{timeout:6000});if(i<vpairs.length-1)await voice.waitForTimeout(2200);}
- await voice.waitForFunction(()=>voiceEvents.some(e=>e.file==='connect-done.m4a'),null,{timeout:12000});
- const spoken=await voice.evaluate(()=>voiceEvents.map(e=>e.file)),lastPair=spoken.lastIndexOf(`connect-${vpairs.at(-1)}.m4a`),done=spoken.indexOf('connect-done.m4a');
- assert.ok(lastPair>=0&&done>lastPair,`the finishing line follows the last friendship: ${spoken}`);
+ await voice.waitForFunction(()=>voiceEvents.some(e=>/^cn-intro-(shadow|colour)\.m4a$/.test(e.file)),null,{timeout:8000});
+ const vpairs=(await voice.locator('#new-game').getAttribute('data-pairs')).split(','),lastPiece=await voice.locator(tile(vpairs.at(-1),'a')).getAttribute('data-piece');
+ for(const [i,pair] of vpairs.entries()){
+  const piece=await voice.locator(tile(pair,'a')).getAttribute('data-piece'),colour=pair.startsWith('colour-')?pair.slice(7):'';
+  await voice.locator(tile(pair,'a')).tap();await voice.locator(tile(pair,'b')).tap();await voice.waitForFunction(f=>voiceEvents.some(e=>e.file===f),`wd-${piece}.m4a`,{timeout:6000});
+  if(colour)await voice.waitForFunction(f=>voiceEvents.some(e=>e.file===f),`col-${colour}.m4a`,{timeout:6000});
+  if(i<vpairs.length-1)await voice.waitForFunction(n=>Number(document.getElementById('new-game').dataset.connected)===n,i+1);
+ }
+ await voice.waitForFunction(()=>voiceEvents.some(e=>e.file==='cn-done.m4a'),null,{timeout:12000});
+ const spoken=await voice.evaluate(()=>voiceEvents.map(e=>e.file)),lastWord=spoken.lastIndexOf(`wd-${lastPiece}.m4a`),done=spoken.indexOf('cn-done.m4a');
+ assert.ok(lastWord>=0&&done>lastWord,`the finishing line follows the last pair's word: ${spoken}`);
  await voice.close();
- console.log('PASS Zoey says the intro, every friendship and then the finish, in order');
+ console.log('PASS Zoey says the intro, every matched picture, its colour, and then the finish, in order');
 
  fs.writeFileSync(path.join(output,'report.json'),JSON.stringify({browser:name,errors,failed,external,sounds:sounds.map(s=>({name:s.name,peak:+s.peak.toFixed(3),seconds:+s.seconds.toFixed(2)}))},null,2));
  assert.deepEqual(errors,[]);assert.deepEqual(failed,[]);assert.deepEqual(external,[]);
