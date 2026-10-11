@@ -87,8 +87,7 @@ const tile=(pair,side)=>`.pz-tile[data-pair="${pair}"][data-side="${side}"]`;
  const geo=await page.evaluate(()=>{const layer=document.querySelector('.paper-party'),c=layer.querySelector('canvas'),s=getComputedStyle(layer),r=layer.getBoundingClientRect();const hit=document.elementFromPoint(innerWidth/2,innerHeight/2);return{pos:s.position,events:s.pointerEvents,z:Number(s.zIndex),w:r.width,h:r.height,iw:innerWidth,ih:innerHeight,cw:c.width,ch:c.height,blocks:!!hit?.closest('.paper-party'),dpr:devicePixelRatio};});
  assert.equal(geo.pos,'fixed');assert.equal(geo.events,'none');assert.ok(geo.z>=900);assert.equal(geo.w,geo.iw);assert.equal(geo.h,geo.ih);assert.ok(Math.abs(geo.cw-geo.iw*Math.min(2,geo.dpr))<=2&&Math.abs(geo.ch-geo.ih*Math.min(2,geo.dpr))<=2,'the canvas is the whole screen');assert.equal(geo.blocks,false,'confetti never catches a touch');
  await page.waitForFunction(()=>LittleCelebration.stats.ms>2000,null,{timeout:6000});await page.screenshot({path:path.join(output,`${name}-confetti-wave3.png`)});
- await page.waitForFunction(()=>LittleCelebration.stats.waves>=5,null,{timeout:8000});
- const wave=await page.evaluate(()=>({...LittleCelebration.stats}));
+ const wave=await page.waitForFunction(()=>LittleCelebration.stats.waves>=5&&{...LittleCelebration.stats},null,{timeout:8000}).then(h=>h.jsonValue());
  assert.equal(wave.waves,5,'five separate waves');assert.ok(wave.peak>=180,`a lot of paper (${wave.peak})`);assert.ok(wave.cells>=21,`paper reached ${wave.cells} of 24 screen areas`);
  await page.waitForFunction(()=>LittleCelebration.stats.ms>4200,null,{timeout:8000});await page.screenshot({path:path.join(output,`${name}-confetti-wave5.png`)});
  await page.waitForFunction(()=>!document.querySelector('.paper-party'),null,{timeout:14000});
@@ -104,7 +103,7 @@ const tile=(pair,side)=>`.pz-tile[data-pair="${pair}"][data-side="${side}"]`;
  const seenPairs=new Set(sets.flatMap(s=>s.split(',')));
  console.log(`PASS connect: three more rounds solved by drag/tap/reverse-drag, every round a different random set (${seenPairs.size} different pairs seen)`);
  // levels
- for(const [level,count] of [[2,4],[3,5],[1,3]]){await page.locator(`.pz-levels [data-level="${level}"]`).tap();await page.waitForFunction(n=>document.getElementById('new-game').dataset.total==n,count);assert.equal(await page.locator('.pz-tile[data-side=a]').count(),count);assert.equal(await page.locator(`.pz-levels [data-level="${level}"]`).getAttribute('aria-pressed'),'true');}
+ for(const [level,count] of [[2,4],[3,5],[1,3]]){await page.locator(`.pz-levels [data-level="${level}"]`).tap();await page.waitForFunction(n=>document.getElementById('new-game').dataset.total==n&&document.querySelectorAll('.pz-tile[data-side=a]').length===n,count);assert.equal(await page.locator('.pz-tile[data-side=a]').count(),count);assert.equal(await page.locator(`.pz-levels [data-level="${level}"]`).getAttribute('aria-pressed'),'true');}
  // gentle hint, and keyboard operation
  await open('connect','&hint=700');await page.waitForFunction(()=>document.querySelectorAll('.pz-tile.hint').length===2,null,{timeout:4000});
  const hinted=await page.locator('.pz-tile.hint').evaluateAll(es=>es.map(e=>e.dataset.pair));assert.equal(new Set(hinted).size,1,'a hint highlights the two halves of one friendship');
