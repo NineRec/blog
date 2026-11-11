@@ -1,0 +1,7 @@
+<a href="{{ .Get "href" }}" style="display:flex;align-items:center;gap:18px;margin:18px 0;padding:16px 20px;border-radius:22px;background:{{ .Get "color" | default "#eaf7ff" }};color:#38334d;text-decoration:none;box-shadow:0 6px 0 rgba(31,26,58,.1);">
+  <img src="{{ .Get "img" }}" alt="" width="88" height="88" style="flex:none;width:88px;height:88px;border-radius:22px;margin:0;box-shadow:none;">
+  <span style="display:flex;flex-direction:column;gap:4px;min-width:0;">
+    <strong style="font-size:1.25em;">{{ .Get "title" }}</strong>
+    <span style="opacity:.75;">{{ .Get "text" }}</span>
+  </span>
+</a>

@@ -41,6 +41,11 @@ copyright = "NineRec"     # default: author.name ↓        # 默认为下面配
   identifier = "categories"
   url = "/categories/"
 [[menu.main]]
+  name = "Games"
+  weight = 35
+  identifier = "games"
+  url = "/games/"
+[[menu.main]]
   name = "Quotes"
   weight = 40
   identifier = "quotes"

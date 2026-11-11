@@ -23,6 +23,13 @@ hugo new post/blog-title.md
 sh deploy.sh
 ```
 
-## Interactive storybook
+## Kids apps
 
-[Zoey's Little Wonders](static/butterfly-adventure/README.md) lives in `static/butterfly-adventure/` and is published at `/butterfly-adventure/`. A separate selection page opens twelve viewport-filling games: butterfly garden, zoo, ocean, a Mandarin planting story, connect-the-pairs, matching pop, clock cottage, market, an ice cream shop, a safe walk, counting picnic, and letter balloons. Original SVG materials have an independent motion gallery, zoo/ocean support two-dimensional touch panning, and all English recordings use the selected Zoey curious voice. For a local preview, run `python3 -m http.server 8080 --directory static` and open `http://localhost:8080/butterfly-adventure/`.
+Linked from the **Games** page (`content/games.md`, menu entry in `config.toml`).
+
+- **Zoey 的游乐园** lives in `static/kids-playground/` and is published at `/kids-playground/`: thirteen small games for a four-year-old (makeup, dress-up, cake shop, pet bath, colouring, thinking puzzles, ice cream shop, feeding, jigsaw, memory, hide and seek, maze, fruit catching) with a sticker album. Plain ES modules, no build step; all pictures are flat SVG drawn in `js/art/`; it installs as a PWA and works offline.
+  - Preview: `python3 -m http.server 8080 --directory static`, then open `http://localhost:8080/kids-playground/` (`dev/gallery.html` shows every picture).
+  - After changing any file run `node tools/playground/build.mjs` to refresh the offline file list in `sw.js`.
+  - `node tools/playground/test.mjs` plays every game to the end in headless Chromium.
+  - Zoey's voice: add a line to `tools/playground/voice-lines.json`, then `.voice-lab/.venv/bin/python tools/playground/build-voice.py` (see `tools/voice/README.md`).
+- **Zoey 的小钢琴** in `static/kids-piano/` is copied from its own project and published at `/kids-piano/`.

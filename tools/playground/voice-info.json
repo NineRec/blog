@@ -1,0 +1,597 @@
+{
+  "hello": {
+    "text": "Hi, I'm Zoey! Let's play together!",
+    "fingerprint": "2bba80400efacefb6fd0280ae9c4c988b1c72a70ab8d3fb1896e8752e13277a9",
+    "seed": 2945666,
+    "language": "English",
+    "seconds": 3.12
+  },
+  "yay-1": {
+    "text": "Yay! You did it!",
+    "fingerprint": "d88fd6eeab731b6afd565161fe0f506149b37033006d75a39db1ecb36b195ca8",
+    "seed": 3702118,
+    "language": "English",
+    "seconds": 1.68
+  },
+  "yay-2": {
+    "text": "Wow, that was amazing!",
+    "fingerprint": "85e7ff213487ddec3cda4377fa0f85cfc6fcc7d42cba3ab7ab41b1fd67a5c895",
+    "seed": 12255083,
+    "language": "English",
+    "seconds": 1.68
+  },
+  "yay-3": {
+    "text": "Great job! You are a star!",
+    "fingerprint": "8d746d35f298f35f7e909dcdcf960096920c2f1a4442d552dac84dcf91bb0165",
+    "seed": 11367776,
+    "language": "English",
+    "seconds": 2.56
+  },
+  "good-1": {
+    "text": "Great!",
+    "fingerprint": "fc5303b3a681687e2ad66939d2f4fa6d594784fd092b7628dce5291458ef47eb",
+    "seed": 6504468,
+    "language": "English",
+    "seconds": 0.72
+  },
+  "good-2": {
+    "text": "Well done!",
+    "fingerprint": "43010b0cca72cc1aacc75b465f2363d7ab33e1b945079febbe464100801c5617",
+    "seed": 7553241,
+    "language": "English",
+    "seconds": 1.2
+  },
+  "good-3": {
+    "text": "That's right!",
+    "fingerprint": "604432816d42189dcb66bc69185ba43b1178a8365ae94b09fe236801cce8eeb1",
+    "seed": 16759031,
+    "language": "English",
+    "seconds": 1.2
+  },
+  "ic-super": {
+    "text": "Happy customers! You are a super ice cream maker!",
+    "fingerprint": "099c7ce57f0c718c52edc9c9cccfc50a0811da378cce0d86971835994a8cb9b1",
+    "seed": 7155485,
+    "language": "English",
+    "seconds": 3.52
+  },
+  "memory-intro": {
+    "text": "Find two cards that are the same!",
+    "fingerprint": "e71a69601adee2b2520fa3a5ae21bcb5b8673049f36ca734aa7ed14a3a68982c",
+    "seed": 6278927,
+    "language": "English",
+    "seconds": 1.92
+  },
+  "feed-intro": {
+    "text": "Our friends are hungry! Give them the food they want.",
+    "fingerprint": "57ce565e9f7cccdc25c89d1db0c30177538ec6e15c72296ae4f86454b2a27c6b",
+    "seed": 12440747,
+    "language": "English",
+    "seconds": 3.36
+  },
+  "feed-no": {
+    "text": "No, thank you!",
+    "fingerprint": "bb5300dc6fa944810ae1d9bf8381f1cdc1e057f4fcdc2409a8185e1a59a35838",
+    "seed": 14933798,
+    "language": "English",
+    "seconds": 1.12
+  },
+  "feed-full": {
+    "text": "That's enough, thank you!",
+    "fingerprint": "5b75d0d1a69c8878320d74dbf3b7a7c0f1d90451adb6c234ee0ee3f8109e9dc2",
+    "seed": 8328445,
+    "language": "English",
+    "seconds": 1.92
+  },
+  "feed-yum": {
+    "text": "Yum yum! Thank you!",
+    "fingerprint": "6611fd61a27766387bbad8f43dc74ac0a70e1fb20d95e3fd6e898cdfeb561869",
+    "seed": 4929871,
+    "language": "English",
+    "seconds": 2.08
+  },
+  "num-8": {
+    "text": "Eight!",
+    "fingerprint": "b2a95195d1e92a252a0053028430d87992b164592ab987a559c591839578c43c",
+    "seed": 7362455,
+    "language": "English",
+    "seconds": 0.64
+  },
+  "wd-cat": {
+    "text": "A cat!",
+    "fingerprint": "21a0a585187b019370e328cfad8a8a5651d3f83da192f15f42b3dd5c922e5d71",
+    "seed": 15094242,
+    "language": "English",
+    "seconds": 0.64
+  },
+  "wd-dog": {
+    "text": "A dog!",
+    "fingerprint": "f26f5fdc6d2660d406467eda40b6874842ebf877da894e0b2ce7afb75f1c5ab9",
+    "seed": 7463792,
+    "language": "English",
+    "seconds": 0.88
+  },
+  "wd-chick": {
+    "text": "A chick!",
+    "fingerprint": "49af43fea29313653d2a7bd52c84a6c3ade92df23b04a70a8a790436e3477696",
+    "seed": 7527206,
+    "language": "English",
+    "seconds": 1.04
+  },
+  "wd-unicorn": {
+    "text": "Unicorn!",
+    "fingerprint": "87d17042f3923041e8471e47b37dbc5e9ae64b7a171a7636a1138c08f497ba2a",
+    "seed": 1151848,
+    "language": "English",
+    "seconds": 1.04
+  },
+  "wd-mouse": {
+    "text": "A mouse!",
+    "fingerprint": "d2522d1e4dd876d02e61ecb8e09955da16314bf5b5c25adb96ea614da6178f88",
+    "seed": 8576414,
+    "language": "English",
+    "seconds": 1.12
+  },
+  "wd-hedgehog": {
+    "text": "Hedgehog!",
+    "fingerprint": "1337d4ba4b73ce45db630dc2c31243532cc4b7158d5256e5a5a24d01744626b6",
+    "seed": 3328569,
+    "language": "English",
+    "seconds": 0.8
+  },
+  "wd-fish": {
+    "text": "A fish!",
+    "fingerprint": "22c6082e919541d6dc4c631d5d246da6ee78ba0a9a3574481e5f329c60b96db5",
+    "seed": 16425551,
+    "language": "English",
+    "seconds": 0.96
+  },
+  "wd-peach": {
+    "text": "A peach!",
+    "fingerprint": "8d47139d759ae8cb673bc98477081af32a2dd8e6ccd72faa0a61f2a946d58a34",
+    "seed": 3812021,
+    "language": "English",
+    "seconds": 0.96
+  },
+  "wd-pineapple": {
+    "text": "Pineapple!",
+    "fingerprint": "2394a520efed6f06f3742733c4d53d83c5a5c56e895b0c50d5a44297f1b86958",
+    "seed": 16196490,
+    "language": "English",
+    "seconds": 1.12
+  },
+  "wd-bone": {
+    "text": "A bone!",
+    "fingerprint": "d8ff8de2354feea1a22fd47d7435695f0db3c27a7e3e7ba5a46d4c126474e8bf",
+    "seed": 9940757,
+    "language": "English",
+    "seconds": 1.12
+  },
+  "wd-cheese": {
+    "text": "Cheese!",
+    "fingerprint": "dd07361ec5629e4078d684be90359fb71c97fe679a8e653e087ea10f726ce3a7",
+    "seed": 15902658,
+    "language": "English",
+    "seconds": 0.8
+  },
+  "wd-acorn": {
+    "text": "An acorn!",
+    "fingerprint": "119f73f43a80a85063025cf594211268a7c95732fb96c3df739e2d19a14a5b3c",
+    "seed": 8327590,
+    "language": "English",
+    "seconds": 1.12
+  },
+  "wd-milk": {
+    "text": "Milk!",
+    "fingerprint": "0446731515edf1ce09b8ac0c7615275deda9b80efd12aa5419bdc883f3c2278a",
+    "seed": 4744702,
+    "language": "English",
+    "seconds": 0.8
+  },
+  "wd-cookie": {
+    "text": "A cookie!",
+    "fingerprint": "c5a461f4a5ba227b80e851c56cd90b3942fb8c5f9e6ae017262c2050e84a6526",
+    "seed": 12383617,
+    "language": "English",
+    "seconds": 0.96
+  },
+  "wd-donut": {
+    "text": "A donut!",
+    "fingerprint": "97aea7c8091a23e95a1a59691c59c711b249cb13c9518b2ede2f20955f99507c",
+    "seed": 13295194,
+    "language": "English",
+    "seconds": 0.8
+  },
+  "wd-cupcake": {
+    "text": "A cupcake!",
+    "fingerprint": "9270391e4eee2258e64ab4bb609c7bb79bcb9584753445ec359b0eb0667be03f",
+    "seed": 9359417,
+    "language": "English",
+    "seconds": 0.96
+  },
+  "wd-candy": {
+    "text": "Candy!",
+    "fingerprint": "99023235ae57886db1b44b223795ce7d813ac14186878e945d9a2d47e30a2fe5",
+    "seed": 7021672,
+    "language": "English",
+    "seconds": 0.88
+  },
+  "wd-lollipop": {
+    "text": "A lollipop!",
+    "fingerprint": "23202253bdc80d0fcbe3d7dd698683b20ea3e3fb0201527c8f93a1b6d22a9b62",
+    "seed": 3517065,
+    "language": "English",
+    "seconds": 0.96
+  },
+  "makeup-intro": {
+    "text": "Let's put on some makeup! Pick a color, and rub it on gently.",
+    "fingerprint": "7ee5ecfa7f40936ebff0e3004d89ec48db1a2dcee6688d8d046ef7d0fc7e92e5",
+    "seed": 11683522,
+    "language": "English",
+    "seconds": 3.76
+  },
+  "mk-lip": {
+    "text": "Lipstick!",
+    "fingerprint": "44d4636191db1c693c25a7211c905df5ec1f6d2c3280b6b0324c31d0a1c68433",
+    "seed": 2424888,
+    "language": "English",
+    "seconds": 0.72
+  },
+  "mk-blush": {
+    "text": "Blush!",
+    "fingerprint": "6f258895c7667962e4091002880cf556fcea04799a4add1da43e76ffee605d3b",
+    "seed": 1856699,
+    "language": "English",
+    "seconds": 0.88
+  },
+  "mk-shadow": {
+    "text": "Eye shadow!",
+    "fingerprint": "a116af76e0200a13d8f22bf19a8a5d392e566a4b78e4802e3606136fed119e26",
+    "seed": 13872856,
+    "language": "English",
+    "seconds": 0.72
+  },
+  "mk-lash": {
+    "text": "Eyelashes!",
+    "fingerprint": "a1924c716d8ca075ad676458aa848f2a15cd5fe9c03cf34f7148083095271cba",
+    "seed": 8890175,
+    "language": "English",
+    "seconds": 0.88
+  },
+  "mk-gem": {
+    "text": "Sparkles!",
+    "fingerprint": "176aadf54764af4a13a8534920d15cdf1c0e5287215aa9592452068fbfb59a6f",
+    "seed": 2598234,
+    "language": "English",
+    "seconds": 0.96
+  },
+  "mk-hair": {
+    "text": "Hair bows!",
+    "fingerprint": "24b173390e5e8f5ed7504bc702526265767c90e425fd92203d5954860b0b1c57",
+    "seed": 10679169,
+    "language": "English",
+    "seconds": 0.96
+  },
+  "mk-ear": {
+    "text": "Earrings!",
+    "fingerprint": "734edcd9e6bb14a1c5cf37ab9684c13e8e4cf993f051e817c07d76b3bbd80caa",
+    "seed": 12669541,
+    "language": "English",
+    "seconds": 0.88
+  },
+  "mk-neck": {
+    "text": "A necklace!",
+    "fingerprint": "4d40a24fe1359e600549ef56a24a16469940fc27da9f23330f516f89ed849128",
+    "seed": 1010528,
+    "language": "English",
+    "seconds": 0.96
+  },
+  "mk-pretty": {
+    "text": "So pretty!",
+    "fingerprint": "5d19ce5a87e6ee89c4fd6bda1b2ac15de1eeb989bb07315c74eac0b0af0704f1",
+    "seed": 13898844,
+    "language": "English",
+    "seconds": 1.04
+  },
+  "makeup-done": {
+    "text": "Wow! You look so beautiful!",
+    "fingerprint": "701a3bddf0ffe96adb5b8a830b98a4429a150f3591b5aa353b54a0b96edb931d",
+    "seed": 15908367,
+    "language": "English",
+    "seconds": 2.32
+  },
+  "dressup-intro": {
+    "text": "Let's get ready for the party! Pick a pretty outfit.",
+    "fingerprint": "8b86f34bc25e0750cb7c99aa997e19c9b4f56af570be4d281b125701a75fd52c",
+    "seed": 2007009,
+    "language": "English",
+    "seconds": 3.28
+  },
+  "du-outfit": {
+    "text": "Dresses!",
+    "fingerprint": "b387e179437b891aeae8d286fe323b1ab8a5d3910e32f5abeffc4f8cbf425cdc",
+    "seed": 5445928,
+    "language": "English",
+    "seconds": 0.88
+  },
+  "du-hair": {
+    "text": "Hair!",
+    "fingerprint": "a8bdc3e0861d4798c30a7bf59cd62283825a30cc50888c2cda0c91691c11a7a6",
+    "seed": 70752,
+    "language": "English",
+    "seconds": 0.64
+  },
+  "du-shoes": {
+    "text": "Shoes!",
+    "fingerprint": "c4c9d7b77b5c7502a85b8609796924798dd519e693b61e5ab7f063e0378498d3",
+    "seed": 1170723,
+    "language": "English",
+    "seconds": 0.88
+  },
+  "du-head": {
+    "text": "Hats and crowns!",
+    "fingerprint": "39bf1a638b79e42d3f4ef024d5b374b8322f197915f9713fcce0152d0747f29e",
+    "seed": 10742262,
+    "language": "English",
+    "seconds": 1.2
+  },
+  "du-hand": {
+    "text": "Something to hold!",
+    "fingerprint": "752cb8ae0f2c9628e08ff121538afd4d7978fe4b57653ab7cab8144bccedabdb",
+    "seed": 7144532,
+    "language": "English",
+    "seconds": 1.12
+  },
+  "du-back": {
+    "text": "Wings!",
+    "fingerprint": "26a69eb7f3e917f8246d9355481ec134d05e77ac66b7dd35b121e40674cb0fe0",
+    "seed": 12728524,
+    "language": "English",
+    "seconds": 1.04
+  },
+  "du-scene": {
+    "text": "Where shall we go?",
+    "fingerprint": "f1051ed67dea1c2020620b9c66c9a4f486321eb7c0d0966c1185cc2bc43b3d1a",
+    "seed": 11074031,
+    "language": "English",
+    "seconds": 1.04
+  },
+  "dressup-done": {
+    "text": "Ta-da! What a wonderful outfit!",
+    "fingerprint": "de716ac6a7196e4c36691e6e133395c2cbd1f87787a610bd9e7427e0ea08e51e",
+    "seed": 5139358,
+    "language": "English",
+    "seconds": 2.48
+  },
+  "lg-intro": {
+    "text": "Let's think together!",
+    "fingerprint": "ba41cbdf7b9a7f56aec6d1c032ef2e2a92d50f2c50370fe48355da2d7c2d700a",
+    "seed": 11533051,
+    "language": "English",
+    "seconds": 1.28
+  },
+  "lg-odd": {
+    "text": "Which one does not belong?",
+    "fingerprint": "4cf6d404aa6111c45f8054d788e7f6d3aedce6a450577d63967e65c3a115d1e5",
+    "seed": 8520930,
+    "language": "English",
+    "seconds": 1.52
+  },
+  "lg-next": {
+    "text": "What comes next?",
+    "fingerprint": "0ed467c25c711e452e03372fdd4f2a83dd907ca941b26f4a2e6dbfb42807243b",
+    "seed": 7711423,
+    "language": "English",
+    "seconds": 0.96
+  },
+  "lg-shadow": {
+    "text": "Whose shadow is this?",
+    "fingerprint": "44f03b538deddf47097db4740db7707705c030ff2c14a4d402602251ae6f621a",
+    "seed": 9464905,
+    "language": "English",
+    "seconds": 1.44
+  },
+  "lg-more": {
+    "text": "Which one has more?",
+    "fingerprint": "db810bd45cd243b9c525ba87145c9026b78168c99ac59fa9ff86c239acec196e",
+    "seed": 14098272,
+    "language": "English",
+    "seconds": 1.36
+  },
+  "lg-biggest": {
+    "text": "Tap the biggest one!",
+    "fingerprint": "2bfb929ff986f5ec501ab6c48bf5a659ea7d636ea530bd4e498b8b978f6f9067",
+    "seed": 831561,
+    "language": "English",
+    "seconds": 1.44
+  },
+  "lg-smallest": {
+    "text": "Tap the smallest one!",
+    "fingerprint": "6ddb435fe8b28caa9495577a030108a86d71085b7a68398f14c0508c7aaa9a1f",
+    "seed": 2848011,
+    "language": "English",
+    "seconds": 1.44
+  },
+  "lg-heavy": {
+    "text": "Who is heavier?",
+    "fingerprint": "246c10eff26eefc18a9491ce9568c61d6d55d334dfe3f14b30921d35f9d1539f",
+    "seed": 6868661,
+    "language": "English",
+    "seconds": 1.04
+  },
+  "lg-pair": {
+    "text": "What does this friend like to eat?",
+    "fingerprint": "075258ed7a65f6aad2207313ff1a690197bc34c8877d0731bcae4200a51773c8",
+    "seed": 13274364,
+    "language": "English",
+    "seconds": 1.76
+  },
+  "lg-try": {
+    "text": "Try again!",
+    "fingerprint": "d0a5cb1d23dcfa5f62f974e61ce9667848465ae51f860e0a98bd1338f09dd60f",
+    "seed": 13307310,
+    "language": "English",
+    "seconds": 1.04
+  },
+  "cake-intro": {
+    "text": "Let's bake a birthday cake! First, choose your cake.",
+    "fingerprint": "bf40e62b36e09b69cd3b5efd34d87ba61e403331c611a2e808bd8cc36050d5fc",
+    "seed": 10334869,
+    "language": "English",
+    "seconds": 3.28
+  },
+  "cake-cream": {
+    "text": "Now spread the cream. Rub it on the cake!",
+    "fingerprint": "e68fa5a58c2014134efd683c7bffb2ea6118793b2872f9eecf26e305b2ffbc56",
+    "seed": 10883179,
+    "language": "English",
+    "seconds": 3.04
+  },
+  "cake-top": {
+    "text": "Time to decorate! Put the toppings on the cake.",
+    "fingerprint": "e0ded0cae80261dfc93fc1292657a4df01202e8e12b1ee4cb03c7e734f166639",
+    "seed": 8666214,
+    "language": "English",
+    "seconds": 2.96
+  },
+  "cake-candle": {
+    "text": "Add some candles, and light them up!",
+    "fingerprint": "d0e72fe22129aa0950123c43a4c77fbffe0a1780bc025cd9c40fb7a925ee5b25",
+    "seed": 9680212,
+    "language": "English",
+    "seconds": 1.84
+  },
+  "cake-blow": {
+    "text": "Make a wish, and blow out the candles! Tap the flames.",
+    "fingerprint": "a23a56eb4999d84ce8d617c8404cf6cc4644f611856410aa442f1b89a65b314e",
+    "seed": 9634917,
+    "language": "English",
+    "seconds": 3.44
+  },
+  "cake-done": {
+    "text": "Happy birthday! What a yummy cake!",
+    "fingerprint": "25604d66b5c694a0ea4fd177ba5e734fefdf5516c2ebd7ff2019ab14b5451ceb",
+    "seed": 16434031,
+    "language": "English",
+    "seconds": 2.64
+  },
+  "spa-intro": {
+    "text": "Oh no, so muddy! Let's give our friend a bath.",
+    "fingerprint": "e726dca76802899ccec488b5d61684ed7c2451e6b6a978feafcdaa5c736965ee",
+    "seed": 6907445,
+    "language": "English",
+    "seconds": 3.44
+  },
+  "spa-leaf": {
+    "text": "First, pick off the leaves.",
+    "fingerprint": "26e6e54db523b978f3cde2cf4297859540b8dabd78f16a266a812b40ec022b01",
+    "seed": 2420462,
+    "language": "English",
+    "seconds": 1.6
+  },
+  "spa-soap": {
+    "text": "Now scrub with the soapy sponge!",
+    "fingerprint": "6b3d3d362f988cb185333bc194f35f2a3d9acfcae1fe3f062b4f6c6a9409665c",
+    "seed": 8883339,
+    "language": "English",
+    "seconds": 2.0
+  },
+  "spa-shower": {
+    "text": "Rinse the bubbles away with the shower!",
+    "fingerprint": "309c8309eaacc62af56b72a39150987d6e5a82fca35f949fa49ba44f810f2be5",
+    "seed": 10772900,
+    "language": "English",
+    "seconds": 1.84
+  },
+  "spa-towel": {
+    "text": "Dry off with the towel.",
+    "fingerprint": "e335008cadf01dbb1ee5c422dd927f4c2645e49cf9ad9eded7ca746c659f3ee9",
+    "seed": 3118667,
+    "language": "English",
+    "seconds": 1.52
+  },
+  "spa-dress": {
+    "text": "All clean! Now pick something pretty to wear.",
+    "fingerprint": "11e542709cb39f013d152aef424b49bc12590acd607b1afd185305a579257641",
+    "seed": 15903206,
+    "language": "English",
+    "seconds": 3.12
+  },
+  "spa-done": {
+    "text": "So clean, and so cute!",
+    "fingerprint": "fa55d92cae509a4d75a215460715db973d3908bf2b20472a930b8bd9231dbdfb",
+    "seed": 13572228,
+    "language": "English",
+    "seconds": 1.68
+  },
+  "color-intro": {
+    "text": "Pick a picture, and let's color it in!",
+    "fingerprint": "7f93c6c128d0f5a4d00a0f00807bad42b9e4a51b9dc4b2f69980454db11220b8",
+    "seed": 4095732,
+    "language": "English",
+    "seconds": 2.32
+  },
+  "color-done": {
+    "text": "What a beautiful picture!",
+    "fingerprint": "d6ae59e61fb102ffb9697836f46ad40d8bd94a510f965d793d635d06189b8bae",
+    "seed": 10460747,
+    "language": "English",
+    "seconds": 1.68
+  },
+  "puzzle-intro": {
+    "text": "Put the pieces back together!",
+    "fingerprint": "6a2d193373672b7f4eacffc05c34cd530f78006cb9bba0d4846d8210b5329b0e",
+    "seed": 6709623,
+    "language": "English",
+    "seconds": 1.52
+  },
+  "seek-intro": {
+    "text": "Our friends are hiding! Can you find them all?",
+    "fingerprint": "9e21f12a54fc9e2779dc3ef5890d6d2368511494e13c8edfa30d674a39447b6f",
+    "seed": 6458009,
+    "language": "English",
+    "seconds": 2.56
+  },
+  "seek-found": {
+    "text": "Found you!",
+    "fingerprint": "d1b0ee7efa8134a0f14b2a420ad3b218d52187c03b9eb37a4daf87820500df34",
+    "seed": 3230151,
+    "language": "English",
+    "seconds": 0.88
+  },
+  "catch-intro": {
+    "text": "Catch the fruit in the basket! Watch out for the smelly socks!",
+    "fingerprint": "163830f03086e56113dd1b50b9d8d8385e7a45d21fe32e90ceedc172615024ba",
+    "seed": 11186090,
+    "language": "English",
+    "seconds": 3.6
+  },
+  "catch-oops": {
+    "text": "Oops! Not that one!",
+    "fingerprint": "b41da95b0f7be30854bee0c93c6cae2e39538260f594d48200da0d2330d4efb9",
+    "seed": 2605158,
+    "language": "English",
+    "seconds": 1.76
+  },
+  "maze-intro": {
+    "text": "Help our friend find the way!",
+    "fingerprint": "6eafe4db95d4ef27ecbc793ce51404e3224b703aed3189b961d439cc0b15f605",
+    "seed": 6202378,
+    "language": "English",
+    "seconds": 1.6
+  },
+  "num-10": {
+    "text": "Number ten!",
+    "fingerprint": "e306844ac15e6067251119be4e04d065a602d9bc3ceccf43a9733ec5dc28a824",
+    "seed": 16733131,
+    "language": "English",
+    "seconds": 0.96
+  },
+  "mk-lovely": {
+    "text": "How lovely!",
+    "fingerprint": "ce58c20001372a69341ebb26b08181f3641aa09344143d5b92a39f07440d6405",
+    "seed": 2617765,
+    "language": "English",
+    "seconds": 0.88
+  }
+}
