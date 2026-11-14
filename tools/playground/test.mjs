@@ -114,18 +114,25 @@ const GAMES = {
     for (const c of await all('.sprite.pulse')) { await click({ x: c.x, y: c.y - c.h * 0.3 }); await sleep(250); }
   },
   async spa() {
+    // Every visit has its own steps: tap what is stuck on or floating around, otherwise use the tool that is lit up.
     await sleep(600);
-    for (let i = 0; i < 12 && await count('.sprite.pulse.tappable'); i++) { await click(await one('.sprite.pulse.tappable')); await sleep(250); }
-    if (await stars() !== 1) throw new Error('leaves did not come off');
     const pet = await largest();
-    const tools = await all('.tool');
-    for (const [i, c, w, h] of [[0, { x: pet.x, y: pet.y - pet.h * 0.07 }, pet.w * 0.75, pet.h * 0.64], [1, { x: pet.x, y: pet.y - pet.h * 0.47 }, pet.w * 1.05, pet.h * 0.07], [2, { x: pet.x, y: pet.y - pet.h * 0.07 }, pet.w * 0.8, pet.h * 0.69]]) {
-      for (let pass = 0; pass < 4 && await stars() < i + 2; pass++) await path([tools[i], ...zigzag(c, w, h, 7, 14)], 14);
-      if (await stars() !== i + 2) throw new Error(`tool ${i} did not finish (stars ${await stars()})`);
-      await sleep(200);
+    const visit = await js(`document.getElementById('stage').dataset.visit`), seen = new Set();
+    const sweeps = [zigzag({ x: pet.x, y: pet.y - pet.h * 0.07 }, pet.w * 0.8, pet.h * 0.69, 7, 14), zigzag({ x: pet.x, y: pet.y - pet.h * 0.47 }, pet.w * 1.05, pet.h * 0.07, 2, 14)];
+    for (let turn = 0; turn < 40 && !(await count('.stage-button.green')); turn++) {
+      const tap = await one('.layer .sprite.tappable');
+      if (tap) { if (!seen.has('tap' + await stars())) { seen.add('tap' + await stars()); await shot(`spa-${visit}-step${await stars()}-tap`); } await click(tap); await sleep(200); continue; }
+      const tool = await one('.tool.pulse');
+      if (!tool) { await sleep(300); continue; }
+      const kind = await js(`document.querySelector('.tool.pulse')?.dataset.tool`);
+      if (!seen.has(kind)) { seen.add(kind); await shot(`spa-${visit}-step${await stars()}-${kind}`); }
+      const before = await stars();
+      for (const sweep of sweeps) if ((await stars()) === before) await path([tool, ...sweep], 14);
+      await sleep(250);
     }
-    await click(await one('.tray .chip', 1)); await click(await one('.tray .chip', 4)); await sleep(200);
-    await shot('spa-clean');
+    if (!(await count('.stage-button.green'))) throw new Error(`the bath did not finish (visit ${await js(`document.getElementById('stage').dataset.visit`)}, ${await stars()} stars)`);
+    for (const i of [1, 4, 5]) { await click(await one('.tray .chip', i)); await sleep(150); }
+    await shot(`spa-visit-${await js(`document.getElementById('stage').dataset.visit`)}`);
     await click(await one('.stage-button.green'));
   },
   async coloring() {
@@ -174,20 +181,22 @@ const GAMES = {
     }
   },
   async puzzle() {
-    for (let round = 0; round < 3; round++) {
-      await sleep(1800);
-      for (let i = 0; i < 40 && await count('.piece:not(.placed)'); i++) {
-        const p = await one('.piece:not(.placed)');
-        const targetOf = `((x, y) => { const piece = document.elementFromPoint(x, y)?.closest('.piece'); if (!piece) return null; const [vx, vy, vw, vh] = piece.querySelector('svg').getAttribute('viewBox').split(' ').map(Number);
-          const b = document.querySelector('.pz-board svg').getBoundingClientRect(); return { x: b.left + (vx + vw / 2) / 600 * b.width, y: b.top + (vy + vh / 2) / 450 * b.height }; })(${p.x}, ${p.y})`;
-        const to = await js(targetOf);
-        if (!to) { await path(line(p, { x: p.x - 30, y: p.y + 20 })); continue; }
-        await path(line(p, to, 10)); await sleep(260);
-      }
-      if (round === 2) await shot('puzzle-solved');
-      await until(async () => (await stars()) === round + 1, 3000, 'the picture to be whole');
-      await sleep(2200);
+    await shot('puzzle-levels');
+    await click(await one('.pz-level', +(process.env.PUZZLE || 0)));
+    await until(() => count('.pz'), 6000, 'the pieces');
+    await sleep(1600);
+    const total = await count('.pz');
+    await shot(`puzzle-${total}-start`);
+    for (let i = 0; i < total * 4 && await count('.pz:not(.placed)'); i++) {
+      const p = await one('.pz:not(.placed)');
+      // whichever piece is really under that point goes to its own place
+      const to = await js(`((x, y) => { const piece = document.elementFromPoint(x, y)?.closest('.pz'); if (!piece || piece.classList.contains('placed')) return null;
+        const stage = document.getElementById('stage'), r = stage.getBoundingClientRect(), k = r.width / parseFloat(stage.style.width);
+        return { x: r.left + piece.dataset.tx * k, y: r.top + piece.dataset.ty * k }; })(${p.x}, ${p.y})`);
+      if (!to) { await path(line(p, { x: p.x + 40, y: p.y - 30 })); continue; }
+      await path(line(p, to, 8), 8); await sleep(200);
     }
+    await shot(`puzzle-${total}-solved`);
   },
   async memory() {
     for (let turn = 0; turn < 60 && !(await won()); turn++) {
@@ -272,6 +281,27 @@ for (const name of wanted) {
     console.log(`FAIL ${name}: ${err.message}${errors.length ? ` [errors: ${errors.join(' | ')}]` : ''}`);
   }
 }
+// Sound after the app has been in the background: the first touch back must bring a running audio context.
+{
+  errors.length = 0;
+  await send('Page.navigate', { url: 'about:blank' }); await sleep(150);
+  await send('Page.navigate', { url: base }); await sleep(900);
+  await click(await one('.hub-side .zoey'));
+  await sleep(300);
+  const state = () => js(`import('./js/audio.js').then((m) => m.audioState())`);
+  const first = await state();
+  await js(`(() => { Object.defineProperty(document, 'hidden', { configurable: true, get: () => true }); document.dispatchEvent(new Event('visibilitychange')); })()`);
+  await sleep(200);
+  const away = await state();
+  await js(`(() => { delete document.hidden; document.dispatchEvent(new Event('visibilitychange')); })()`);
+  await click(await one('.hub-side .zoey'));
+  await sleep(400);
+  const back = await state();
+  const fine = first === 'running' && away !== 'running' && back === 'running' && !errors.length;
+  if (!fine) failed++;
+  console.log(`${fine ? 'PASS' : 'FAIL'} sound after returning from the background (${first} → ${away} → ${back})${errors.length ? ` errors: ${errors.join(' | ')}` : ''}`);
+}
+
 errors.length = 0;
 await send('Page.navigate', { url: `${base}#/album` }); await sleep(800);
 const stickers = await count('.sticker'), got = await count('.sticker.got');

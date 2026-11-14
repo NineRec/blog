@@ -128,16 +128,18 @@
   "wd-mouse": {
     "text": "A mouse!",
     "fingerprint": "d2522d1e4dd876d02e61ecb8e09955da16314bf5b5c25adb96ea614da6178f88",
-    "seed": 8576414,
+    "seed": 8584333,
     "language": "English",
-    "seconds": 1.12
+    "seconds": 0.72,
+    "pitch_hz": 375
   },
   "wd-hedgehog": {
-    "text": "Hedgehog!",
-    "fingerprint": "1337d4ba4b73ce45db630dc2c31243532cc4b7158d5256e5a5a24d01744626b6",
-    "seed": 3328569,
+    "text": "A hedgehog!",
+    "fingerprint": "6fadc7bc38e9640af1e9172051b41469b8344b69659350b61a190f4ca57076bc",
+    "seed": 12726157,
     "language": "English",
-    "seconds": 0.8
+    "seconds": 0.88,
+    "pitch_hz": 350
   },
   "wd-fish": {
     "text": "A fish!",
@@ -205,9 +207,10 @@
   "wd-cupcake": {
     "text": "A cupcake!",
     "fingerprint": "9270391e4eee2258e64ab4bb609c7bb79bcb9584753445ec359b0eb0667be03f",
-    "seed": 9359417,
+    "seed": 9391093,
     "language": "English",
-    "seconds": 0.96
+    "seconds": 0.96,
+    "pitch_hz": 381
   },
   "wd-candy": {
     "text": "Candy!",
@@ -457,9 +460,10 @@
   "cake-candle": {
     "text": "Add some candles, and light them up!",
     "fingerprint": "d0e72fe22129aa0950123c43a4c77fbffe0a1780bc025cd9c40fb7a925ee5b25",
-    "seed": 9680212,
+    "seed": 9688131,
     "language": "English",
-    "seconds": 1.84
+    "seconds": 2.0,
+    "pitch_hz": 393
   },
   "cake-blow": {
     "text": "Make a wish, and blow out the candles! Tap the flames.",
@@ -593,5 +597,125 @@
     "seed": 2617765,
     "language": "English",
     "seconds": 0.88
+  },
+  "fl-mango": {
+    "text": "Yummy mango!",
+    "fingerprint": "3b8ceb3b547005e63ce9fa7827e2fd251134b6decd70a25824b3eafdc48ed6a2",
+    "seed": 15534032,
+    "language": "English",
+    "seconds": 1.2,
+    "pitch_hz": 457
+  },
+  "about-jellyfish": {
+    "text": "The jellyfish floats like a soft umbrella. She drifts gently, up and down.",
+    "fingerprint": "9bb1f24cdc02d6865028da8ffbfed5f53fbdf8502a14b5a9682bd412152c68b0",
+    "seed": 3102482,
+    "language": "English",
+    "seconds": 4.56,
+    "pitch_hz": 375
+  },
+  "about-turtle": {
+    "text": "The sea turtle paddles through the water with her big, strong flippers.",
+    "fingerprint": "1d6e4d0da9ed879bea4cac08b4507c378a0fc672a62537c9fcd2adfbbfafbb4c",
+    "seed": 7690229,
+    "language": "English",
+    "seconds": 3.84,
+    "pitch_hz": 364
+  },
+  "wd-mushroom": {
+    "text": "Mushroom!",
+    "fingerprint": "b50149fd7bc44d182bc218ebf8fb85eb5fc7fe5e3e7b9d2c33b068c0e06d3d9c",
+    "seed": 376525,
+    "language": "English",
+    "seconds": 0.88,
+    "pitch_hz": 358
+  },
+  "fl-chocolate": {
+    "text": "Chocolate!",
+    "fingerprint": "d5c1b74b196974435d80fc04cfd2234df4148f7688145127d5dfa32b55e48dd1",
+    "seed": 16287094,
+    "language": "English",
+    "seconds": 0.72,
+    "pitch_hz": 436
+  },
+  "wd-hippo": {
+    "text": "Hippo!",
+    "fingerprint": "fcdffae24b7f1f19725f8fc883020c28c11ea855b60551f08cda79510e7b4a9b",
+    "seed": 6745453,
+    "language": "English",
+    "seconds": 0.88,
+    "pitch_hz": 364
+  },
+  "spa-paint": {
+    "text": "Oh no, paint everywhere! Let's wash it off.",
+    "fingerprint": "a327f930827967746be982d058068b5b24363b09f773fc5f09eca0b457b3ad10",
+    "seed": 11048826,
+    "language": "English",
+    "seconds": 2.88,
+    "pitch_hz": 400
+  },
+  "spa-sticky": {
+    "text": "Uh-oh, so sticky! Let's clean up our friend.",
+    "fingerprint": "a43a537ed70f7a35e3a8d8f18832ecd0095509a19a8910c268e5172be4450749",
+    "seed": 13697713,
+    "language": "English",
+    "seconds": 3.12,
+    "pitch_hz": 449
+  },
+  "spa-candy": {
+    "text": "First, pick off the candies.",
+    "fingerprint": "c2a09ae990fdc0a2498b130d555c8c1155aeb6fe74d17070aa46da567dafa9f0",
+    "seed": 5867315,
+    "language": "English",
+    "seconds": 2.0,
+    "pitch_hz": 421
+  },
+  "spa-dryer": {
+    "text": "Blow the fur dry with the hair dryer!",
+    "fingerprint": "701698a3591db29ae6595ea10fbd86c68b34ce16278895fdc5cc7a7f1669a140",
+    "seed": 15654128,
+    "language": "English",
+    "seconds": 2.16,
+    "pitch_hz": 381
+  },
+  "spa-brush": {
+    "text": "Now brush the fur, nice and smooth.",
+    "fingerprint": "ea8bdb09e719e553aed94697f9ad65d52ca5f379632dcebd878b96ed5259266c",
+    "seed": 7874054,
+    "language": "English",
+    "seconds": 2.32,
+    "pitch_hz": 364
+  },
+  "spa-bubbles": {
+    "text": "Pop all the bubbles!",
+    "fingerprint": "f716acc0362b3377a1671d7c0af16ad3e35f0ddb9e2e5bf052a12b4dbb161216",
+    "seed": 6985376,
+    "language": "English",
+    "seconds": 1.28,
+    "pitch_hz": 522
+  },
+  "puzzle-pick": {
+    "text": "How many pieces do you want?",
+    "fingerprint": "ebdbff95002fcd7eb271d9ca975dbe4551b97ce9b06b6b7e4c7e1c8eb481041d",
+    "seed": 15633180,
+    "language": "English",
+    "seconds": 1.68,
+    "pitch_hz": 444
+  },
+  "about-whale": {
+    "text": "The whale is the biggest animal in the sea. She sings a deep, slow song.",
+    "fingerprint": "6980d0fc05a8c51702efe43b7131dea7c89a8f71c140940d190acfa884efabf3",
+    "seed": 8372625,
+    "language": "English",
+    "seconds": 4.4,
+    "pitch_hz": 353
+  },
+  "about-fox": {
+    "text": "The fox is clever, with pointy ears and a fluffy tail.",
+    "fingerprint": "11950389c2af42ada8fc9bcb45599a9f91f14951301ca795782276e84f9068bf",
+    "seed": 3010337,
+    "language": "English",
+    "seconds": 3.52,
+    "pitch_hz": 387
   }
 }

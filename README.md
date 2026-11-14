@@ -32,4 +32,6 @@ Linked from the **Games** page (`content/games.md`, menu entry in `config.toml`)
   - After changing any file run `node tools/playground/build.mjs` to refresh the offline file list in `sw.js`.
   - `node tools/playground/test.mjs` plays every game to the end in headless Chromium.
   - Zoey's voice: add a line to `tools/playground/voice-lines.json`, then `.voice-lab/.venv/bin/python tools/playground/build-voice.py` (see `tools/voice/README.md`).
+    The builder re-renders any take that comes out in a deeper, grown-up voice; `tools/playground/check-voice.py` scans the whole folder for such clips.
+  - `dev/pets.html` shows every bath friend wearing every accessory (the per-animal fit lives in `FIT` in `js/games/spa.js`).
 - **Zoey 的小钢琴** in `static/kids-piano/` is copied from its own project and published at `/kids-piano/`.
