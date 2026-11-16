@@ -78,6 +78,18 @@ const GAMES = {
     await path(zigzag(lips, face.w * 0.13, face.h * 0.05, 5, 12));
     const lip = await js(`+document.querySelector('.paint-lip').getAttribute('opacity')`);
     if (!(lip > 0.6)) throw new Error(`lipstick did not go on (${lip})`);
+    // every lash style and every sparkle must really show on the face
+    for (const [cat, slot, n] of [[3, 'lash', 3], [4, 'gem', 5]]) {
+      await click(await one('.mk-cats .chip', cat)); await sleep(150);
+      for (let i = 0; i < n; i++) {
+        await click(await one('.mk-options .chip', i)); await sleep(200);
+        // a shape counts as showing when its middle is not under the fringe, which is drawn after it
+        const seen = await js(`(() => { const svg = document.querySelector('.sprite svg'), fringe = svg.querySelector('[data-slot="gem"]').nextElementSibling;
+          return [...svg.querySelector('[data-slot="${slot}"]').querySelectorAll('path, circle, ellipse')].filter((n) => { const b = n.getBBox(), p = svg.createSVGPoint(); p.x = b.x + b.width / 2; p.y = b.y + b.height / 2; return !fringe.isPointInFill(p); }).length; })()`);
+        if (!seen) throw new Error(`${slot} option ${i} is hidden on the face`);
+        await shot(`makeup-${slot}-${i}`);
+      }
+    }
     for (const [cat, slot] of [[3, 'lash'], [5, 'hair'], [6, 'ear'], [7, 'neck']]) {
       await click(await one('.mk-cats .chip', cat)); await sleep(150);
       await click(await one('.mk-options .chip', 1)); await sleep(150);

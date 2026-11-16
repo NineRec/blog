@@ -3,14 +3,19 @@
 import { INK, E, C, P, R, e, c, p, L, tube, rot, shade, shadow, star, sparkle, starPath, heartPath, insidePath, nextId } from './base.js';
 import { meadow, night, sky, cloud, sun, hills, band, rainbow, pine, gradient } from './scenes.js';
 
-const SKIN = '#ffd6b3', CHEEK = '#ff9e8f';
+const SKIN = '#f0bd96', CHEEK = '#ee8c7a', BLACK = '#2b2529';
 const both = (fn) => fn(1) + fn(-1);          // fn(side): side 1 = her left hand side of the picture (x < 200)
 const mx = (s, x) => 200 - s * (200 - x);     // mirror an x for the other side
 
 const BANGS = 'M76 198 C68 110 130 62 200 62 C270 62 332 110 324 198 C318 168 306 152 292 146 Q276 160 258 150 Q240 162 220 150 Q200 162 180 150 Q160 162 142 150 Q124 160 108 146 C94 152 82 168 76 198Z';
 const CAP = 'M200 56 C92 56 58 140 66 230 L334 230 C342 140 308 56 200 56Z';
 const HAIR = {
-  bob: { col: '#6b4433', back: (h) => P('M200 56 C80 56 54 150 62 250 C64 292 76 318 94 332 L306 332 C324 318 336 292 338 250 C346 150 320 56 200 56Z', h), front: (h) => P(BANGS, h) },
+  // Zoey's own hair: soft black, down to the shoulders with the ends flicking out, and a blunt fringe that parts a little
+  bob: { col: BLACK,
+    back: (h) => P('M200 52 C92 52 56 132 58 232 C58 270 56 300 44 332 Q66 346 88 332 Q100 346 120 336 Q132 328 140 312 L260 312 Q268 328 280 336 Q300 346 312 332 Q334 346 356 332 C344 300 342 270 342 232 C344 132 308 52 200 52Z', h),
+    front: (h) => both((s) => P(`M${mx(s, 82)} 176 C${mx(s, 68)} 230 ${mx(s, 72)} 284 ${mx(s, 56)} 326 Q${mx(s, 80)} 340 ${mx(s, 100)} 322 C${mx(s, 110)} 286 ${mx(s, 106)} 236 ${mx(s, 102)} 190Z`, h)) +
+      `<path d="M74 214 C62 112 128 56 200 56 C272 56 338 112 326 214 C322 192 314 176 302 166 Q292 178 280 176 L274 160 L268 177 Q250 181 236 179 L231 166 L226 180 Q214 181 206 180 L196 132 L186 180 Q170 182 158 180 L153 165 L148 179 Q132 180 120 176 L115 162 L110 174 Q102 170 98 166 C86 176 78 192 74 214Z" fill="${h}" stroke="${h}" stroke-width="4" stroke-linejoin="round"/>` +
+      L('M150 150 q4 -34 28 -58 M236 146 q-2 -30 -18 -52', 3, 'rgba(255,255,255,.13)') },
   pigtails: { col: '#3b2f3a', back: (h) => P(CAP, h) + both((s) => E(mx(s, 56), 262, 30, 74, h, rot(s * 10, mx(s, 56), 200))), front: (h) => P(BANGS, h) + both((s) => C(mx(s, 70), 192, 12, '#ff5c8a')) },
   long: { col: '#e8ac5c', back: (h) => P('M200 56 C80 56 48 150 56 262 C60 360 36 440 62 486 Q120 500 140 470 L260 470 Q280 500 338 486 C364 440 340 360 344 262 C352 150 320 56 200 56Z', h), front: (h) => P(BANGS, h) },
   buns: { col: '#ff9ecb', back: (h) => C(92, 66, 44, h) + C(308, 66, 44, h) + P(CAP, h), front: (h) => P(BANGS, h) + both((s) => L(`M${mx(s, 66)} 58 q${s * 22} -14 ${s * 44} 0`, 4, 'rgba(255,255,255,.4)')) },
@@ -21,9 +26,15 @@ const HAIR = {
 
 const skirt = 'M146 384 Q200 372 254 384 C310 440 344 520 352 596 Q200 640 48 596 C56 520 90 440 146 384Z';
 const OUTFIT = {
-  zoey: () => P('M146 430 h108 l6 76 h-52 l-8 -34 l-8 34 h-52z', '#ffe7c4') + [[166, 452], [190, 478], [232, 450], [214, 486], [160, 492], [244, 488]].map(([x, y]) => c(x, y, 5, '#7fb6f0')).join('') +
-    both((s) => E(mx(s, 142), 318, 24, 18, s > 0 ? '#fff' : '#f1eef5', rot(s * -30, mx(s, 142), 318))) + P('M146 300 Q200 286 254 300 L262 440 Q200 452 138 440Z', '#fff') +
-    P('M178 296 Q200 318 222 296 Q200 304 178 296Z', '#e3ecfa') + star(200, 372, 30, '#5fa8f0') + sparkle(232, 344, 9, '#a8d4ff') + sparkle(168, 400, 7, '#a8d4ff'),
+  zoey: () => P('M144 436 h112 l8 78 h-56 l-8 -32 l-8 32 h-56z', '#f6eeda') + p('M144 436 h112 l2 16 h-116z', '#e9dfc6') +
+    [[160, 476, '#4f8fd0'], [186, 462, '#e8604c'], [234, 470, '#4f8fd0'], [246, 498, '#e8604c'], [158, 502, '#4f8fd0'], [216, 500, '#4f8fd0']].map(([x, y, col]) => p(`M${x} ${y} l6 -10 l6 10z`, col)).join('') +
+    both((s) => P(`M${mx(s, 152)} 298 L${mx(s, 108)} 326 L${mx(s, 118)} 374 L${mx(s, 158)} 356Z`, s > 0 ? '#ffffff' : '#f1eef5')) +
+    P('M138 300 Q200 286 262 300 L272 450 Q200 466 128 450Z', '#ffffff') + p('M236 300 Q250 298 262 300 L272 450 Q254 456 240 458Z', 'rgba(31,26,58,.04)') +
+    P('M176 294 Q200 318 224 294 Q200 304 176 294Z', '#e3e9f5') +
+    // the print: a little figure in a blue gown, with snowflakes and a line of writing
+    p('M200 356 L232 414 Q200 424 168 414Z', '#c4e9f7') + p('M200 352 L220 412 Q200 418 180 412Z', '#3f9fd8') + R(194, 340, 12, 18, 5, '#3f9fd8') + L('M206 346 l15 -11', 3, '#9fd6ee') +
+    c(200, 331, 8.5, '#f2e3a8') + c(200, 334, 6.5, '#ffdcc0') + sparkle(226, 330, 6, '#6fb6e6') + sparkle(236, 372, 6, '#6fb6e6') + sparkle(166, 372, 4.5, '#6fb6e6') +
+    L('M170 432 h60', 3, '#5b6f9a', 'stroke-dasharray="6 3"'),
   princess: () => both((s) => C(mx(s, 140), 318, 27, '#ffb7d9')) + P(skirt, '#ff9ecb') +
     P('M146 384 Q200 372 254 384 C292 422 312 462 322 504 Q290 526 262 502 Q232 528 200 504 Q168 528 138 502 Q110 526 78 504 C88 462 108 422 146 384Z', '#ffc9e3') +
     P('M148 300 Q200 322 252 300 L258 390 Q200 404 142 390Z', '#ff7fb0') + R(142, 376, 116, 18, 9, '#ffd447') + P(heartPath(200, 346, 12), '#fff', 'stroke-width="3"') +
@@ -108,24 +119,29 @@ const SCENES = {
 };
 
 
-const eyes = () => both((s) => `<g class="eye eyes-open"><ellipse cx="${mx(s, 156)}" cy="204" rx="12" ry="14" fill="${INK}"/><circle cx="${mx(s, 156) - 4}" cy="198" r="4.500" fill="#fff"/></g>`) +
-  `<g class="eyes-joy">${L('M142 196 l22 9 l-22 9 M258 196 l-22 9 l22 9', 6)}</g>`;
-const mouth = () => { const id = nextId(), d = 'M176 232 h48 a24 26 0 0 1 -48 0z';
-  return `<g class="mouth-open"><clipPath id="${id}"><path d="${d}"/></clipPath><path d="${d}" fill="${INK}"/><ellipse clip-path="url(#${id})" cx="200" cy="258" rx="16" ry="11" fill="#ff7f9c"/></g>`; };
+const eyes = () => both((s) => { const x = mx(s, 157);
+  return `<g class="eye eyes-open"><ellipse cx="${x}" cy="209" rx="12" ry="12" fill="${BLACK}"/><circle cx="${x - 4}" cy="205" r="4" fill="#fff"/></g>` +
+    `<g class="eyes-open">${L(`M${mx(s, 172)} 205 Q${mx(s, 157)} 191 ${mx(s, 142)} 205`, 3, BLACK)}</g>` +
+    L(`M${mx(s, 142)} 186 Q${mx(s, 157)} 180 ${mx(s, 172)} 186`, 4.5, 'rgba(43,37,41,.6)'); }) +
+  `<g class="eyes-joy">${L('M143 200 l22 9 l-22 9 M257 200 l-22 9 l22 9', 6, BLACK)}</g>`;
+const mouth = () => { const id = nextId(), d = 'M175 249 Q200 261 225 249 Q219 277 200 277 Q181 277 175 249Z';
+  return `<g class="mouth-open"><clipPath id="${id}"><path d="${d}"/></clipPath><path d="${d}" fill="#9c3b46"/><ellipse clip-path="url(#${id})" cx="200" cy="278" rx="14" ry="8" fill="#f0808e"/>` +
+    `<path clip-path="url(#${id})" d="M170 246 Q200 262 230 246 L228 258 Q200 270 172 258Z" fill="#fff"/></g>`; };
 
 /** The whole girl for a look: { hair, outfit, shoes, head, hand, back }. */
 export function doll(look) {
   const hair = HAIR[look.hair], legs = !HIDE_LEGS.includes(look.outfit), arm2 = shade(SKIN, -0.06);
   const arm = (s) => tube(`M${mx(s, 148)} 322 Q${mx(s, 114)} 370 ${mx(s, 106)} 428`, s > 0 ? SKIN : arm2, 16) + C(mx(s, 106), 436, 15, s > 0 ? SKIN : arm2);
-  return (look.back ? `<g class="a-wings">${BACK[look.back]()}</g>` : '') + hair.back(hair.col) +
-    (legs ? R(162, 440, 32, 204, 16, SKIN) + R(206, 440, 32, 204, 16, arm2) + (look.shoes ? shoeAt(176, 1, look.shoes) + shoeAt(224, -1, look.shoes) : E(172, 646, 26, 14, SKIN) + E(228, 646, 26, 14, arm2))
+  const head = 'transform="translate(200 292) scale(.88) translate(-200 -292)"';
+  return (look.back ? `<g class="a-wings">${BACK[look.back]()}</g>` : '') + `<g ${head}>${hair.back(hair.col)}</g>` +
+    (legs ? R(158, 440, 37, 204, 18, SKIN) + R(205, 440, 37, 204, 18, arm2) + (look.shoes ? shoeAt(176, 1, look.shoes) + shoeAt(224, -1, look.shoes) : E(172, 646, 28, 15, SKIN) + E(228, 646, 28, 15, arm2))
       : look.outfit === 'pajama' ? E(172, 642, 26, 14, '#fff') + E(228, 642, 26, 14, '#f1eef5') : '') +
     `<g class="a-arm a-arm-l">${arm(1)}</g><g class="a-arm a-arm-r">${arm(-1)}${look.hand ? HAND[look.hand]() : ''}</g>` +
     R(184, 268, 32, 44, 12, shade(SKIN, -0.1)) + P('M146 300 Q200 286 254 300 L262 456 Q200 470 138 456Z', '#fff') +
     (look.outfit ? OUTFIT[look.outfit]() : '') +
-    `<g class="a-head">` + both((s) => E(mx(s, 82), 198, 18, 24, SKIN) + e(mx(s, 82), 198, 8, 12, CHEEK, 'opacity=".5"')) + E(200, 180, 122, 112, SKIN) +
-    both((s) => c(mx(s, 124), 234, 19, CHEEK, 'opacity=".8"')) + e(200, 222, 6, 4.500, shade(SKIN, -0.14)) + eyes() + mouth() +
-    hair.front(hair.col) + L('M118 132 Q136 96 172 84', 9, 'rgba(255,255,255,.25)') + (look.head ? HEAD[look.head]() : '') + `</g>`;
+    `<g ${head}><g class="a-head">` + both((s) => E(mx(s, 82), 198, 18, 24, SKIN) + e(mx(s, 82), 198, 8, 12, CHEEK, 'opacity=".5"')) + E(200, 180, 122, 112, SKIN) +
+    both((s) => c(mx(s, 122), 240, 20, CHEEK, 'opacity=".5"')) + L('M192 234 q8 6 16 0', 3.2, shade(SKIN, -0.24)) + eyes() + mouth() +
+    hair.front(hair.col) + L('M118 132 Q136 96 172 84', 9, 'rgba(255,255,255,.2)') + (look.head ? HEAD[look.head]() : '') + `</g></g>`;
 }
 
 export const ZOEY_LOOK = { hair: 'bob', outfit: 'zoey', shoes: null, head: null, hand: null, back: null };

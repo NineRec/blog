@@ -1,0 +1,8 @@
+<!doctype html><meta charset="utf-8"><title>zoey</title><link rel="stylesheet" href="../css/app.css">
+<style>html,body{height:auto;overflow:auto}body{background:#62d4ff;display:flex;gap:10px;padding:14px;align-items:flex-end}.z{width:300px;height:400px;background:#b5efff;border-radius:24px}.z.big{width:420px;height:560px}</style>
+<div class="z big" data-pose="idle"></div><div class="z" data-pose="wave"></div><div class="z" data-pose="cheer"></div><div class="z" id="d1"></div>
+<script type="module">
+import { zoeySvg, doll } from '../js/art/girl.js';
+document.querySelectorAll('.z[data-pose]').forEach((n) => { n.innerHTML = zoeySvg(); });
+document.getElementById('d1').innerHTML = `<svg class="art" viewBox="-70 -30 540 720">${doll({ hair: 'bob', outfit: 'princess', shoes: 'mary', head: 'crown', hand: 'wand', back: 'fairy' })}</svg>`;
+</script>

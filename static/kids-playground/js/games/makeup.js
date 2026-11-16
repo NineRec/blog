@@ -4,8 +4,8 @@ import { room, sceneSvg } from '../art/scenes.js';
 import { INK, E, C, P, R, e, c, p, L, tube, rot, starPath, heartPath, nextId } from '../art/base.js';
 import { tray } from './kit.js';
 
-const SKIN = '#ffe2cc';
-const HAIRS = [['bob', '#6b4433'], ['buns', '#3b2f3a'], ['long', '#e2a55a'], ['buns', '#ff9ecb'], ['long', '#8a5cd0']];
+const SKIN = '#f3c6a2';
+const HAIRS = [['bob', '#2b2529'], ['buns', '#3b2f3a'], ['long', '#e2a55a'], ['buns', '#ff9ecb'], ['long', '#8a5cd0']];
 const PAL = {
   lip: ['#e8364f', '#ff5c8a', '#ff9ec0', '#c2185b', '#ff7043', '#b565d9'],
   blush: ['#ff8fa3', '#ffab91', '#f48fb1', '#ffc46b', '#ff7a8a', '#e6a0ff'],
@@ -21,25 +21,35 @@ const eye = (cx, cy) => `<g class="eye"><ellipse cx="${cx}" cy="${cy}" rx="30" r
 const hairBack = (style, col) => (style === 'buns' ? C(140, 84, 64, col) + C(460, 84, 64, col) : '') +
   (style === 'long'
     ? P('M300 40 C120 40 66 190 76 360 C80 520 40 640 70 720 L530 720 C560 640 520 520 524 360 C534 190 480 40 300 40Z', col)
-    : P('M300 40 C120 40 66 190 76 360 C80 470 96 560 134 604 L466 604 C504 560 520 470 524 360 C534 190 480 40 300 40Z', col));
-const hairFront = (col) => P('M98 334 C86 170 188 70 300 70 C412 70 514 170 502 334 C496 292 482 268 462 256 Q440 276 414 262 Q388 278 360 262 Q330 278 300 262 Q270 278 240 262 Q212 278 186 262 Q160 276 138 256 C118 268 104 292 98 334Z', col) +
-  L('M210 110 q-30 40 -34 96 M300 96 v110 M390 110 q30 40 34 96', 4, 'rgba(255,255,255,.22)');
+    // to the shoulders, the ends flicking out a little
+    : P('M300 40 C120 40 66 190 76 360 C78 470 74 560 44 630 Q84 652 122 628 Q140 646 166 632 L190 606 L410 606 L434 632 Q460 646 478 628 Q516 652 556 630 C526 560 522 470 524 360 C534 190 480 40 300 40Z', col));
+// a blunt fringe with a few gaps, the widest a little left of the middle
+const hairFront = (col) => `<path d="M98 334 C86 170 188 70 300 70 C412 70 514 170 502 334 C496 296 484 272 466 258 Q450 276 432 272 L424 250 L414 274 Q388 280 366 276 L358 256 L350 278 Q328 280 314 278 L296 204 L282 278 Q256 282 236 278 L228 256 L220 276 Q196 278 178 272 L170 252 L162 268 Q148 264 136 256 C116 270 104 296 98 334Z" fill="${col}" stroke="${col}" stroke-width="6" stroke-linejoin="round"/>` +
+  L('M210 110 q-30 40 -34 96 M390 110 q30 40 34 96', 4, 'rgba(255,255,255,.14)');
 
 const flowerAt = (x, y, col, s = 1) => `<g transform="translate(${x} ${y}) scale(${s})">${[0, 72, 144, 216, 288].map((a) => `<ellipse cx="0" cy="-15" rx="10" ry="13" fill="${col}" stroke="${INK}" stroke-width="3.500" transform="rotate(${a})"/>`).join('')}<circle r="9" fill="#ffd447" stroke="${INK}" stroke-width="3.500"/></g>`;
 const bowAt = (x, y, col, s = 1, dark = '#ff5c8a') => `<g transform="translate(${x} ${y}) scale(${s})">${P('M0 0 C-30 -46 -84 -44 -78 0 C-84 44 -30 46 0 0Z', col)}${P('M0 0 C30 -46 84 -44 78 0 C84 44 30 46 0 0Z', col)}${L('M-58 -14 q20 14 40 10 M58 -14 q-20 14 -40 10', 4, dark)}${R(-17, -20, 34, 40, 12, dark)}</g>`;
 
+// Lashes grow out of a lid line that hugs the top of the eye (30 wide, 36 tall around (cx, EYE_Y)),
+// so what goes on the face is exactly what the button shows.
+const EYE_Y = 364;
+const lidPoint = (cx, deg, out = 0) => { const a = (deg * Math.PI) / 180; return `${(cx + (35 + out) * Math.cos(a)).toFixed(1)} ${(EYE_Y + (41 + out) * Math.sin(a)).toFixed(1)}`; };
+const lidLine = (cx, width) => L(`M${lidPoint(cx, 200)} A35 41 0 0 1 ${lidPoint(cx, 340)}`, width);
+/** Lashes at these angles (340 = outer corner, 270 = top) on the outer side `s` of the eye. */
+const lashes = (cx, s, list) => L(list.map(([deg, length]) => { const d = s > 0 ? deg : 540 - deg; return `M${lidPoint(cx, d)} L${lidPoint(cx, d, length)}`; }).join(' '), 5);
+
 const ITEMS = {
   lash: {
-    soft: (cx, s) => L(`M${cx + s * 34} 322 l${s * 14} -10 M${cx + s * 26} 314 l${s * 10} -14`, 5),
-    long: (cx, s) => L(`M${cx + s * 36} 324 l${s * 18} -10 M${cx + s * 28} 314 l${s * 14} -18 M${cx + s * 14} 306 l${s * 6} -20 M${cx - s * 2} 304 l0 -18 M${cx - s * 18} 308 l${-s * 6} -16`, 5),
-    wing: (cx, s) => P(`M${cx - s * 36} 326 Q${cx} 286 ${cx + s * 38} 322 L${cx + s * 66} 300 Q${cx + s * 50} 330 ${cx + s * 36} 332 Q${cx} 300 ${cx - s * 36} 326Z`, '#3b2a25', 'stroke-width="3"') +
-      L(`M${cx + s * 20} 308 l${s * 10} -18 M${cx + s * 2} 302 l${s * 3} -18`, 5),
+    soft: (cx, s) => lidLine(cx, 5) + lashes(cx, s, [[322, 15], [302, 15]]),
+    long: (cx, s) => lidLine(cx, 5) + lashes(cx, s, [[326, 22], [304, 22], [282, 20], [260, 18], [238, 15]]),
+    wing: (cx, s) => lidLine(cx, 9) + L(`M${lidPoint(cx, s > 0 ? 338 : 202)} l${s * 30} -16`, 9) + lashes(cx, s, [[312, 16], [290, 16]]),
   },
   gem: {
     stars: () => [[150, 392, 14], [128, 420, 9], [450, 392, 14], [472, 420, 9]].map(([x, y, r]) => P(starPath(x, y, r, r * 0.45), '#ffd447', 'stroke-width="3"')).join(''),
     hearts: () => [[146, 396, 10], [454, 396, 10]].map(([x, y, s]) => P(heartPath(x, y, s), '#ff5c8a', 'stroke-width="3"')).join('') + c(124, 416, 5, '#ff9ec0') + c(476, 416, 5, '#ff9ec0'),
     pearls: () => [[172, 392], [196, 398], [220, 400], [428, 392], [404, 398], [380, 400]].map(([x, y]) => C(x, y, 7, '#fff', 'stroke-width="2.500"')).join(''),
-    moon: () => P('M300 150 a26 26 0 1 0 22 40 a20 20 0 1 1 -22 -40Z', '#ffd447', 'stroke-width="3.500"') + P(starPath(336, 160, 9, 4), '#fff', 'stroke-width="2.500"'),
+    // on the forehead just under the fringe (higher up it would be hidden by the hair)
+    moon: () => P('M300 284 a17 17 0 1 0 14 26 a13 13 0 1 1 -14 -26Z', '#ffc21f') + P(starPath(324, 291, 6.5, 3), '#ffc21f'),
     rainbow: () => [[160, 400, -12], [440, 400, 12]].map(([x, y, a]) => `<g transform="rotate(${a} ${x} ${y})">${['#ff7a8a', '#ffd447', '#7fd3ff'].map((col, i) => `<path d="M${x - 20 + i * 6} ${y + 8} a${20 - i * 6} ${20 - i * 6} 0 0 1 ${(20 - i * 6) * 2} 0" fill="none" stroke="${col}" stroke-width="6" stroke-linecap="round"/>`).join('')}</g>`).join(''),
   },
   hair: {
@@ -68,8 +78,8 @@ const ITEMS = {
     gems: () => L('M226 588 Q300 660 374 588', 4, '#e0a100') + [[264, 620, '#7fd3ff'], [300, 630, '#ff5c8a'], [336, 620, '#9be29f']].map(([x, y, col]) => P(`M${x} ${y - 14} l12 14 l-12 16 l-12 -16z`, col, 'stroke-width="3.500"')).join(''),
   },
 };
-const ITEM_VIEW = { lash: '310 268 150 100', gem: '90 350 150 100', hair: '110 20 380 250', ear: '456 394 76 86', neck: '206 570 188 110' };
-const draw = (cat, key) => !key ? '' : cat === 'lash' ? `<g transform="translate(0 18)">${ITEMS.lash[key](218, -1) + ITEMS.lash[key](382, 1)}</g>` : cat === 'gem' && key !== 'moon' ? `<g transform="translate(0 26)">${ITEMS.gem[key]()}</g>` : cat === 'ear' ? ITEMS.ear[key](92) + ITEMS.ear[key](508) : ITEMS[cat][key]();
+const ITEM_VIEW = { lash: '322 292 132 104', gem: '90 350 150 100', hair: '110 20 380 250', ear: '456 394 76 86', neck: '206 570 188 110' };
+const draw = (cat, key) => !key ? '' : cat === 'lash' ? ITEMS.lash[key](218, -1) + ITEMS.lash[key](382, 1) : cat === 'gem' && key !== 'moon' ? `<g transform="translate(0 26)">${ITEMS.gem[key]()}</g>` : cat === 'ear' ? ITEMS.ear[key](92) + ITEMS.ear[key](508) : ITEMS[cat][key]();
 
 const CATS = [
   { key: 'lip', voice: 'mk-lip', icon: `<svg viewBox="0 0 100 100">${R(34, 54, 32, 40, 6, '#ffd447')}${R(38, 38, 24, 20, 3, '#f1f1f1')}${P('M40 40 V18 Q54 4 60 22 V40Z', '#e8364f')}</svg>` },
@@ -88,13 +98,13 @@ function faceMarkup(style, hair, blurId) {
     hairBack(style, hair) + R(262, 520, 76, 110, 30, SKIN) +
     P('M110 730 C110 640 200 604 300 604 C400 604 490 640 490 730Z', '#ff9ec0') + P('M236 608 Q300 664 364 608 Q300 632 236 608Z', '#fff') +
     `<g class="slot" data-slot="neck"></g>` +
-    E(96, 380, 28, 38, SKIN) + E(504, 380, 28, 38, SKIN) + e(96, 382, 13, 20, '#ffc9b0') + e(504, 382, 13, 20, '#ffc9b0') +
+    E(96, 380, 28, 38, SKIN) + E(504, 380, 28, 38, SKIN) + e(96, 382, 13, 20, '#e8a585') + e(504, 382, 13, 20, '#e8a585') +
     P('M300 110 C440 110 508 214 508 350 C508 482 420 568 300 568 C180 568 92 482 92 350 C92 214 160 110 300 110Z', SKIN) +
-    e(168, 452, 42, 27, '#ffb3a8', 'opacity=".5"') + e(432, 452, 42, 27, '#ffb3a8', 'opacity=".5"') +
+    e(168, 452, 42, 27, '#f08f7c', 'opacity=".4"') + e(432, 452, 42, 27, '#f08f7c', 'opacity=".4"') +
     `<g filter="url(#${blurId})"><ellipse class="paint paint-blush" cx="168" cy="452" rx="56" ry="38" opacity="0"/><ellipse class="paint paint-blush" cx="432" cy="452" rx="56" ry="38" opacity="0"/></g>` +
     `<path class="paint paint-shadow" d="${lid(218, 346)}" opacity="0"/><path class="paint paint-shadow" d="${lid(382, 346)}" opacity="0"/>` +
     eye(218, 364) + eye(382, 364) + `<g class="slot" data-slot="lash"></g>` +
-    L('M291 440 q9 8 18 0', 4, '#e3a58c') +
+    L('M291 440 q9 8 18 0', 4, '#c98c6a') +
     P(LIPS, '#f4a3a3', 'stroke-width="4"') + `<path class="paint paint-lip" d="${LIPS}" opacity="0"/>` + L('M268 497 Q300 510 332 497', 3.5) + `<ellipse class="lip-shine" cx="290" cy="514" rx="9" ry="4" fill="#fff" opacity="0"/>` +
     `<g class="slot" data-slot="gem"></g>` + hairFront(hair) + `<g class="slot" data-slot="hair"></g><g class="slot" data-slot="ear"></g>` +
     z('lip', 0) + z('blush', 0) + z('blush', 1) + z('shadow', 0) + z('shadow', 1);
@@ -143,7 +153,7 @@ export default {
         brush.html(cat.icon);
       } else {
         const keys = Object.keys(ITEMS[cat.key]);
-        options = tray(ctx, W - 122, 330, keys.map((key) => ({ key, html: `<svg viewBox="${ITEM_VIEW[cat.key]}">${cat.key === 'lash' ? ITEMS.lash[key](374, 1) + L('M338 328 Q374 298 410 328', 6) : cat.key === 'ear' ? ITEMS.ear[key](494).replace(/translate/g, 'translate') : cat.key === 'gem' && (key === 'moon') ? '' : ITEMS[cat.key][key]()}</svg>` })), (item, chip) => {
+        options = tray(ctx, W - 122, 330, keys.map((key) => ({ key, html: `<svg viewBox="${ITEM_VIEW[cat.key]}">${cat.key === 'lash' ? e(382, EYE_Y, 30, 36, '#d6dbe8') + ITEMS.lash[key](382, 1) : cat.key === 'ear' ? ITEMS.ear[key](494).replace(/translate/g, 'translate') : cat.key === 'gem' && (key === 'moon') ? '' : ITEMS[cat.key][key]()}</svg>` })), (item, chip) => {
           const on = state.worn[cat.key] !== item.key;
           state.worn[cat.key] = on ? item.key : null;
           svg.querySelector(`[data-slot="${cat.key}"]`).innerHTML = draw(cat.key, state.worn[cat.key]);
@@ -151,7 +161,7 @@ export default {
           ctx.sfx(on ? 'sparkle' : 'drop');
           if (on) { state.used.add(cat.key); anim(svg.querySelector(`[data-slot="${cat.key}"]`), 'fade', 300); ctx.burst(fx, fy - 60, { n: 7, spread: 240 }); }
         }, { width: 214, cls: 'mk-options' });
-        if (cat.key === 'gem') options.chips.get('moon').innerHTML = `<svg viewBox="262 136 100 80">${ITEMS.gem.moon()}</svg>`;
+        if (cat.key === 'gem') options.chips.get('moon').innerHTML = `<svg viewBox="268 270 80 64">${ITEMS.gem.moon()}</svg>`;
         if (state.worn[cat.key]) options.select(state.worn[cat.key]);
       }
       guides(PAL[cat.key] ? cat.key : null);
