@@ -36,7 +36,7 @@ const server = createServer((req, res) => {
 await new Promise((r) => server.listen(0, '127.0.0.1', r));
 const base = `http://127.0.0.1:${server.address().port}/kids-playground/`;
 
-const chrome = spawn(findChrome(), ['--headless', '--remote-debugging-port=0', `--window-size=${VW},${VH}`, '--hide-scrollbars', '--autoplay-policy=no-user-gesture-required', 'about:blank'], { stdio: ['ignore', 'ignore', 'pipe'] });
+const chrome = spawn(findChrome(), ['--headless', '--remote-debugging-port=0', `--window-size=${VW},${VH}`, '--hide-scrollbars', '--mute-audio', '--autoplay-policy=no-user-gesture-required', 'about:blank'], { stdio: ['ignore', 'ignore', 'pipe'] });
 const wsUrl = await new Promise((done) => chrome.stderr.on('data', (d) => { const m = /ws:\/\/[^\s]+/.exec(String(d)); if (m) done(m[0]); }));
 const port = new URL(wsUrl).port;
 const target = (await (await fetch(`http://127.0.0.1:${port}/json`)).json()).find((t) => t.type === 'page');
