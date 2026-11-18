@@ -9,12 +9,16 @@ import { toolbox, spray, Paint, svgEl } from './salonkit.js';
 
 // where each finger starts on the hand (from the middle of the palm), how it leans, how long and wide it is
 const FINGERS = [
-  { bx: -158, by: 30, ang: -54, len: 158, w: 74 },
-  { bx: -98, by: -100, ang: -12, len: 214, w: 64 },
-  { bx: -32, by: -112, ang: -3, len: 240, w: 66 },
-  { bx: 36, by: -106, ang: 7, len: 220, w: 64 },
-  { bx: 100, by: -84, ang: 19, len: 172, w: 58 },
+  { bx: -112, by: 70, ang: -40, len: 168, w: 72 },     // thumb, out to the side
+  { bx: -94, by: -96, ang: -7, len: 228, w: 62 },
+  { bx: -30, by: -104, ang: -2, len: 256, w: 64 },
+  { bx: 34, by: -100, ang: 4, len: 236, w: 62 },
+  { bx: 94, by: -84, ang: 11, len: 186, w: 56 },
 ];
+const TAPER = 0.84;     // a fingertip is a little narrower than the base of the finger
+/** A long slim finger: a soft swell at the middle joint, then narrowing to a round tip. */
+const fingerShape = (w, l) => { const t = w * TAPER / 2;
+  return `M${-w / 2} 46 C${-w / 2} ${-l * 0.2} ${-w * 0.45} ${-l * 0.3} ${-w * 0.47} ${-l * 0.47} C${-w * 0.49} ${-l * 0.6} ${-t} ${-l * 0.72} ${-t} ${-l + t} A${t} ${t} 0 0 1 ${t} ${-l + t} C${t} ${-l * 0.72} ${w * 0.49} ${-l * 0.6} ${w * 0.47} ${-l * 0.47} C${w * 0.45} ${-l * 0.3} ${w / 2} ${-l * 0.2} ${w / 2} 46Z`; };
 const POLISH = ['#ff4f7b', '#ff8fc4', '#ff9d2e', '#ffd23f', '#4fc56a', '#3fb4ff', '#9a7bf5', 'glitter'];
 const STEPS = ['clip', 'file', 'polish', 'deco'];
 const VOICE = { clip: 'nails-clip', file: 'nails-file', polish: 'nails-polish', deco: 'nails-deco' };
@@ -28,12 +32,12 @@ export default {
 
   start(ctx) {
     const { W } = ctx;
-    const px = Math.round(W * 0.48), py = 548;
+    const px = Math.round(W * 0.48), py = 536;
     const skin = pick(CLIENTS).skin, dark = shade(skin, -0.13), glitter = nextId();
     ctx.scene(nailTable(W, px));
 
     const fingers = FINGERS.map((f, i) => {
-      const a = f.ang * Math.PI / 180, nw = f.w * 0.68, nh = f.w * 0.86, y0 = -f.len + f.w * 0.16;
+      const a = f.ang * Math.PI / 180, nw = f.w * 0.74, nh = f.w, y0 = -f.len + f.w * 0.1;       // big nails: easy to paint
       return { ...f, i, X: px + f.bx, Y: py + f.by, cos: Math.cos(a), sin: Math.sin(a), nw, nh, y0, state: 'long', filed: 0, clip: nextId() };
     });
     const toLocal = (f, pt) => { const dx = pt.x - f.X, dy = pt.y - f.Y; return { x: dx * f.cos + dy * f.sin, y: -dx * f.sin + dy * f.cos }; };
@@ -42,7 +46,7 @@ export default {
     const fingerMarkup = (f) => {
       const { nw: w, nh: h, y0, len } = f;
       return `<g transform="translate(${f.X} ${f.Y}) rotate(${f.ang})"><g class="finger" data-finger="${f.i}" style="animation-delay:${-f.i * 0.7}s">` +
-        R(-f.w / 2, -len, f.w, len + 44, f.w / 2, skin) + L(`M${-f.w * 0.24} ${-len * 0.44} q${f.w * 0.24} 9 ${f.w * 0.48} 0 M${-f.w * 0.2} ${-len * 0.44 + 12} q${f.w * 0.2} 7 ${f.w * 0.4} 0`, 3.5, dark) +
+        `<path d="${fingerShape(f.w, len)}" fill="${skin}"/>` + L(`M${-f.w * 0.24} ${-len * 0.44} q${f.w * 0.24} 9 ${f.w * 0.48} 0 M${-f.w * 0.2} ${-len * 0.44 + 12} q${f.w * 0.2} 7 ${f.w * 0.4} 0`, 3.5, dark) +
         `<g class="ring-slot"></g>` +
         // grown far too long, with a ragged end
         `<path class="over" d="M${-w / 2} ${y0 + w * 0.5} L${-w / 2} ${y0 - 14} L${-w * 0.22} ${y0 - 34} L0 ${y0 - 20} L${w * 0.24} ${y0 - 38} L${w / 2} ${y0 - 12} L${w / 2} ${y0 + w * 0.5}Z" fill="#fff3ea"/>` +
@@ -55,8 +59,11 @@ export default {
     };
     const holder = ctx.add(el('div', { class: 'salon-holder', html:
       `<svg class="salon-svg" viewBox="0 0 ${W} 800" width="${W}" height="800"><defs><pattern id="${glitter}" width="18" height="18" patternUnits="userSpaceOnUse"><rect width="18" height="18" fill="#ff9ecb"/><circle cx="4" cy="5" r="2.200" fill="#fff"/><circle cx="13" cy="12" r="2.600" fill="#fff36b"/><circle cx="13" cy="3" r="1.300" fill="#fff"/><circle cx="5" cy="14" r="1.500" fill="#fff36b"/></pattern></defs>` +
-      `<g class="hand" style="transform-origin:${px}px ${py + 250}px">${R(px - 95, py + 150, 190, 460, 30, skin)}<path d="M${px - 146} ${py + 40} C${px - 152} ${py - 70} ${px - 140} ${py - 128} ${px - 50} ${py - 128} L${px + 50} ${py - 128} C${px + 140} ${py - 128} ${px + 152} ${py - 60} ${px + 146} ${py + 30} C${px + 142} ${py + 110} ${px + 100} ${py + 150} ${px + 95} ${py + 214} L${px - 95} ${py + 214} C${px - 100} ${py + 164} ${px - 140} ${py + 130} ${px - 146} ${py + 40}Z" fill="${skin}"/>` +
-      [-98, -32, 36, 100].map((bx, i) => L(`M${px + bx - 16} ${py - 92 + Math.abs(i - 1.3) * 7} q16 -10 32 0`, 3.5, dark)).join('') +
+      `<g class="hand" style="transform-origin:${px}px ${py + 250}px"><g transform="translate(${px} ${py})">${R(-84, 226, 172, 460, 20, skin)}` +
+      // the back of the hand: widest at the knuckles, a soft bulge under the thumb, narrowing to the wrist
+      `<path d="M-118 -80 L-30 -92 L114 -70 C126 -28 128 60 100 140 C92 164 88 190 88 240 L-84 240 C-84 196 -92 170 -110 150 C-140 116 -134 40 -122 -10Z" fill="${skin}"/>` +
+      `<path d="M-121 -58 Q-127 -9 -152 -27 L-162 -17 L-124 26 L-96 30 L-96 -60Z" fill="${skin}"/>` +     // the web between thumb and first finger
+      [-94, -30, 34, 94].map((bx, i) => L(`M${bx - 15} ${[-78, -86, -82, -68][i]} q15 -9 30 0`, 3.5, dark)).join('') + `</g>` +
       `<g class="wrist-slot"></g>${fingers.map(fingerMarkup).join('')}</g><g class="fly"></g></svg>` }));
     const root = holder.firstElementChild, hand = root.querySelector('.hand'), flyG = root.querySelector('.fly'), wristG = root.querySelector('.wrist-slot');
     for (const f of fingers) {
@@ -64,7 +71,7 @@ export default {
       for (const k of ['over', 'rough', 'paint', 'shine', 'decal', 'ring-slot']) f[k] = f.g.querySelector(`.${k}`);
       const pts = [];
       for (const fx of [-0.32, -0.11, 0.11, 0.32]) for (const fy of [0.14, 0.32, 0.5, 0.68, 0.86]) pts.push([fx * f.nw, f.y0 + fy * f.nh]);
-      f.coatOf = new Paint(f.paint, pts, 12);
+      f.coatOf = new Paint(f.paint, pts, 14);
       f.edge = toStage(f, 0, f.y0 - 6);
       f.mid = toStage(f, 0, f.y0 + f.nh / 2);
     }
@@ -178,9 +185,9 @@ export default {
         ctx.sfx('slide'); ctx.after(380, () => { ctx.sfx('sparkle'); const at = toStage(f.n, 0, -f.n.len * 0.29); ctx.burst(at.x, at.y, { n: 6, shapes: ['star'], colors: ['#fff', '#fff36b'], spread: 70, size: 24, ms: 600 }); });
         return true;
       }
-      if (y < py + 80 || Math.abs(x - px) > 190) return false;
-      wristG.innerHTML = `<g transform="translate(${px} ${py + 196})"><g class="acc-in">${BRACELETS[key](196)}</g></g>`;
-      ctx.sfx('sparkle'); ctx.burst(px, py + 196, { n: 8, shapes: ['star', 'heart'], spread: 150, size: 28 });
+      if (y < py + 90 || Math.abs(x - px) > 190) return false;
+      wristG.innerHTML = `<g transform="translate(${px + 2} ${py + 206})"><g class="acc-in">${BRACELETS[key](186)}</g></g>`;
+      ctx.sfx('sparkle'); ctx.burst(px, py + 206, { n: 8, shapes: ['star', 'heart'], spread: 150, size: 28 });
       return true;
     }
 
@@ -204,7 +211,7 @@ export default {
       } else if (now === 'deco') decorate();
     }
 
-    ['clipper', 'file'].forEach((k, i) => box.add(k, TOOLS[k], W - 126, 330 + i * 170, 150, k === 'clipper' ? 127 : 100, { tip: [TIP[k][0] * 150, TIP[k][1] * (k === 'clipper' ? 127 : 100)] }));
+    ['clipper', 'file'].forEach((k, i) => box.add(k, TOOLS[k], W - 122, 320 + i * 170, 150, k === 'clipper' ? 127 : 100, { tip: [TIP[k][0] * 150, TIP[k][1] * (k === 'clipper' ? 127 : 100)] }));
     next();
   },
 };

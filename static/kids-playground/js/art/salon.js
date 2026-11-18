@@ -55,13 +55,13 @@ export const turban = (who, col = '#ff9ecb') =>
 /* ---------- tools ---------- */
 
 const svg = (box, inner) => `<svg viewBox="${box}">${inner}</svg>`;
-const METAL = '#cfd6e6', STEEL = '#8a93a8';
+const METAL = '#b4bed4', STEEL = '#7c869c';
 
 export const TOOLS = {
   // the blades point left; they open and close while the scissors are held
   scissors: svg('0 0 140 120',
     `<g class="blade-a">${P('M74 62 L10 40 Q2 46 8 56Z', METAL)}${L('M74 62 L102 80', 11, '#ff6fa8')}<circle cx="114" cy="90" r="16" fill="none" stroke="#ff6fa8" stroke-width="10"/></g>` +
-    `<g class="blade-b">${P('M74 58 L10 80 Q2 74 8 64Z', '#e3e8f3')}${L('M74 58 L102 40', 11, '#ff6fa8')}<circle cx="114" cy="30" r="16" fill="none" stroke="#ff6fa8" stroke-width="10"/></g>` + C(74, 60, 6, STEEL)),
+    `<g class="blade-b">${P('M74 58 L10 80 Q2 74 8 64Z', '#cdd5e4')}${L('M74 58 L102 40', 11, '#ff6fa8')}<circle cx="114" cy="30" r="16" fill="none" stroke="#ff6fa8" stroke-width="10"/></g>` + C(74, 60, 6, STEEL)),
   potion: svg('0 0 120 120', R(40, 50, 58, 64, 16, '#7ed957') + R(40, 50, 22, 64, 11, '#9be27a') + P(starPath(70, 84, 16, 7), '#fff36b') + R(58, 34, 22, 20, 4, '#fff') +
     P('M40 14 h46 q8 0 8 8 v14 h-54z', '#33a650') + R(26, 18, 18, 12, 4, '#33a650') + P('M86 36 l12 18 h-12z', '#2a8a43') + c(52, 62, 5, '#fff') + sparkle(98, 94, 9, '#fff36b')),
   curler: svg('0 0 140 120', R(6, 46, 90, 28, 14, '#ff8fc4') + R(12, 50, 78, 8, 4, '#ffc4e0') + L('M10 78 Q50 86 92 78', 6, STEEL) + R(90, 42, 46, 36, 14, '#7a5bdb') + C(112, 60, 7, '#c9b8ff') +
@@ -82,7 +82,7 @@ export const TOOLS = {
   clipper: svg('0 0 130 110', P('M12 70 Q10 60 20 60 L112 64 q10 2 8 12 q-2 8 -12 8 L20 76 q-8 -1 -8 -6Z', METAL) + `<g class="lever">${P('M22 56 L110 26 q10 -3 12 7 q1 8 -8 11 L30 64Z', '#b6bfd3')}${C(104, 38, 6, '#fff')}</g>` + C(40, 62, 6, STEEL) + P('M12 58 l10 -2 v6z', STEEL)),
   file: svg('0 0 150 100', `<g transform="rotate(-16 75 50)">${R(8, 38, 106, 24, 12, '#ffb4d6')}${R(14, 42, 94, 16, 8, '#ff8fc4')}${[24, 38, 52, 66, 80, 94].map((x) => c(x, 50, 2.5, '#ffd9ec')).join('')}${R(104, 34, 40, 32, 14, '#7a5bdb')}${C(126, 50, 6, '#c9b8ff')}</g>`),
   puff: svg('0 0 120 120', C(60, 64, 46, '#ff9ecb') + C(60, 64, 34, '#ffb4d6') + L('M30 64 Q60 44 90 64', 5, '#ff7fb0') + C(34, 30, 15, '#fff') + C(58, 22, 18, '#fff') + C(84, 32, 14, '#fff') + c(54, 20, 5, '#dff4ff')),
-  cream: svg('0 0 120 120', P('M32 34 h56 l-7 74 q-1 6 -7 6 h-28 q-6 0 -7 -6z', '#fff') + P('M34 52 h52 l-2 22 h-48z', '#ffb4d6') + P(heartPath(60, 63, 7), '#fff') + R(46, 14, 28, 22, 6, '#ff6fa8') + R(46, 14, 10, 22, 5, '#ff8fc4')),
+  cream: svg('0 0 120 120', P('M32 34 h56 l-7 74 q-1 6 -7 6 h-28 q-6 0 -7 -6z', '#9fdcff') + P('M32 34 h18 l-3 80 h-1 q-6 0 -7 -6z', '#c4eaff') + P('M34 52 h52 l-2 24 h-48z', '#fff') + P(heartPath(60, 64, 8), '#ff6fa8') + R(46, 14, 28, 22, 6, '#ff6fa8') + R(46, 14, 10, 22, 5, '#ff8fc4')),
 };
 
 /** Where the working end of each tool is, from the middle of its picture, as a share of its width and height. */
@@ -162,14 +162,12 @@ export function nailTable(W, cx) {
   for (const [fx, y, r, col] of [[0.06, 150, 16, '#ffd447'], [0.94, 200, 13, '#ff9ecb'], [0.9, 660, 15, '#b79cff'], [0.08, 640, 12, '#7fd3ff']]) out += `<path class="twinkle" d="${starPath(W * fx, y, r, r * 0.45)}" fill="${col}"/>`;
   return out;
 }
-/** The spa: a calm green room with a window on the left, a tool board on the right and the chair in the middle. */
+/** The spa: a calm green room with a window on the left and the chair in the middle. */
 export function spaRoom(W, cx) {
   let out = room(W, '#dff5ec', '#cdeee0', '#b9dfcf', 690, 'stripes');
   const wx = 130;
   out += R(wx - 104, 86, 208, 252, 104, '#fff') + R(wx - 88, 102, 176, 236, 88, '#a9e2ff') + C(wx + 26, 168, 26, '#fff7a8') + `<path d="M${wx - 88} 300 q46 -48 88 -10 q38 -32 88 10 v38 h-176z" fill="#9be0a8"/>` + R(wx - 120, 330, 240, 18, 9, '#fff') +
     [[-60, '#ff9ecb'], [0, '#fff36b'], [60, '#c4adff']].map(([dx, col]) => R(wx + dx - 9, 300, 18, 30, 5, col) + `<path class="flame" d="M${wx + dx} 280 q8 10 0 18 q-8 -8 0 -18z" fill="#ffb21f"/>`).join('');
-  // the board the tools hang on
-  out += R(W - 208, 112, 164, 446, 44, '#ffffff') + R(W - 208, 112, 164, 446, 44, 'rgba(159,224,200,.25)');
   // the chair
   out += R(cx - 210, 250, 420, 700, 120, '#9be0c8') + R(cx - 176, 282, 352, 680, 92, '#b9eddc');
   return out;

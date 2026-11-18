@@ -237,7 +237,7 @@ export default {
       for (const node of pupils) node.style.transform = `translate(${look.x.toFixed(1)}px, ${look.y.toFixed(1)}px)`;
     });
 
-    ['puff', 'towel', 'cream'].forEach((k, i) => box.add(k, TOOLS[k], W - 126, 196 + i * 144, 124, k === 'towel' ? 114 : 124, { tip: [TIP[k][0] * 124, TIP[k][1] * 124] }));
+    ['puff', 'towel', 'cream'].forEach((k, i) => box.add(k, TOOLS[k], W - 116, 190 + i * 150, 120, 120, { tip: [TIP[k][0] * 120, TIP[k][1] * 120] }));
     next();
   },
 };

@@ -344,11 +344,12 @@ svg.scene { position: absolute; left: 0; top: 0; overflow: visible; display: blo
 .cl-thumb { aspect-ratio: 1.12; border-radius: 30px; background: #fff; box-shadow: 0 8px 0 var(--shadow); padding: 10px; animation: card-in .45s cubic-bezier(.3, 1.4, .5, 1) both; }
 .cl-thumb:active { transform: translateY(5px); }
 .cl-thumb svg { pointer-events: none; }
-.cl-paper { position: absolute; border-radius: 40px; background: #fff; box-shadow: 0 10px 0 var(--shadow); padding: 26px; }
+.cl-paper { position: absolute; border-radius: 40px; background: #fff; box-shadow: 0 10px 0 var(--shadow); padding: 16px; }
 svg.page .zone { stroke: var(--ink); stroke-width: 3.5; stroke-linejoin: round; cursor: pointer; paint-order: fill; }
 svg.page .zone-line { cursor: pointer; }
 svg.page.done .zone { stroke-width: 0; }
 svg.page.done .edge { display: none; }
+svg.page .printed { pointer-events: none; }
 .cl-thumb svg.page .zone { stroke-width: 5; }
 .cl-palette { gap: 10px; padding: 14px 10px; }
 .cl-palette .swatch { width: 58px; height: 58px; }
@@ -396,6 +397,13 @@ svg.salon-svg { position: absolute; left: 0; top: 0; display: block; overflow: v
 .salon-face[data-mouth="o"] .mouth-smile, .salon-face[data-mouth="happy"] .mouth-smile { display: none; }
 .salon-face[data-mouth="o"] .mouth-o, .salon-face[data-mouth="happy"] .mouth-happy { display: inline; }
 .dirt-spot { transition: opacity .1s; }
+/* every tool has its own tile; the one to use next gets a bright frame */
+.tool-slot { position: absolute; border-radius: 30px; background: #fff; box-shadow: 0 6px 0 var(--shadow); pointer-events: none; transition: background .2s, box-shadow .2s; }
+.tool-slot.next { background: #fff3a8; box-shadow: 0 0 0 7px #ffb21f, 0 9px 0 5px var(--shadow); animation: slot-next .8s ease-in-out infinite alternate; }
+@keyframes slot-next { from { scale: 1; } to { scale: 1.06; } }
+.tool.kit.off { opacity: 1; filter: none; }
+.tool.kit.using { filter: drop-shadow(0 16px 0 rgba(31, 26, 58, .16)); }
+.tool.kit.pulse.using { animation: none; }
 /* tools come alive in the hand */
 .tool > svg { transition: transform .18s; }
 .tool .blade-a, .tool .blade-b { transform-origin: 74px 60px; }

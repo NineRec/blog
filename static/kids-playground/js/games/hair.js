@@ -26,11 +26,30 @@ const CAP = 'M20 310 L20 20 L580 20 L580 310 C520 220 400 196 300 196 C200 196 8
 const bowAt = (x, y, col, s, dark) => `<g transform="translate(${x} ${y}) scale(${s})">${P('M0 0 C-30 -46 -84 -44 -78 0 C-84 44 -30 46 0 0Z', col)}${P('M0 0 C30 -46 84 -44 78 0 C84 44 30 46 0 0Z', col)}${R(-17, -20, 34, 40, 12, dark)}</g>`;
 const flowerAt = (x, y, col, s = 1) => `<g transform="translate(${x} ${y}) scale(${s})">${[0, 72, 144, 216, 288].map((a) => `<ellipse cx="0" cy="-15" rx="10" ry="13" fill="${col}" transform="rotate(${a})"/>`).join('')}<circle r="9" fill="#ffd447"/></g>`;
 // things for the hair, in face units; one from the top and one from the side can be worn together
+const GOLD = '#ffc21f', CROWN_VIEW = '180 -6 240 150';
 const WEAR = {
-  tiara: { slot: 'top', view: '180 0 240 150', art: () => P('M196 124 L212 50 L250 96 L276 26 L300 84 L324 26 L350 96 L388 50 L404 124 Q300 100 196 124Z', '#ffd447') + C(276, 34, 10, '#ff5c8a') + C(324, 34, 10, '#7fd3ff') + C(300, 96, 12, '#b388ff') + C(212, 56, 8, '#fff') + C(388, 56, 8, '#fff') },
+  tiara: { slot: 'top', view: CROWN_VIEW, art: () => P('M196 124 L212 50 L250 96 L276 26 L300 84 L324 26 L350 96 L388 50 L404 124 Q300 100 196 124Z', '#ffd447') + C(276, 34, 10, '#ff5c8a') + C(324, 34, 10, '#7fd3ff') + C(300, 96, 12, '#b388ff') + C(212, 56, 8, '#fff') + C(388, 56, 8, '#fff') },
+  // a queen's crown: red velvet under golden arches
+  royal: { slot: 'top', view: CROWN_VIEW, art: () => P('M212 104 C206 28 394 28 388 104Z', '#e8364f') + L('M214 100 C226 44 286 36 300 30 C314 36 374 44 386 100', 12, GOLD) + L('M300 32 V100', 12, GOLD) + C(300, 20, 13, GOLD) + c(296, 16, 4, '#fff3a8') +
+    P('M200 96 Q300 76 400 96 L404 128 Q300 106 196 128Z', GOLD) + C(240, 106, 8, '#3fb4ff') + C(300, 99, 10, '#fff') + C(360, 106, 8, '#4fc56a') + c(270, 101, 4, '#fff3a8') + c(330, 101, 4, '#fff3a8') },
+  // pink, with hearts
+  hearts: { slot: 'top', view: CROWN_VIEW, art: () => L('M198 122 Q300 94 402 122', 15, '#ff8fc4') + L('M236 104 V84 M364 104 V84 M300 96 V70', 8, '#ff8fc4') + P(heartPath(300, 50, 30), '#ff4f7b') + c(288, 40, 6, '#ffb3c6') +
+    P(heartPath(236, 72, 17), '#ff9ecb') + P(heartPath(364, 72, 17), '#ff9ecb') + C(200, 122, 9, '#fff') + C(400, 122, 9, '#fff') + C(268, 104, 6, '#fff') + C(332, 104, 6, '#fff') },
+  // ice crystals, for a snow queen
+  ice: { slot: 'top', view: CROWN_VIEW, art: () => P('M198 126 L220 60 L246 102 L266 30 L290 94 L300 6 L310 94 L334 30 L354 102 L380 60 L402 126 Q300 100 198 126Z', '#8fd6ff') +
+    p('M300 6 L310 94 L300 108 L290 94Z', '#e3f6ff') + p('M266 30 L290 94 L272 104Z', '#bfe8ff') + p('M334 30 L310 94 L328 104Z', '#bfe8ff') + p('M220 60 L246 102 L228 112Z', '#bfe8ff') + p('M380 60 L354 102 L372 112Z', '#bfe8ff') +
+    sparkle(300, 60, 12, '#fff') + sparkle(236, 96, 7, '#fff') + sparkle(364, 96, 7, '#fff') },
+  // a silver band with stars standing on it
+  stars: { slot: 'top', view: CROWN_VIEW, art: () => L('M198 124 Q300 98 402 124', 13, '#cfd6e6') + L('M232 108 V78 M368 108 V78 M300 100 V64 M266 104 V92 M334 104 V92', 6, '#cfd6e6') + P(starPath(300, 40, 32, 14), '#ffd447') +
+    P(starPath(232, 62, 21, 9.5), '#fff36b') + P(starPath(368, 62, 21, 9.5), '#fff36b') + C(266, 86, 7, '#ff8fc4') + C(334, 86, 7, '#ff8fc4') + c(292, 32, 5, '#fff7c2') },
+  // a small crown worn to one side
+  mini: { slot: 'top', view: '200 20 170 140', art: () => `<g transform="rotate(-16 250 110)">${P('M214 122 L206 62 L234 88 L254 44 L274 88 L302 62 L294 122 Q254 110 214 122Z', '#ffd447')}${R(212, 106, 84, 18, 9, '#ff8fc4')}${C(254, 52, 9, '#ff4f7b')}${C(208, 66, 7, '#fff')}${C(300, 66, 7, '#fff')}${C(254, 115, 6, '#fff')}</g>` },
   flowers: { slot: 'top', view: '100 40 400 160', art: () => [[136, 160, '#ff9ec0'], [204, 104, '#fff'], [300, 82, '#ff7a8a'], [396, 104, '#b388ff'], [464, 160, '#ffd447']].map(([x, y, col], i) => flowerAt(x, y, col, i === 2 ? 1.6 : 1.3)).join('') +
     [[166, 128], [248, 88], [352, 88], [434, 128]].map(([x, y]) => p(`M${x - 14} ${y} q14 -18 30 -4 q-14 16 -30 4z`, '#7ed957')).join('') },
   ears: { slot: 'top', view: '110 -10 380 180', art: () => L('M132 150 Q300 6 468 150', 16, '#ff9ec0') + P('M150 126 L128 6 L240 62Z', '#fff') + p('M160 104 L148 36 L212 68Z', '#ffc2d1') + P('M450 126 L472 6 L360 62Z', '#fff') + p('M440 104 L452 36 L388 68Z', '#ffc2d1') },
+  // a unicorn horn between two little ears
+  unicorn: { slot: 'top', view: '200 -40 200 170', art: () => P('M232 112 L224 52 L268 86Z', '#fff') + p('M238 100 L234 68 L256 86Z', '#ffc2d1') + P('M368 112 L376 52 L332 86Z', '#fff') + p('M362 100 L366 68 L344 86Z', '#ffc2d1') +
+    P('M280 104 L300 -30 L320 104Z', '#fff36b') + L('M286 76 L314 60 M290 46 L310 34 M294 16 L305 9', 6, '#ffb347') + flowerAt(268, 108, '#ff9ec0', 1.1) + flowerAt(332, 108, '#b388ff', 1.1) + flowerAt(300, 114, '#fff', 1.2) },
   bow: { slot: 'side', view: '340 76 220 130', art: () => bowAt(450, 140, '#ff6fa8', 1.2, '#e64f8b') },
   clips: { slot: 'side', view: '380 110 150 130', art: () => P(starPath(424, 150, 26, 12), '#ffd447') + P(starPath(466, 190, 20, 9), '#fff36b') + P(heartPath(486, 142, 13), '#ff5c8a') },
   butterfly: { slot: 'side', view: '380 96 150 120', art: () => E(428, 138, 26, 32, '#b388ff', 'transform="rotate(-24 428 138)"') + E(482, 138, 26, 32, '#b388ff', 'transform="rotate(24 482 138)"') + E(436, 176, 18, 20, '#7fd3ff', 'transform="rotate(20 436 176)"') + E(474, 176, 18, 20, '#7fd3ff', 'transform="rotate(-20 474 176)"') +
@@ -273,8 +292,8 @@ export default {
     /* ---------- the steps ---------- */
     const shelf = (keys, cols) => keys.forEach((k, i) => {
       const col = cols === 1 ? 0 : i % 2, row = cols === 1 ? i : Math.floor(i / 2), rows = Math.ceil(keys.length / cols);
-      const w = 126, h = k === 'scissors' || k === 'curler' || k === 'iron' ? 108 : 118;
-      box.add(k, TOOLS[k], cols === 1 ? W - 116 : W - 232 + col * 136, (cols === 1 ? 400 : 356) + (row - (rows - 1) / 2) * 148, w, h, { tip: [TIP[k][0] * w, TIP[k][1] * h] });
+      const w = 126, h = 118;
+      box.add(k, TOOLS[k], cols === 1 ? W - 110 : W - 252 + col * 156, (cols === 1 ? 400 : 356) + (row - (rows - 1) / 2) * 150, w, h, { tip: [TIP[k][0] * w, TIP[k][1] * h] });
     });
 
     function next() {
@@ -304,7 +323,7 @@ export default {
         dyes = tray(ctx, 84, 432, DYES.map((col) => ({ key: col, color: col === 'rainbow' ? RAINBOW_CSS : col })), (item) => { ctx.sfx('tap'); setDye(item.key); can.anim('wiggle', 400); }, { width: 96, cls: 'hair-dyes' });
         dyes.select(dye); setDye(dye);
         anim(dyes.el, 'fade', 300);
-        extra.push(ctx.button('check', W - 164, 706, 'green', '做好了', () => next()));
+        extra.push(ctx.button('check', W - 174, 716, 'green', '做好了', () => next()));
       });
     }
 
@@ -313,7 +332,7 @@ export default {
       dyes?.el.remove();
       extra.forEach((b) => b.remove()); extra = [];
       const worn = new Map();
-      const picks = tray(ctx, W - 132, 350, Object.keys(WEAR).map((k) => ({ key: k, html: `<svg viewBox="${WEAR[k].view}">${WEAR[k].art()}</svg>` })), (item) => {
+      const picks = tray(ctx, W - 178, 356, Object.keys(WEAR).map((k) => ({ key: k, html: `<svg viewBox="${WEAR[k].view}">${WEAR[k].art()}</svg>` })), (item) => {
         const on = !worn.has(item.key);
         if (on) for (const [k, node] of worn) if (WEAR[k].slot === WEAR[item.key].slot) { node.remove(); worn.delete(k); }
         if (on) {
@@ -322,9 +341,9 @@ export default {
           ctx.sfx('sparkle'); ctx.burst(hx, hy - 150, { n: 7, spread: 200 }); mood('joy', 'happy', 900);
         } else { worn.get(item.key).remove(); worn.delete(item.key); ctx.sfx('drop'); }
         for (const [k, chip] of picks.chips) chip.classList.toggle('on', worn.has(k));
-      }, { width: 214, select: false });
+      }, { width: 312, select: false });
       anim(picks.el, 'fade', 300);
-      ctx.button('camera', W - 132, 706, 'pink', '拍照', async () => {
+      ctx.button('camera', W - 178, 706, 'pink', '拍照', async () => {
         picks.el.remove();
         ctx.sfx('camera');
         const flash = ctx.add(el('div', { class: 'flash' }));

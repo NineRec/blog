@@ -123,7 +123,14 @@ const GAMES = {
     await useTool('dryer', [...Array(30)].map(() => at(hx + 300, hy + 60)), 40);
     await shot('hair-8-wind');
     await click(await one('.stage-button.green')); await sleep(500);
-    for (const i of [0, 3]) { await click(await one('.tray .chip', i)); await sleep(250); }
+    // every crown and hair thing goes on (one from the top and one from the side at a time)
+    const things = await count('.tray .chip');
+    for (let i = 0; i < things; i++) {
+      await click(await one('.tray .chip', i)); await sleep(520);
+      if (!(await js(`[...document.querySelectorAll('.wear .acc-in')].some((g) => g.getBBox().width > 20)`))) throw new Error(`hair thing ${i} did not show`);
+      if (i < 6 || i === 8) await shot(`hair-wear-${i}`);
+    }
+    await click(await one('.tray .chip', 1)); await sleep(300);
     if ((await count('.wear .acc-in')) !== 2) throw new Error('the hair things were not put on');
     await sleep(500);
     await shot('hair-9-done');
@@ -131,7 +138,7 @@ const GAMES = {
   },
   async nails() {
     await sleep(500);
-    const st = await stageBox(), at = (x, y) => ({ x: st.x + x * st.k, y: st.y + y * st.k }), px = Math.round(st.W * 0.48), py = 548;
+    const st = await stageBox(), at = (x, y) => ({ x: st.x + x * st.k, y: st.y + y * st.k }), px = Math.round(st.W * 0.48), py = 536;
     await shot('nails-1-long');
     for (const tip of await all('.finger .over')) { await useTool('clipper', [...line({ x: tip.x + 120, y: tip.y }, tip, 6), ...Array(8).fill(tip)], 50); await sleep(450); }
     if ((await stars()) < 1) { await sleep(700); if ((await stars()) < 1) throw new Error('the nails were not clipped'); }
@@ -271,10 +278,17 @@ const GAMES = {
   async coloring() {
     await click(await one('.cl-thumb', 0)); await sleep(500);
     // a point that really lands on each shape (others may lie on top of its middle)
-    const zones = await js(`[...document.querySelectorAll('.cl-paper .zone')].map((z) => { const r = z.getBoundingClientRect(); for (let i = 0; i < 60; i++) { const x = r.left + r.width * ((i * 0.37) % 1), y = r.top + r.height * ((i * 0.61) % 1); if (document.elementFromPoint(x, y) === z) return { x, y }; } return null; }).filter(Boolean)`);
+    const zones = await js(`[...document.querySelectorAll('.cl-paper .zone, .cl-paper .zone-line')].map((z) => { const r = z.getBoundingClientRect(); for (let i = 0; i < 60; i++) { const x = r.left + r.width * ((i * 0.37) % 1), y = r.top + r.height * ((i * 0.61) % 1); if (document.elementFromPoint(x, y) === z) return { x, y }; } return null; }).filter(Boolean)`);
     for (let i = 0; i < zones.length; i++) { if (i % 3 === 0) await click(await one('.cl-palette > *', (i / 3) % 9)); await click(zones[i]); await sleep(40); }
-    const painted = await js(`[...document.querySelectorAll('.cl-paper .zone')].filter((z) => z.getAttribute('fill') !== '#ffffff').length`);
+    const painted = await js(`[...document.querySelectorAll('.cl-paper .zone, .cl-paper .zone-line')].filter((z) => z.getAttribute(z.dataset.kind) !== '#ffffff').length`);
     if (painted < 4) throw new Error(`only ${painted} shapes took colour`);
+    const all = await count('.cl-paper .zone, .cl-paper .zone-line');
+    if (zones.length < all) throw new Error(`${all - zones.length} of ${all} shapes cannot be reached`);
+    if (await js(`document.querySelector('.cl-paper .zone').getAttribute('fill') === '#ffffff'`)) throw new Error('the background did not take colour');
+    if ((await count('.cl-pattern')) < 10) throw new Error('too few patterns');
+    // nothing left to colour is smaller than a fingertip
+    const small = await js(`[...document.querySelectorAll('.cl-paper .zone')].filter((z) => { const r = z.getBoundingClientRect(); return Math.max(r.width, r.height) < 34 * innerHeight / 834; }).length`);
+    if (small) throw new Error(`${small} shapes are still too small to tap`);
     await shot('coloring-page');
     if (!(await won())) await click(await one('.stage-button.green'));
   },
@@ -310,7 +324,7 @@ const GAMES = {
       }
       if (round === 0) await shot('feed-round');
       await until(async () => (await stars()) === round + 1, 4000, 'the friend to be full');
-      await until(async () => !(await count('.bubble-box.think')) || won(), 6000, 'the next friend');
+      await until(async () => (await won()) || ((await count('.bubble-box.think')) && !(await count('.want.fed'))), 8000, 'the next friend');
     }
   },
   async puzzle() {

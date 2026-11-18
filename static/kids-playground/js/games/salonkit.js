@@ -11,7 +11,9 @@ export const svgEl = (tag, attrs = {}) => {
 };
 
 /**
- * Tools on a shelf. Each one is dragged by hand and springs back when let go.
+ * Tools on a shelf, each in its own tile. A tool is dragged by hand and springs back when let go.
+ * Tools always show in full colour; the one to use next has a bright frame around its tile, and one that
+ * is not needed yet only shakes its head when it is pulled.
  * `use(key, point, dt, tool, time)` runs every frame while a tool is held; `point` is the working
  * end of the tool (the tips of the scissors, the mouth of the dryer), not the middle of its picture.
  */
@@ -22,13 +24,16 @@ export function toolbox(ctx, use) {
     tools,
     get held() { return held; },
     add(key, html, cx, cy, w, h, o = {}) {
-      const t = ctx.sprite(html, cx, cy, w, h, `tool shadowed ${o.cls || ''}`);
-      t.key = key; t.tip = o.tip || [0, 0]; t.on = true;
+      const slot = ctx.add(el('div', { class: 'tool-slot', style: { left: `${cx - w / 2 - 9}px`, top: `${cy - h / 2 - 9}px`, width: `${w + 18}px`, height: `${h + 18}px` } }));
+      anim(slot, 'in', 350);
+      const t = ctx.sprite(html, cx, cy, w, h, `tool kit ${o.cls || ''}`);
+      t.key = key; t.tip = o.tip || [0, 0]; t.on = true; t.slot = slot;
       t.el.dataset.tool = key;
+      t.el.addEventListener('pointerdown', () => { if (!t.on && ctx.alive) { ctx.sfx('boing'); t.anim('shake', 350); } });
       t.point = () => ({ x: t.cx + t.tip[0], y: t.cy + t.tip[1] });
       ctx.drag(t, {
         enabled: () => t.on,
-        start: () => { held = t; t.el.classList.add('using'); t.el.classList.remove('pulse'); box.onPick?.(t); },
+        start: () => { held = t; t.el.classList.add('using'); box.onPick?.(t); },
         end: () => { held = null; t.el.classList.remove('using'); t.goHome(); box.onDrop?.(t); },
       });
       tools.set(key, t);
@@ -41,6 +46,7 @@ export function toolbox(ctx, use) {
         t.on = keys.includes(k);
         t.el.classList.toggle('off', !t.on);
         t.el.classList.toggle('pulse', t.on && keys.length === 1);
+        t.slot.classList.toggle('next', t.on && keys.length === 1);
       }
     },
     remove(key) {
@@ -49,6 +55,7 @@ export function toolbox(ctx, use) {
       tools.delete(key);
       if (held === t) held = null;
       t.el.style.pointerEvents = 'none';
+      anim(t.slot, 'out', 250, { fill: 'forwards' }).then(() => t.slot.remove());
       anim(t.el, 'out', 250, { fill: 'forwards' }).then(() => t.remove());
     },
     clear() { for (const k of [...tools.keys()]) box.remove(k); },
