@@ -1,7 +1,7 @@
 {
   "name": "Zoey 的游乐园",
   "short_name": "Kids Games",
-  "description": "给小朋友的游乐园：化妆、换装、做蛋糕、给宠物洗澡、动脑筋、拼图、涂色……",
+  "description": "给小朋友的游乐园：美发、美甲、美容、化妆、换装、做蛋糕、给宠物洗澡、动脑筋、拼图、涂色……",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

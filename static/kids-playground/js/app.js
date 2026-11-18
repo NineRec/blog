@@ -3,9 +3,10 @@ import { el, Sprite, clamp, pick, store, icon, roundButton, anim } from './core.
 import { say, sfx, hush, unlock, note } from './audio.js';
 import { confetti, stopConfetti, burst } from './fx.js';
 import { sceneSvg, meadow } from './art/scenes.js';
+import { sparkle } from './art/base.js';
 import { animal, LAND, SEA } from './art/animals.js';
 import { food, FRUITS, VEGGIES, TREATS } from './art/food.js';
-import { GAMES } from './games/index.js';
+import { GAMES, GROUPS } from './games/index.js';
 import { Zoey } from './zoey.js';
 
 const $ = (id) => document.getElementById(id);
@@ -209,12 +210,15 @@ function show(view) {
 function renderHub() {
   if (!$('hub-bg').firstChild) $('hub-bg').innerHTML = `<svg viewBox="0 0 1200 800" preserveAspectRatio="xMidYMax slice">${meadow(1200, 610, { sunX: 1040, trees: false })}</svg>`;
   $('hub-grid').innerHTML = '';
-  for (const g of GAMES) {
-    const wins = store.data.wins[g.id] || 0;
-    $('hub-grid').append(el('a', {
-      class: 'card', href: `#/play/${g.id}`, style: { '--c1': g.colors[0], '--c2': g.colors[1] }, 'data-game': g.id,
-      html: `<div class="card-art">${g.icon()}</div><div class="card-name">${g.name}</div>${wins ? `<div class="card-wins">★ ${wins}</div>` : ''}`,
-    }));
+  for (const group of GROUPS) {
+    $('hub-grid').append(el('h2', { class: 'hub-title', html: `<svg viewBox="-20 -20 40 40">${sparkle(0, 0, 18, '#fff36b')}</svg>${group.name}` }));
+    for (const g of group.games) {
+      const wins = store.data.wins[g.id] || 0;
+      $('hub-grid').append(el('a', {
+        class: 'card', href: `#/play/${g.id}`, style: { '--c1': g.colors[0], '--c2': g.colors[1] }, 'data-game': g.id,
+        html: `<div class="card-art">${g.icon()}</div><div class="card-name">${g.name}</div>${wins ? `<div class="card-wins">★ ${wins}</div>` : ''}`,
+      }));
+    }
   }
   $('hub-grid').append(el('a', {
     class: 'card card-link', href: '../kids-piano/', style: { '--c1': '#d9f1ff', '--c2': '#a9dcff' },

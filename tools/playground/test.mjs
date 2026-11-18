@@ -71,7 +71,128 @@ const stars = () => count('#progress .on');
 const until = async (fn, ms = 9000, what = 'condition') => { const end = Date.now() + ms; while (Date.now() < end) { if (await fn()) return true; await sleep(120); } throw new Error(`timed out waiting for ${what}`); };
 const shot = async (name) => writeFileSync(join(out, `${name}.png`), Buffer.from((await send('Page.captureScreenshot', { format: 'png' })).data, 'base64'));
 
+// For the salon games: where the stage is on the screen, and holding a tool by its working end.
+const stageBox = () => js(`(() => { const s = document.getElementById('stage'), r = s.getBoundingClientRect(), W = parseFloat(s.style.width); return { x: r.left, y: r.top, k: r.width / W, W }; })()`);
+const tool = (key) => one(`.tool[data-tool="${key}"]`);
+/** Drag a tool so that its working end (not the middle of its picture) passes through these screen points. */
+const useTool = async (key, points, pause = 16) => {
+  const t = await tool(key), tip = await js(`import('./js/art/salon.js').then((m) => m.TIP[${JSON.stringify(key)}])`);
+  await path([t, ...points.map((p) => ({ x: p.x - tip[0] * t.w, y: p.y - tip[1] * t.h }))], pause);
+};
+const untilStars = async (n, act, tries = 8, what = `star ${n}`) => { for (let i = 0; i < tries && (await stars()) < n; i++) { await act(i); await sleep(250); } if ((await stars()) < n) throw new Error(`did not reach ${what}`); };
+
 const GAMES = {
+  async hair() {
+    await sleep(500);
+    const st = await stageBox(), at = (x, y) => ({ x: st.x + x * st.k, y: st.y + y * st.k }), hx = Math.round(st.W * 0.45), hy = 336;
+    const sweep = (x0, y0, x1, y1, n = 14) => line(at(x0, y0), at(x1, y1), n);
+    await untilStars(1, () => useTool('shampoo', [...sweep(hx - 70, hy - 215, hx + 70, hy - 215, 8), ...sweep(hx + 70, hy - 215, hx - 70, hy - 215, 8)], 150), 3, 'shampoo on the hair');
+    if ((await count('.salon-face[data-eyes="shut"]')) !== 1) throw new Error('she did not close her eyes for the shampoo');
+    await shot('hair-1-shampoo');
+    await untilStars(2, () => path(zigzag(at(hx, hy - 150), 250 * st.k, 110 * st.k, 5, 12), 22), 6, 'a lather');
+    await shot('hair-2-lather');
+    await untilStars(3, () => useTool('shower', [...sweep(hx - 240, hy - 290, hx + 240, hy - 290, 20), ...sweep(hx + 240, hy - 290, hx - 240, hy - 290, 20)], 40), 5, 'the foam rinsed off');
+    if (await count('.foam')) await sleep(600);
+    await shot('hair-3-wet');
+    await untilStars(4, (i) => useTool('dryer', i % 2 ? [...sweep(hx - 40, hy - 150, hx - 40, hy + 230, 16), ...sweep(hx - 40, hy + 230, hx - 40, hy - 150, 16)] : [...sweep(hx + 250, hy - 150, hx + 250, hy + 230, 16), ...sweep(hx + 250, hy + 230, hx + 250, hy - 150, 16)], 90), 10, 'dry hair');
+    await shot('hair-4-frizzy');
+    await untilStars(5, () => useTool('comb', zigzag(at(hx, hy), 460 * st.k, 440 * st.k, 9, 12), 24), 5, 'combed hair');
+    await sleep(900);
+    await shot('hair-5-tools');
+    // the hairdresser's tools: each must really change the hair
+    const paths = () => js(`[...document.querySelectorAll('.strands path')].map((p) => p.getTotalLength()).reduce((a, b) => a + b, 0)`);
+    const before = await paths();
+    await useTool('scissors', sweep(hx - 280, hy + 120, hx - 110, hy + 120, 20), 20);
+    if (!(await count('.cut path'))) throw new Error('the scissors cut nothing');
+    await sleep(200);
+    const cut = await paths();
+    if (!(cut < before - 300)) throw new Error(`cutting did not shorten the hair (${before} → ${cut})`);
+    await shot('hair-6-cut');
+    await useTool('potion', [...Array(40)].map((_, i) => at(hx - 175 + (i % 2) * 6, hy + 110)), 40);
+    const grown = await paths();
+    if (!(grown > cut + 300)) throw new Error(`the potion did not grow the hair (${cut} → ${grown})`);
+    await click(await one('.hair-dyes .swatch', 5)); await sleep(150);
+    await useTool('spray', zigzag(at(hx + 175, hy + 60), 70 * st.k, 260 * st.k, 7, 6), 24);
+    if (!(await count('.strands path[stroke="#3fb4ff"]'))) throw new Error('the spray did not colour the hair');
+    await click(await one('.hair-dyes .swatch', 7)); await sleep(150);
+    await useTool('spray', zigzag(at(hx - 175, hy + 60), 70 * st.k, 260 * st.k, 7, 6), 24);
+    const wavy = () => js(`Math.max(...[...document.querySelectorAll('.strands[data-kind="drape"] path')].map((p) => p.getBBox().width))`);
+    const straight = await wavy();
+    await useTool('curler', zigzag(at(hx + 175, hy + 80), 60 * st.k, 240 * st.k, 6, 6), 40);
+    await shot('hair-7-styled');
+    await useTool('dryer', [...Array(30)].map(() => at(hx + 300, hy + 60)), 40);
+    await shot('hair-8-wind');
+    await click(await one('.stage-button.green')); await sleep(500);
+    for (const i of [0, 3]) { await click(await one('.tray .chip', i)); await sleep(250); }
+    if ((await count('.wear .acc-in')) !== 2) throw new Error('the hair things were not put on');
+    await sleep(500);
+    await shot('hair-9-done');
+    await click(await one('.stage-button.pink'));
+  },
+  async nails() {
+    await sleep(500);
+    const st = await stageBox(), at = (x, y) => ({ x: st.x + x * st.k, y: st.y + y * st.k }), px = Math.round(st.W * 0.48), py = 548;
+    await shot('nails-1-long');
+    for (const tip of await all('.finger .over')) { await useTool('clipper', [...line({ x: tip.x + 120, y: tip.y }, tip, 6), ...Array(8).fill(tip)], 50); await sleep(450); }
+    if ((await stars()) < 1) { await sleep(700); if ((await stars()) < 1) throw new Error('the nails were not clipped'); }
+    await sleep(400);
+    await shot('nails-2-clipped');
+    for (const edge of await all('.finger .rough')) { await useTool('file', [...Array(9)].flatMap(() => [{ x: edge.x - 26, y: edge.y }, { x: edge.x + 26, y: edge.y }]), 22); await sleep(450); }
+    await sleep(700);
+    if ((await stars()) < 2) throw new Error('the nails were not filed');
+    await sleep(500);
+    const nails = await all('.finger .plate');
+    for (let i = 0; i < nails.length; i++) {
+      await click(await one('.nl-polish .chip', [0, 3, 5, 7, 6][i])); await sleep(120);
+      await path(zigzag(nails[i], nails[i].w * 0.8, nails[i].h * 0.8, 6, 6), 14);
+      if (i === 1) await shot('nails-3-painting');
+    }
+    if ((await count('.finger .paint rect')) !== 5) throw new Error(`only ${await count('.finger .paint rect')} nails took a full coat`);
+    await click(await one('.stage-button.green')); await sleep(700);
+    const pieces = await all('.sprite.shadowed.draggable');
+    for (let i = 0; i < 5; i++) { await path(line(pieces[i], nails[i], 8)); await sleep(150); }
+    if ((await count('.finger .decal .acc-in')) !== 5) throw new Error('the stickers did not land on the nails');
+    const fingersAt = await all('.finger');
+    await path(line(pieces[6], fingersAt[2], 8)); await sleep(150);
+    await path(line(pieces[7], fingersAt[3], 8)); await sleep(150);
+    if ((await count('.ring-on')) !== 2) throw new Error('the rings did not go on');
+    await path(line(pieces[9], at(px, py + 190), 8)); await sleep(500);
+    if ((await count('.wrist-slot .acc-in')) !== 1) throw new Error('the bracelet did not go on');
+    await shot('nails-4-done');
+    await click(await one('.stage-button.pink'));
+  },
+  async facial() {
+    await sleep(500);
+    const st = await stageBox(), K = 0.86, hx = Math.round(st.W * 0.47), hy = 404;
+    const at = (x, y) => ({ x: st.x + x * st.k, y: st.y + y * st.k }), face = (x, y) => at(hx + (x - 300) * K, hy + (y - 339) * K);
+    const over = (rows = 8) => zigzag(at(hx, hy + 36), 320 * st.k, 300 * st.k, rows, 12);
+    await shot('facial-1-dirty');
+    await untilStars(1, () => useTool('puff', over(), 26), 5, 'a clean face');
+    await shot('facial-2-foam');
+    await untilStars(2, () => useTool('towel', over(), 22), 5, 'the foam wiped off');
+    await sleep(600);
+    await click(await one('.spa-jars .chip', 1)); await sleep(150);
+    await untilStars(3, () => path(over(10), 14), 5, 'the mask painted on');
+    if (!(await count('.mask-paint > *'))) throw new Error('no mask on the face');
+    await shot('facial-3-mask');
+    await sleep(500);
+    const slices = await all('.sprite.pulse.draggable');
+    await path(line(slices[0], face(218, 364), 8)); await sleep(300);
+    await path(line(slices[1], face(382, 364), 8));
+    await untilStars(4, () => sleep(300), 6, 'cucumbers on the eyes');
+    await sleep(600);
+    for (let i = 0; i < 3; i++) { await click(await one('.sprite.tappable.pulse')); await sleep(450); if (i === 1) await shot('facial-4-steam'); await sleep(450); }
+    await untilStars(5, () => sleep(400), 10, 'the steaming');
+    await sleep(500);
+    for (const eye of [face(218, 364), face(382, 364)]) { await click(eye); await sleep(450); }
+    await untilStars(6, () => useTool('towel', over(10), 16), 5, 'the mask wiped off');
+    if (await count('.mask-paint > *')) throw new Error('some mask is left');
+    await sleep(600);
+    await useTool('cream', [[300, 272], [172, 448], [428, 448], [300, 426], [300, 552]].flatMap(([x, y]) => [face(x, y), face(x, y), face(x, y)]), 60);
+    if ((await count('.creams .acc-in')) !== 5) throw new Error(`only ${await count('.creams .acc-in')} dabs of cream`);
+    await shot('facial-5-cream');
+    for (const [x, y] of [[300, 272], [172, 448], [428, 448], [300, 426], [300, 552]]) await path(zigzag(face(x, y), 50 * st.k, 30 * st.k, 5, 6), 12);
+  },
   async makeup() {
     const face = await largest();
     const lips = { x: face.x, y: face.y - face.h / 2 + face.h * 504 / 730 };

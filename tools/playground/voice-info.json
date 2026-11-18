@@ -717,5 +717,245 @@
     "language": "English",
     "seconds": 3.52,
     "pitch_hz": 387
+  },
+  "hair-intro": {
+    "text": "Welcome to the hair salon!",
+    "fingerprint": "73576b40a47fbf541365be63ef2712d5aca99f08732924e63aaedc1d0f3a2728",
+    "seed": 8649574,
+    "language": "English",
+    "seconds": 1.68,
+    "pitch_hz": 364
+  },
+  "hair-shampoo": {
+    "text": "First, squeeze some shampoo on the hair!",
+    "fingerprint": "79390f0771cc8efa5ba0a4f043e4682306296dffecd49bd43eeb9ebd8cacf738",
+    "seed": 3717587,
+    "language": "English",
+    "seconds": 2.48,
+    "pitch_hz": 400
+  },
+  "hair-lather": {
+    "text": "Now rub the hair with your finger. Make lots of bubbles!",
+    "fingerprint": "a24c1003d78569ea81c964ab47bf87121c765252441a9695ca2013d83a0cf9ab",
+    "seed": 5636886,
+    "language": "English",
+    "seconds": 3.12,
+    "pitch_hz": 369
+  },
+  "hair-rinse": {
+    "text": "Rinse the bubbles away with the shower!",
+    "fingerprint": "309c8309eaacc62af56b72a39150987d6e5a82fca35f949fa49ba44f810f2be5",
+    "seed": 8090788,
+    "language": "English",
+    "seconds": 2.0,
+    "pitch_hz": 364
+  },
+  "hair-dry": {
+    "text": "The hair is all wet! Blow it dry with the hair dryer.",
+    "fingerprint": "b4144d68943a26d86951ac40d766472ff9d7dfadff1fd139ec1df4c509a8c622",
+    "seed": 7401894,
+    "language": "English",
+    "seconds": 3.36,
+    "pitch_hz": 400
+  },
+  "hair-comb": {
+    "text": "So fluffy! Comb the hair, nice and smooth.",
+    "fingerprint": "f3d8314764dfc324383b341329d87caec51af0c5ac0565b4e9f3b5c382ac3d21",
+    "seed": 2641234,
+    "language": "English",
+    "seconds": 4.48,
+    "pitch_hz": 387
+  },
+  "hair-style": {
+    "text": "Now you are the hairdresser! Cut it, curl it, or color it!",
+    "fingerprint": "62a34151c59b22d1f5db3b547b279597847ba80e61fd103f8f6ab34d2e408564",
+    "seed": 212799,
+    "language": "English",
+    "seconds": 3.92,
+    "pitch_hz": 414
+  },
+  "hair-deco": {
+    "text": "Pick something pretty for the hair!",
+    "fingerprint": "4b8ea58a26095bacaa22595075cd46a836485b77819ba35aacfa7dc22ccc7812",
+    "seed": 5950590,
+    "language": "English",
+    "seconds": 1.68,
+    "pitch_hz": 417
+  },
+  "hair-done": {
+    "text": "Wow! What a lovely hairstyle!",
+    "fingerprint": "732eea740034466b7b2e2b1322e2e2bcfc605f4c87e6de3a6535cb8bf5352d35",
+    "seed": 15499262,
+    "language": "English",
+    "seconds": 2.72,
+    "pitch_hz": 429
+  },
+  "hair-snip": {
+    "text": "Snip, snip, snip! The scissors cut the hair.",
+    "fingerprint": "244b8d427d17d7ac628d1e85cc9deea7bbdd2f2ba79ec284c9ed3811770c156c",
+    "seed": 11539903,
+    "language": "English",
+    "seconds": 2.96,
+    "pitch_hz": 393
+  },
+  "hair-grow": {
+    "text": "Magic potion! Grow, hair, grow!",
+    "fingerprint": "fb261c339b3466fe6f6f17cc7c3b0bf3cf2e1422006938010d1e614c6066f0f0",
+    "seed": 9823661,
+    "language": "English",
+    "seconds": 2.56,
+    "pitch_hz": 440
+  },
+  "hair-curl": {
+    "text": "Curly, curly! Make the hair curly.",
+    "fingerprint": "82e42516cded69e28e1592f6dce5895c8e42ad33faa95d742816658acd3b7544",
+    "seed": 12625315,
+    "language": "English",
+    "seconds": 2.96,
+    "pitch_hz": 387
+  },
+  "hair-straight": {
+    "text": "Make the hair nice and straight.",
+    "fingerprint": "b49e41bc25556a4dc35f40d248bfc656ca22ef801beba60bb8a02665770eb4ed",
+    "seed": 6856435,
+    "language": "English",
+    "seconds": 1.76,
+    "pitch_hz": 393
+  },
+  "hair-color": {
+    "text": "Pick a color, and spray it on!",
+    "fingerprint": "e71f4894212e995fa4b4fc56b78ba12ea751f25a56f5c9e767049c1b41e52c11",
+    "seed": 6885194,
+    "language": "English",
+    "seconds": 2.0,
+    "pitch_hz": 425
+  },
+  "nails-intro": {
+    "text": "Welcome to the nail salon!",
+    "fingerprint": "aedd8f3ba7c98cdbb9842809874e84d560bec0d7af6a421652ed25ea703e777f",
+    "seed": 14535344,
+    "language": "English",
+    "seconds": 1.52,
+    "pitch_hz": 421
+  },
+  "nails-clip": {
+    "text": "Oh, the nails are too long! Snip them with the nail clipper.",
+    "fingerprint": "aa671ecdc7f3a127e95d178c5a4a7fdcaa6f18c2da0797e7218753a6efd1d043",
+    "seed": 15541808,
+    "language": "English",
+    "seconds": 3.68,
+    "pitch_hz": 393
+  },
+  "nails-file": {
+    "text": "Now file the nails, nice and round.",
+    "fingerprint": "bb406c45fa225a83f19d04a6adf661569c89619c069cab975b1b739d577564c0",
+    "seed": 10789057,
+    "language": "English",
+    "seconds": 2.48,
+    "pitch_hz": 421
+  },
+  "nails-polish": {
+    "text": "Pick a color, and paint every nail!",
+    "fingerprint": "01ce391901152e4a317b592e153799a53f1f808442a1ea05421ddb004c963884",
+    "seed": 3267693,
+    "language": "English",
+    "seconds": 2.08,
+    "pitch_hz": 414
+  },
+  "nails-deco": {
+    "text": "Now decorate! Stickers for the nails, and rings for the fingers!",
+    "fingerprint": "6f997f9089b7180ff13f04680c694102fd1f33da30f5f5b3794ad9f5b148a7fd",
+    "seed": 7109819,
+    "language": "English",
+    "seconds": 3.6,
+    "pitch_hz": 400
+  },
+  "nails-done": {
+    "text": "Ta-da! What beautiful nails!",
+    "fingerprint": "4bc4a28e5e91502d6543e8d79dcf6c396d375f2bf76aaf37c5de5f38bfe9a363",
+    "seed": 13838714,
+    "language": "English",
+    "seconds": 3.52,
+    "pitch_hz": 453
+  },
+  "facial-intro": {
+    "text": "Welcome to the spa!",
+    "fingerprint": "4c8b70114417fc35e4266478cd012b305b90943c8cdf7c7b4a0a6f8dd5a80e94",
+    "seed": 12605718,
+    "language": "English",
+    "seconds": 1.36,
+    "pitch_hz": 410
+  },
+  "facial-wash": {
+    "text": "Wash the face with the soapy puff!",
+    "fingerprint": "049499483c584ad4def689f4cb659c5fc84fec429961c1a30d0aeed55f6aadfd",
+    "seed": 11169323,
+    "language": "English",
+    "seconds": 2.0,
+    "pitch_hz": 480
+  },
+  "facial-rinse": {
+    "text": "Wipe the bubbles away with the towel.",
+    "fingerprint": "980ea0ff4cb8b38e1534e5193876539aad01dca69b8ac90a34ac46fc97df540d",
+    "seed": 8875196,
+    "language": "English",
+    "seconds": 1.92,
+    "pitch_hz": 358
+  },
+  "facial-mask": {
+    "text": "Pick a mask, and paint it all over the face!",
+    "fingerprint": "a6d5d4dca50f92cc1de5120abc37a75cac5033f4aa6bf749615b3631ac34c88d",
+    "seed": 7260436,
+    "language": "English",
+    "seconds": 2.48,
+    "pitch_hz": 429
+  },
+  "facial-cucumber": {
+    "text": "Put the cucumber slices on the eyes.",
+    "fingerprint": "a3d3b921e2817f7b4d0b33c4960b8977576aa82a62e614eebae7a07e8d3fe292",
+    "seed": 8230519,
+    "language": "English",
+    "seconds": 2.16,
+    "pitch_hz": 358
+  },
+  "facial-relax": {
+    "text": "Time to relax! Tap the steamer.",
+    "fingerprint": "e25b520c99d283251465c749b8593347b841f990ce631536fd91fa00ba717dce",
+    "seed": 433784,
+    "language": "English",
+    "seconds": 2.48,
+    "pitch_hz": 453
+  },
+  "facial-peel": {
+    "text": "Take off the cucumbers, and wipe the mask away.",
+    "fingerprint": "715906add3a0f3fb6a10d6a90b22b98d8d5668ea5b73cd8bb9be0c045dfdf58d",
+    "seed": 12144464,
+    "language": "English",
+    "seconds": 2.88,
+    "pitch_hz": 387
+  },
+  "facial-cream": {
+    "text": "Dab some cream on the dots.",
+    "fingerprint": "96f3a474d8287ef05e7828096eec3595859198535ff15b285243d4bd9bfa613f",
+    "seed": 117299,
+    "language": "English",
+    "seconds": 1.68,
+    "pitch_hz": 414
+  },
+  "facial-rub": {
+    "text": "Now rub it in, gently.",
+    "fingerprint": "89f1cb182978eec1648e85c4834b42f8965ab18f5b0353d180d7ef7a2c2c547d",
+    "seed": 7210996,
+    "language": "English",
+    "seconds": 1.92,
+    "pitch_hz": 375
+  },
+  "facial-done": {
+    "text": "So fresh, and so pretty!",
+    "fingerprint": "ef74f69c4ee8b3f2a68e5edeaa6c55392781f62d81fab735173327be1b1698e2",
+    "seed": 4204901,
+    "language": "English",
+    "seconds": 1.92,
+    "pitch_hz": 436
   }
 }

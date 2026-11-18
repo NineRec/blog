@@ -384,3 +384,53 @@ svg.page.done .edge { display: none; }
 .seek-bar .chip { width: 72px; height: 72px; border-radius: 22px; }
 .seek-bar .chip:not(.on) svg { filter: brightness(0) opacity(.22); }
 .seek-bar .chip.on { transform: none; }
+
+/* ---------- 沙龙：美发、美甲、美容 SPA ---------- */
+.salon-holder { position: absolute; inset: 0; pointer-events: none; }
+svg.salon-svg { position: absolute; left: 0; top: 0; display: block; overflow: visible; }
+.strands path { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+/* the customer's face: eyes open, shut or smiling; mouth smiling, surprised or laughing */
+.salon-face .eye-shut, .salon-face .eye-joy, .salon-face .mouth-o, .salon-face .mouth-happy { display: none; }
+.salon-face[data-eyes="shut"] .eye-open, .salon-face[data-eyes="joy"] .eye-open { display: none; }
+.salon-face[data-eyes="shut"] .eye-shut, .salon-face[data-eyes="joy"] .eye-joy { display: inline; }
+.salon-face[data-mouth="o"] .mouth-smile, .salon-face[data-mouth="happy"] .mouth-smile { display: none; }
+.salon-face[data-mouth="o"] .mouth-o, .salon-face[data-mouth="happy"] .mouth-happy { display: inline; }
+.dirt-spot { transition: opacity .1s; }
+/* tools come alive in the hand */
+.tool > svg { transition: transform .18s; }
+.tool .blade-a, .tool .blade-b { transform-origin: 74px 60px; }
+.tool.using .blade-a { animation: snip-a .2s ease-in-out infinite alternate; }
+.tool.using .blade-b { animation: snip-b .2s ease-in-out infinite alternate; }
+@keyframes snip-a { to { transform: rotate(-13deg); } }
+@keyframes snip-b { to { transform: rotate(13deg); } }
+.tool .lever { transform-origin: 30px 60px; }
+.tool.using .lever { animation: clip .24s ease-in-out infinite alternate; }
+@keyframes clip { to { transform: rotate(10deg); } }
+.tool[data-tool="shampoo"].using > svg, .tool[data-tool="cream"].using > svg { transform: rotate(-130deg); }
+.tool[data-tool="dryer"].using > svg, .tool[data-tool="curler"].using > svg, .tool[data-tool="iron"].using > svg { animation: buzz .09s linear infinite alternate; }
+@keyframes buzz { from { translate: 0 -1px; } to { translate: 0 1px; } }
+.can-rainbow { display: none; }
+.tool.rainbow .can-rainbow { display: inline; }
+.foam { animation: foam 1.6s ease-in-out infinite alternate; }
+@keyframes foam { from { scale: .93; } to { scale: 1.07; } }
+.paint-cursor { pointer-events: none; z-index: 700; }
+/* things that are put on pop into place; a ring slides down the finger */
+.acc-in { transform-box: fill-box; transform-origin: center; animation: acc-in .45s cubic-bezier(.3, 1.7, .5, 1) backwards; }
+@keyframes acc-in { from { transform: scale(0); } }
+.ring-on { animation: ring-on .42s cubic-bezier(.3, 1.3, .5, 1) backwards; }
+@keyframes ring-on { from { transform: translateY(-130px); opacity: 0; } 40% { opacity: 1; } }
+.finger { animation: finger-idle 2.8s ease-in-out infinite alternate; }
+@keyframes finger-idle { from { transform: rotate(-1.3deg); } to { transform: rotate(1.3deg); } }
+.hair-dyes { flex-direction: column; flex-wrap: nowrap; gap: 10px; padding: 16px 12px; border-radius: 30px; }
+.hair-dyes .swatch { width: 48px; height: 48px; }
+.hair-dyes .swatch.on { transform: scale(1.1); box-shadow: 0 0 0 4px #fff, 0 0 0 8px var(--ink); }
+.nl-polish { gap: 10px; padding: 12px; }
+.nl-polish .chip { width: 86px; height: 86px; }
+.nl-panel { display: block; background: #efe6ff; box-shadow: 0 8px 0 var(--shadow), inset 0 0 0 8px #fff; }
+.spa-jars { gap: 9px; padding: 12px; border-radius: 30px; }
+.spa-jars .chip { width: 92px; height: 92px; }
+
+/* ---------- home: a title above each group of games ---------- */
+.hub-title { grid-column: 1 / -1; display: flex; align-items: center; gap: 8px; margin: 0 0 -8px 6px; font-size: 22px; font-weight: 900; letter-spacing: 2px; color: #fff; text-shadow: 0 3px 0 rgba(31, 26, 58, .18); }
+.hub-title:not(:first-child) { margin-top: 8px; }
+.hub-title svg { width: 30px; height: 30px; flex: none; }

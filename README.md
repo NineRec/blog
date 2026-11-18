@@ -27,7 +27,7 @@ sh deploy.sh
 
 Linked from the **Games** page (`content/games.md`, menu entry in `config.toml`).
 
-- **Zoey 的游乐园** lives in `static/kids-playground/` and is published at `/kids-playground/`: thirteen small games for a four-year-old (makeup, dress-up, cake shop, pet bath, colouring, thinking puzzles, ice cream shop, feeding, jigsaw, memory, hide and seek, maze, fruit catching) with a sticker album. Plain ES modules, no build step; all pictures are flat SVG drawn in `js/art/`; it installs as a PWA and works offline.
+- **Zoey 的游乐园** lives in `static/kids-playground/` and is published at `/kids-playground/`: sixteen small games for a four-year-old with a sticker album, in two groups: the salon (hair salon, nail salon, spa facial, makeup, dress-up, pet bath) and the playground (cake shop, colouring, thinking puzzles, ice cream shop, feeding, jigsaw, memory, hide and seek, maze, fruit catching). Plain ES modules, no build step; all pictures are flat SVG drawn in `js/art/`; it installs as a PWA and works offline.
   - Preview: `python3 -m http.server 8080 --directory static`, then open `http://localhost:8080/kids-playground/` (`dev/gallery.html` shows every picture).
   - After changing any file run `node tools/playground/build.mjs` to refresh the offline file list in `sw.js`.
   - `node tools/playground/test.mjs` plays every game to the end in headless Chromium.

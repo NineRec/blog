@@ -112,6 +112,10 @@ const FX = {
   snip: () => { noise(0, 0.03, { f: 5000, v: 0.2 }); tone(1500, 0.02, 0.04, { v: 0.05 }); },
   puff: () => noise(0, 0.5, { f: 900, to: 300, q: 0.5, v: 0.2, type: 'lowpass' }),
   slide: () => tone(300, 0, 0.35, { to: 900, v: 0.12 }),
+  squirt: () => { tone(240, 0, 0.13, { to: 520, v: 0.12 }); noise(0, 0.1, { f: 1400, v: 0.08, type: 'lowpass' }); },
+  spray: () => noise(0, 0.16, { f: 5200, q: 0.6, v: 0.06 }),
+  steam: () => noise(0, 0.7, { f: 4200, to: 1600, q: 0.5, v: 0.07 }),
+  file: () => noise(0, 0.07, { f: 2600, q: 3, v: 0.1 }),
 };
 
 export function sfx(name) {
