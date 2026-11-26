@@ -385,7 +385,9 @@ def worn_hats(m0):
         m = no_threads(diff_mask(m0, e, keep=600, grow=2), r=3)
         if not m.any():
             continue
-        L, m = extract(e, m)
+        L, _ = extract(e, m)
+        L = drop_redrawn(L, e, m0)
+        m = L[..., 3] > 40
         spec = save(L, f'worn-{p.stem}.webp')
         cols = np.nonzero(m.any(0))[0]
         bottom = {int(x): int(np.nonzero(m[:, x])[0].max()) for x in cols}
@@ -479,19 +481,226 @@ def worn_jewelry(h, D, nails):
         D['wrist'] = {'at': [int((xs.min() + xs.max()) // 2), y], 'w': int(xs.max() - xs.min())}
 
 
+def body_coloured(a):
+    """Her skin and its outline (warm, not grey or white like the vest and shorts), where `a` is solid."""
+    rgb = a[..., :3] / 255
+    mx, mn = rgb.max(-1), rgb.min(-1)
+    c = mx - mn
+    r, g, bl = rgb[..., 0], rgb[..., 1], rgb[..., 2]
+    h = np.where(mx == r, ((g - bl) / np.maximum(c, 1e-3) / 6) % 1, 0.5)
+    sat = c / np.maximum(mx, 1e-3)
+    return (a[..., 3] > 200) & (mx == r) & (h > 0.01) & (h < 0.12) & (sat > 0.1) & (mx > 0.35)
+
+
+def redrawn_body(e, b, r=3, thr=28):
+    """
+    Pixels of an edit that are just her body drawn again, up to `r` px off: the same colour as her skin or outline
+    within r px in the master, where the master shows body or nothing (never the vest or shorts the clothes cover).
+    A dress edit redraws the head's edge and the arms' outlines slightly moved; without this they come out as lines
+    (above her head, along her arms) in the dress layer.
+    """
+    body = body_coloured(b)
+    E = e[..., :3]
+    best = np.full(E.shape[:2], 1e9, np.float32)
+    H, W = best.shape
+    for dy in range(-r, r + 1):
+        for dx in range(-r, r + 1):
+            ys, yd = (slice(dy, H), slice(0, H - dy)) if dy >= 0 else (slice(0, H + dy), slice(-dy, H))
+            xs, xd = (slice(dx, W), slice(0, W - dx)) if dx >= 0 else (slice(0, W + dx), slice(-dx, W))
+            d = np.abs(E[yd, xd] - b[ys, xs, :3]).max(-1)
+            d = np.where(body[ys, xs], d, 1e9)
+            best[yd, xd] = np.minimum(best[yd, xd], d)
+    covered = (b[..., 3] > 200) & ~body          # the vest and shorts: whatever the edit drew there is clothes
+    return (best < thr) & ~covered & (e[..., 3] > 128)
+
+
+def skin_outline(a):
+    """Her skin and its warm orange-brown outline (light peach to brown), for a whole picture."""
+    rgb = a[..., :3] / 255
+    mx, mn = rgb.max(-1), rgb.min(-1)
+    sat = (mx - mn) / np.maximum(mx, 1e-3)
+    r, g, bl = rgb[..., 0], rgb[..., 1], rgb[..., 2]
+    hue = np.where(mx == r, ((g - bl) / np.maximum(mx - mn, 1e-3) / 6) % 1, 0.5)
+    return (a[..., 3] > 6) & (hue > 0.02) & (hue < 0.09) & (sat > 0.3) & (mx > 0.45)
+
+
+def drop_redrawn(layer, e, master, thin_only=False):
+    """
+    A worn thing's layer without her own body drawn again a pixel or two off (the edge of her head, an arm's or a
+    finger's outline) — only along its edge: inside it, a colour close to skin is the thing's own shading.
+    """
+    R = redrawn_body(e, master)
+    R &= ~ndimage.binary_fill_holes((layer[..., 3] > 40) & ~R)
+    if thin_only:       # a hand closed round a stick is new skin over the old hand: only lines go, not shapes
+        R &= ~ndimage.binary_dilation(ndimage.binary_opening(layer[..., 3] > 40, iterations=4), iterations=1)
+    out = layer.copy()
+    out[..., 3] *= ~R
+    out[..., 3] *= no_threads(out[..., 3] > 6)      # what that leaves hanging loose
+    return out
+
+
+def sheet_pieces(sheet):
+    """The items of a prop sheet at full size, by name (as SHEETS lists them)."""
+    p = f'props/{sheet}.png'
+    if not have(p):
+        return {}
+    a = clean(load(p))
+    out = {}
+    for name, it in zip(SHEETS[sheet].split(), slice_items(a[..., 3])):
+        y0, y1, x0, x1 = it['box']
+        piece = a[y0:y1, x0:x1].copy()
+        piece[..., 3] *= it['mask']
+        out[name] = piece
+    return out
+
+
+def fit_whole(item, e, b):
+    """
+    The whole item (from its sheet) placed on the master canvas where the edit shows it: the scale and position at
+    which it best covers what the edit drew beside her body (searched on a small copy), so it lines up with the worn
+    picture it was drawn from.
+    """
+    H, W = b.shape[:2]
+    shows = (e[..., 3] > 128) & (b[..., 3] < 128)
+    # only solid parts: the edit also redraws her outline a pixel wider all round, which must not count
+    shows = ndimage.binary_opening(shows, iterations=4)
+    lab, n = ndimage.label(shows)
+    if n:
+        sizes = ndimage.sum(shows, lab, range(1, n + 1))
+        shows = np.isin(lab, [i + 1 for i, v in enumerate(sizes) if v >= 2000])
+    ys, xs = np.nonzero(shows)
+    iy, ix = np.nonzero(item[..., 3] > 128)
+    s0 = (xs.max() - xs.min()) / (ix.max() - ix.min())
+    q = 4                                                   # search on a quarter-size copy
+    T = shows[::q, ::q]
+    hide = (b[..., 3] >= 128)[::q, ::q]
+    ia = Image.fromarray((item[..., 3] > 128).astype(np.uint8) * 255)
+    best = (-1, None)
+    for sk in np.arange(0.88, 1.121, 0.02):
+        s = s0 * sk
+        w, h = max(1, round(item.shape[1] * s / q)), max(1, round(item.shape[0] * s / q))
+        I = np.asarray(ia.resize((w, h), Image.BILINEAR)) > 127
+        cx = (xs.min() + xs.max()) / 2 / q
+        top = ys.min() / q - (iy.min() * s / q)
+        for dy in range(-8, 9):
+            for dx in range(-6, 7):
+                x0, y0 = round(cx - w / 2) + dx, round(top) + dy
+                P = np.zeros_like(T)
+                ya, yb, xa, xb = max(0, y0), min(T.shape[0], y0 + h), max(0, x0), min(T.shape[1], x0 + w)
+                if ya >= yb or xa >= xb:
+                    continue
+                P[ya:yb, xa:xb] = I[ya - y0:yb - y0, xa - x0:xb - x0]
+                P &= ~hide
+                iou = (P & T).sum() / max(1, (P | T).sum())
+                if iou > best[0]:
+                    best = (iou, (s, x0 * q, y0 * q))
+    iou, (s, x0, y0) = best
+    w, h = round(item.shape[1] * s), round(item.shape[0] * s)
+    im = Image.fromarray(np.clip(item, 0, 255).astype(np.uint8), 'RGBA').resize((w, h), Image.LANCZOS)
+    canvas = Image.new('RGBA', (W, H))
+    canvas.paste(im, (int(x0), int(y0)))
+    print(f'   whole back item: scale {s:.2f}, overlap {iou:.0%}')
+    if iou < 0.45:       # the whole drawing is never quite the worn one: butterfly 55% and cape 50% look right on her
+        WARN.append(f'back item fitted with only {iou:.0%} overlap: check it on her')
+    return np.asarray(canvas).astype(np.float32)
+
+
+def in_front(e, b, keep=1200):
+    """What a back item's edit drew over her body (a cape's knot at the neck), as a layer, or None."""
+    m = diff_mask(b, e, keep=keep, grow=2) & (b[..., 3] > 128)
+    R = redrawn_body(e, b)
+    m &= ~(R & ~ndimage.binary_fill_holes(m & ~R))
+    m = no_threads(m, keep=keep)
+    if m.sum() < keep:
+        return None
+    L, _ = extract(e, m, solo=True)
+    return L if (L[..., 3] > 120).sum() >= keep else None
+
+
+def body_keep(b, e, near, name, min_px=300, reach=40, also=None):
+    """
+    A keep picture for the body (opaque where it still shows) hiding what the edit `e` shows as background but the
+    master `b` draws (the vest beside a fitted dress), close to the worn thing (`near`), and `also`; None when
+    nothing is hidden.
+    """
+    gone = (b[..., 3] > 128) & (e[..., 3] < 60) & ndimage.binary_dilation(near, iterations=reach)
+    if also is not None:
+        gone |= also
+    gone = ndimage.binary_opening(gone, iterations=2)
+    lab, n = ndimage.label(gone)
+    if n:
+        sizes = ndimage.sum(gone, lab, range(1, n + 1))
+        gone = np.isin(lab, [i + 1 for i, v in enumerate(sizes) if v >= min_px])
+    if gone.sum() < min_px:
+        return None
+    gone = ndimage.binary_dilation(gone, iterations=2)
+    base = M['BODY']['base']
+    bx, by, bw, bh = base['x'], base['y'], base['w'], base['h']
+    keep = np.zeros((bh, bw, 4), np.float32)
+    keep[..., :3] = 255
+    keep[..., 3] = np.where(gone[by:by + bh, bx:bx + bw], 0, 255)
+    return save(keep, f'{name}-keep.webp', scale=0.5, trim=False, q=70, check=False)['src']
+
+
+def clothes_regions(b):
+    """
+    Where the master's own clothes are: {'dress': vest and shorts, 'top': the vest, 'bottom': the shorts}. They are
+    the solid, not-skin part of the body; the vest's hem is the row with the most shadow between the two.
+    """
+    cov = ndimage.binary_opening((b[..., 3] > 200) & ~body_coloured(b), iterations=2)
+    lab, n = ndimage.label(cov)
+    if not n:
+        return {}
+    sizes = ndimage.sum(cov, lab, range(1, n + 1))
+    cov = lab == int(np.argmax(sizes)) + 1           # the eyes are not-skin too, but small and apart
+    ys = np.nonzero(cov.any(1))[0]
+    y0, y1 = ys.min() + (ys.max() - ys.min()) // 2, ys.max() - 40
+    dark = [((b[y, :, :3].min(-1) < 200) & cov[y]).sum() for y in range(y0, y1)]
+    hem = y0 + int(np.argmax(dark))
+    rows = np.arange(b.shape[0])[:, None]
+    return {'dress': cov, 'top': cov & (rows < hem + 6), 'bottom': cov & (rows >= hem - 6)}
+
+
 def body():
     if not have('master/body.png'):
         return
     b = clean(load('master/body.png'))
     M['BODY'] = {'size': [b.shape[1], b.shape[0]], 'base': save(b, 'body-base.webp')}
     M['BODY']['skin'] = hexcol(np.median(b[int(b.shape[0] * 0.75):int(b.shape[0] * 0.75) + 10, b.shape[1] // 2 - 120:b.shape[1] // 2 - 110, :3].reshape(-1, 3), axis=0))
+    whole = sheet_pieces('backs')
+    covers = clothes_regions(b)
     for p in sorted((RAW / 'wear').glob('*.png')) if (RAW / 'wear').exists() else []:
         e = clean(load(f'wear/{p.name}'))
-        layer, _ = extract(e, no_threads(diff_mask(b, e, keep=800, grow=2)))
-        # and once more on the picture itself: a stray outline the hole filling joined to the clothes
-        # (a wider radius only where a thick stray outline is known: it would eat thin ties and straps elsewhere)
-        layer[..., 3] *= no_threads(layer[..., 3] > 6, r={'dress-sailor': 8, 'dress-mermaid': 8}.get(p.stem, 4))
         wear = M['BODY'].setdefault('wear', {})
+        if p.stem.startswith('back-') and f'icon-{p.stem}' in whole:
+            # Wings and capes sit behind her: the whole thing goes on the back layer (her body hides its middle),
+            # not the bits of it the edit shows beside her. Only what lies over her body stays a layer of its own
+            # in front (a cape's knot at the neck).
+            wear[p.stem] = save(fit_whole(whole[f'icon-{p.stem}'], e, b), f'wear-{p.stem}.webp')
+            front = in_front(e, b)
+            if front is not None:
+                wear[p.stem]['front'] = save(front, f'wear-{p.stem}-front.webp')
+            continue
+        layer, cut = extract(e, no_threads(diff_mask(b, e, keep=800, grow=2)))
+        # Whatever the edit drew over what this replaces (a dress: vest and shorts; a top: the vest; bottoms: the
+        # shorts) is the new clothes, even where it looks like the old (a white tutu over white shorts): no holes,
+        # and no edge of the old shorts left showing under a hem.
+        kind = p.stem.split('-')[0]
+        part, rim = covers.get(kind), None
+        if part is not None and kind in ('top', 'bottom'):
+            # A top or bottoms replace half her clothes, and the edit leaves what it did not change as it was: the
+            # other half's vest or shorts at the waist, and the rim of the old shorts (vest) beside slimmer jeans
+            # (a slimmer top). Neither is the new piece: the waist stays the body's, the rim is hidden.
+            band = covers['top'] & covers['bottom']
+            same = (np.abs(e[..., :3] - b[..., :3]).max(-1) < 28) & (e[..., 3] > 128)
+            part = part & ~same
+            rim = ndimage.binary_opening(covers[kind] & same & ~band, iterations=2)
+        if part is not None:
+            add = ndimage.gaussian_filter((part & (e[..., 3] > 128)).astype(np.float32), 1.2)
+            layer[..., 3] = np.maximum(layer[..., 3], e[..., 3] * add)
+        layer = drop_redrawn(layer, e, b)
+        # and once more on the picture itself: a stray outline the hole filling joined to the clothes
+        layer[..., 3] *= no_threads(layer[..., 3] > 6)
         if p.stem.startswith('dress-'):
             # Every dress came with shoes: cut them off at the ankle so shoes are a choice of their own.
             cut = ankle(layer[..., 3] > 40)
@@ -499,6 +708,11 @@ def body():
             layer[cut:, :, 3] = 0
             wear['shoes-' + p.stem[6:]] = save(shoes, f'wear-shoes-{p.stem[6:]}.webp')
         wear[p.stem] = save(layer, f'wear-{p.stem}.webp')
+        # Clothes narrower than her vest and shorts (a fitted dress): the picture shows background between the
+        # dress and her arm where the master has vest. Those parts of the body picture are hidden while it is worn.
+        keep = body_keep(b, e, cut, f'wear-{p.stem}', also=rim)
+        if keep:
+            wear[p.stem]['keep'] = keep
 
 
     holds = {}
@@ -507,20 +721,39 @@ def body():
         m = no_threads(diff_mask(b, e, keep=600, grow=2))
         if not m.any():
             continue
+        m |= strings(b, e, m)
         L, m = extract(e, m)
+        # Her arm, moved a few px by the new pose, leaves thin slivers of skin and outline away from any solid
+        # shape (the curled fist is new skin too, but solid, and its outline hugs it); things in her hand are drawn
+        # above her clothes, so a sliver would cross a sleeve. Strings and sticks are other colours and stay
+        # (drop_redrawn's thread filter would take a balloon's string too, so it is not used here).
+        solid = ndimage.binary_dilation(ndimage.binary_opening(L[..., 3] > 40, iterations=9), iterations=6)
+        L[..., 3] *= ~(skin_outline(L) & ~solid)
+        lab, n = ndimage.label(L[..., 3] > 6, structure=np.ones((3, 3)))     # specks that leaves loose
+        if n:
+            sizes = ndimage.sum(L[..., 3] > 6, lab, range(1, n + 1))
+            L[..., 3] *= np.isin(lab, [i + 1 for i, v in enumerate(sizes) if v >= 400])
         spec = save(L, f'worn-{p.stem}.webp')
-        # where her open hand was and is no longer (fingers now curled): hide that part of the body picture
-        near = ndimage.binary_dilation(m, iterations=30)
-        hole = near & (b[..., 3] > 128) & (e[..., 3] < 60)
-        hole = ndimage.binary_dilation(hole, iterations=2)
-        bx, by, bw, bh = M['BODY']['base']['x'], M['BODY']['base']['y'], M['BODY']['base']['w'], M['BODY']['base']['h']
-        keep = np.zeros((bh, bw, 4), np.float32); keep[..., :3] = 255
-        keep[..., 3] = np.where(hole[by:by + bh, bx:bx + bw], 0, 255)
-        k = save(keep, f'worn-{p.stem}-keep.webp', scale=0.5, trim=False, q=70, check=False)
-        spec['keep'] = k['src']
+        # where her open hand was and is no longer (fingers now curled, the tips well below the fist): hidden
+        keep = body_keep(b, e, m, f'worn-{p.stem}', reach=110, min_px=150)
+        if keep:
+            spec['keep'] = keep
         holds[p.stem] = spec
     if holds:
         M['BODY']['hold'] = holds
+
+
+def strings(b, e, m):
+    """
+    A balloon's string, a ribbon end: thin new lines of a colour that is not her skin, joined to the thing `m`.
+    diff_mask's opening and no_threads remove lines this thin, so they are put back here.
+    """
+    d = np.abs(over_grey(b) - over_grey(e)).max(axis=2) > 38
+    line = d & (e[..., 3] > 100) & ~skin_outline(e)
+    lab, n = ndimage.label(line | m, structure=np.ones((3, 3)))
+    if not n:
+        return line
+    return line & np.isin(lab, np.unique(lab[m])) & ndimage.binary_dilation(line, iterations=1)
 
 
 def no_threads(m, r=4, keep=1500):

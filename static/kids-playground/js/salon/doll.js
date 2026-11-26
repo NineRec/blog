@@ -14,7 +14,7 @@ const HEAD_K = 0.7;
 /** Body landmarks (body units). */
 export const BODY_ANCHORS = { handR: [842, 968], handL: [180, 968], feet: [510, 1460], waist: [510, 960], chest: [510, 720], head: [510, 300], neck: [510, 590] };
 /** Layer order on the body, bottom to top. */
-const BODY_SLOTS = ['back', 'held', 'base', 'shoes', 'bottom', 'top', 'dress', 'head', 'hand', 'fx'];
+const BODY_SLOTS = ['back', 'held', 'base', 'shoes', 'bottom', 'top', 'dress', 'neck', 'head', 'hand', 'fx'];
 
 /** What can be worn and where it goes. */
 export const WEAR = {
@@ -79,14 +79,18 @@ export class Doll {
     const hat = slot === 'hat' && BUST.hats?.[key], hold = slot === 'hand' && BODY.hold?.[key];
     if (BODY.wear?.[key]) {
       node = await this.body.layer(slot, BODY.wear[key], `sl-wear sl-wear-${slot}`);
+      // a cape is the whole cape behind her plus the part over her shoulders (its knot), above her clothes
+      if (BODY.wear[key].front) node.front = await this.body.layer('neck', BODY.wear[key].front, `sl-wear sl-wear-${slot}-front`);
+      // a fitted dress: the vest and shorts of the body picture that would show beside it are hidden
+      if (BODY.wear[key].keep) this.mask(this.body, ['base'], BODY.wear[key].keep, slot);
     } else if (hat) {
       // drawn on her head, and the hair it covers is hidden
       node = await this.head.layer('top', { ...hat, skin: false }, `sl-wear sl-wear-${slot}`);
-      this.mask(this.head, ['hair', 'back'], hat.keep);
+      this.mask(this.head, ['hair', 'back'], hat.keep, 'hat');
     } else if (hold) {
       // drawn in her hand, fingers closed round it; the open hand of the body picture is hidden
       node = await this.body.layer('hand', hold, `sl-wear sl-wear-${slot}`);
-      this.mask(this.body, ['base'], hold.keep);
+      this.mask(this.body, ['base'], hold.keep, 'hand');
     } else {
       const p = PLACE[slot](key), rig = p.rig === 'head' ? this.head : this.body;
       node = placeOn(rig, p.slot, { key, x: p.x, y: p.y, s: 1, r: p.r || 0 }, p.w);
@@ -97,21 +101,27 @@ export class Doll {
     node.dataset.key = key;
     this.worn[slot] = key;
     this.nodes[slot] = node;
-    if (!quiet) anim(node, 'squash', 420);
+    if (!quiet) { anim(node, 'squash', 420); if (node.front) anim(node.front, 'squash', 420); }
     return node;
   }
   /**
-   * Hide part of some slots with a keep picture (opaque where they still show); src null shows them whole again.
-   * The body's base picture is masked itself (the keep picture covers just it), so the neck cut on its slot stays.
+   * Hide part of some slots with a keep picture (opaque where they still show), on behalf of `owner` (the slot of
+   * the thing worn); src null takes that owner's picture away. Several owners' pictures are intersected (a fitted
+   * dress and a balloon in her hand both hide part of the body). The body's base picture is masked itself (the keep
+   * picture covers just it), so the neck cut on its slot stays.
    */
-  mask(rig, slots, src) {
+  mask(rig, slots, src, owner = '') {
     for (const name of slots) {
       const n = name === 'base' ? rig.slots.base.firstElementChild : rig.slots[name];
       if (!n) continue;
-      const st = n.style;
-      st.webkitMaskImage = st.maskImage = src ? `url("${ART + src}")` : '';
-      st.webkitMaskSize = st.maskSize = src ? '100% 100%' : '';
-      st.webkitMaskRepeat = st.maskRepeat = src ? 'no-repeat' : '';
+      const keeps = (n.keeps ||= {});
+      if (src) keeps[owner] = src; else delete keeps[owner];
+      const all = Object.values(keeps), st = n.style;
+      st.webkitMaskImage = st.maskImage = all.map((s) => `url("${ART + s}")`).join(', ');
+      st.webkitMaskSize = st.maskSize = all.map(() => '100% 100%').join(', ');
+      st.webkitMaskRepeat = st.maskRepeat = all.map(() => 'no-repeat').join(', ');
+      st.maskComposite = all.map(() => 'intersect').join(', ');
+      st.webkitMaskComposite = all.map(() => 'source-in').join(', ');
     }
   }
   /** Show or hide the hair room's things on top of her head (a tiara, a bow): a hat goes on instead of them. */
@@ -121,14 +131,17 @@ export class Doll {
   /** Take off what is in a slot. */
   off(slot, quiet = false) {
     if (slot === 'hat' && this.nodes.hat) this.crown(true);
-    if (slot === 'hat' && BUST.hats?.[this.worn.hat]) this.mask(this.head, ['hair', 'back'], null);
-    if (slot === 'hand' && BODY.hold?.[this.worn.hand]) this.mask(this.body, ['base'], null);
+    if (slot === 'hat' && BUST.hats?.[this.worn.hat]) this.mask(this.head, ['hair', 'back'], null, 'hat');
+    if (slot === 'hand' && BODY.hold?.[this.worn.hand]) this.mask(this.body, ['base'], null, 'hand');
+    if (BODY.wear?.[this.worn[slot]]?.keep) this.mask(this.body, ['base'], null, slot);
     const node = this.nodes[slot];
     delete this.worn[slot];
     delete this.nodes[slot];
     if (!node) return;
-    if (quiet) node.remove();
-    else anim(node, 'out', 220, { fill: 'forwards' }).then(() => node.remove());
+    for (const n of [node, node.front].filter(Boolean)) {
+      if (quiet) n.remove();
+      else anim(n, 'out', 220, { fill: 'forwards' }).then(() => n.remove());
+    }
   }
   /** Which slot's clothes are under a stage point (topmost first), or null. */
   slotAt(p) {
