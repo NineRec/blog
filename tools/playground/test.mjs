@@ -122,9 +122,17 @@ const GAMES = {
     await shot('hair-7-styled');
     await useTool('dryer', [...Array(30)].map(() => at(hx + 300, hy + 60)), 40);
     await shot('hair-8-wind');
+    // glitter sticks to the hair, and every ready-made hairstyle reshapes it
+    await useTool('glitter', zigzag(at(hx + 170, hy + 20), 80 * st.k, 220 * st.k, 6, 6), 30);
+    if ((await count('.glits path')) < 5) throw new Error(`only ${await count('.glits path')} bits of glitter on the hair`);
+    await shot('hair-8b-glitter');
+    const lengths = [], widths = [];
+    for (let i = 0; i < 4; i++) { await click(await one('.hair-presets .chip', i)); await sleep(1700); lengths.push(Math.round(await paths())); widths.push(await wavy()); await shot(`hair-style-${i}`); }
+    if (!(lengths[0] < lengths[1] - 1500)) throw new Error(`the short and the long hairstyle look the same (${lengths})`);
+    if (!(widths[3] > widths[1] + 4)) throw new Error(`the curly hairstyle is no curlier than the straight one (${widths})`);
     await click(await one('.stage-button.green')); await sleep(500);
     // every crown and hair thing goes on (one from the top and one from the side at a time)
-    const things = await count('.tray .chip');
+    const things = await count('.tray:not(.hair-presets) .chip');
     for (let i = 0; i < things; i++) {
       await click(await one('.tray .chip', i)); await sleep(520);
       if (!(await js(`[...document.querySelectorAll('.wear .acc-in')].some((g) => g.getBBox().width > 20)`))) throw new Error(`hair thing ${i} did not show`);
@@ -139,21 +147,40 @@ const GAMES = {
   async nails() {
     await sleep(500);
     const st = await stageBox(), at = (x, y) => ({ x: st.x + x * st.k, y: st.y + y * st.k }), px = Math.round(st.W * 0.48), py = 536;
-    await shot('nails-1-long');
+    const sweep = (x0, y0, x1, y1, n = 14) => line(at(x0, y0), at(x1, y1), n);
+    await shot('nails-1-dirty');
+    const hand = [[-30, 60], [52, 150], [-98, -210], [-34, -250], [40, -230], [106, -160], [-150, 20], [30, -10], [-66, 130], [70, 70]];
+    await untilStars(1, () => useTool('sponge', hand.flatMap(([x, y]) => zigzag(at(px + x, py + y), 70 * st.k, 50 * st.k, 4, 5)), 10), 4, 'a clean hand');
+    if (await count('.grime .mud')) throw new Error('mud is left on the hand');
+    await shot('nails-1b-foam');
+    await untilStars(2, () => useTool('shower', [...sweep(px - 220, py - 360, px + 220, py - 360, 26), ...sweep(px + 220, py - 360, px - 220, py - 360, 26)], 40), 4, 'the foam rinsed off');
+    await sleep(900);
+    await shot('nails-1c-long');
     for (const tip of await all('.finger .over')) { await useTool('clipper', [...line({ x: tip.x + 120, y: tip.y }, tip, 6), ...Array(8).fill(tip)], 50); await sleep(450); }
-    if ((await stars()) < 1) { await sleep(700); if ((await stars()) < 1) throw new Error('the nails were not clipped'); }
+    if ((await stars()) < 3) { await sleep(700); if ((await stars()) < 3) throw new Error('the nails were not clipped'); }
     await sleep(400);
     await shot('nails-2-clipped');
     for (const edge of await all('.finger .rough')) { await useTool('file', [...Array(9)].flatMap(() => [{ x: edge.x - 26, y: edge.y }, { x: edge.x + 26, y: edge.y }]), 22); await sleep(450); }
     await sleep(700);
-    if ((await stars()) < 2) throw new Error('the nails were not filed');
+    if ((await stars()) < 4) throw new Error('the nails were not filed');
     await sleep(500);
     const nails = await all('.finger .plate');
     for (let i = 0; i < nails.length; i++) {
-      await click(await one('.nl-polish .chip', [0, 3, 5, 7, 6][i])); await sleep(120);
-      await path(zigzag(nails[i], nails[i].w * 0.8, nails[i].h * 0.8, 6, 6), 14);
+      await click(await one('.nl-polish .chip', [0, 3, 8, 7, 6][i])); await sleep(120);
+      // a tap brings the nail up close; it is painted there and the hand comes back by itself
+      await click(nails[i]); await sleep(800);
+      if (!(await count('.zoom-ring'))) throw new Error(`nail ${i} did not zoom in`);
+      const big = (await all('.finger .plate'))[i];
+      if (!(big.w > nails[i].w * 1.8)) throw new Error(`nail ${i} is not bigger up close (${nails[i].w} → ${big.w})`);
+      await path(zigzag(big, big.w * 0.8, big.h * 0.8, 7, 8), 10);
       if (i === 1) await shot('nails-3-painting');
+      await until(async () => !(await count('.zoom-ring')), 4000, 'the hand to come back');
+      await sleep(700);
     }
+    // zooming out by hand works too
+    await click(nails[0]); await sleep(800);
+    await click(await one('.stage-button.blue')); await sleep(800);
+    if (await count('.zoom-ring')) throw new Error('the zoom-out button did not work');
     if ((await count('.finger .paint rect')) !== 5) throw new Error(`only ${await count('.finger .paint rect')} nails took a full coat`);
     await click(await one('.stage-button.green')); await sleep(700);
     const pieces = await all('.sprite.shadowed.draggable');
@@ -178,21 +205,31 @@ const GAMES = {
     await shot('facial-2-foam');
     await untilStars(2, () => useTool('towel', over(), 22), 5, 'the foam wiped off');
     await sleep(600);
-    await click(await one('.spa-jars .chip', 1)); await sleep(150);
-    await untilStars(3, () => path(over(10), 14), 5, 'the mask painted on');
+    const tokens = await all('.sprite.shadowed.draggable'), bowl = at(168, 588);
+    if (tokens.length !== 5) throw new Error(`${tokens.length} things to mix`);
+    await path(line(tokens[0], at(600, 700), 6)); await sleep(500);      // dropped beside the bowl: it goes back
+    for (const i of [1, 2, 4]) { await path(line(tokens[i], bowl, 8)); await sleep(450); }
+    if ((await count('.blobs circle')) !== 3) throw new Error('the things did not land in the bowl');
+    await shot('facial-2b-bowl');
+    const spoon = await one('.sprite.shadowed.pulse');
+    await path([spoon, ...[...Array(10)].flatMap(() => [at(118, 548), at(218, 548)].flatMap((p, k) => line(k ? at(118, 548) : at(218, 548), p, 5)))], 12);
+    await untilStars(3, () => sleep(400), 5, 'the mask mixed');
+    await shot('facial-2c-mixed');
+    await sleep(500);
+    await untilStars(4, () => path(over(10), 14), 5, 'the mask painted on');
     if (!(await count('.mask-paint > *'))) throw new Error('no mask on the face');
     await shot('facial-3-mask');
     await sleep(500);
     const slices = await all('.sprite.pulse.draggable');
     await path(line(slices[0], face(218, 364), 8)); await sleep(300);
     await path(line(slices[1], face(382, 364), 8));
-    await untilStars(4, () => sleep(300), 6, 'cucumbers on the eyes');
+    await untilStars(5, () => sleep(300), 6, 'cucumbers on the eyes');
     await sleep(600);
     for (let i = 0; i < 3; i++) { await click(await one('.sprite.tappable.pulse')); await sleep(450); if (i === 1) await shot('facial-4-steam'); await sleep(450); }
-    await untilStars(5, () => sleep(400), 10, 'the steaming');
+    await untilStars(6, () => sleep(400), 10, 'the steaming');
     await sleep(500);
     for (const eye of [face(218, 364), face(382, 364)]) { await click(eye); await sleep(450); }
-    await untilStars(6, () => useTool('towel', over(10), 16), 5, 'the mask wiped off');
+    await untilStars(7, () => useTool('towel', over(10), 16), 5, 'the mask wiped off');
     if (await count('.mask-paint > *')) throw new Error('some mask is left');
     await sleep(600);
     await useTool('cream', [[300, 272], [172, 448], [428, 448], [300, 426], [300, 552]].flatMap(([x, y]) => [face(x, y), face(x, y), face(x, y)]), 60);
@@ -223,6 +260,21 @@ const GAMES = {
       await click(await one('.mk-options .chip', 1)); await sleep(150);
       if (!(await js(`document.querySelector('[data-slot="${slot}"]').innerHTML.length`))) throw new Error(`${slot} was not put on`);
     }
+    for (let i = 0; i < 4; i++) {
+      await click(await one('.mk-cats .chip', 8)); await sleep(150);
+      await click(await one('.mk-options .chip', i)); await sleep(200);
+      if (!(await js(`document.querySelector('[data-slot="brow"]').getBBox().width > 100`))) throw new Error(`brow ${i} did not show`);
+    }
+    await shot('makeup-brows');
+    // she shuts her eyes while the lids are painted, and opens them again
+    await click(await one('.mk-cats .chip', 2)); await sleep(150);
+    const lid = { x: face.x - face.w * 0.137, y: face.y - face.h / 2 + face.h * 316 / 730 };
+    await mouse('mousePressed', lid.x, lid.y);
+    for (const p of zigzag(lid, face.w * 0.14, face.h * 0.05, 5, 10)) { await mouse('mouseMoved', p.x, p.y); await sleep(10); }
+    if (!(await count('.mk-face.shut'))) throw new Error('her eyes stayed open for the eye shadow');
+    await shot('makeup-shut');
+    await mouse('mouseReleased', lid.x, lid.y); await sleep(600);
+    if (await count('.mk-face.shut')) throw new Error('her eyes did not open again');
     await click(await one('.mk-cats .chip', 1)); await sleep(150);
     await click(await one('.mk-options .swatch', 2));
     await path(zigzag({ x: face.x - face.w * 0.22, y: face.y - face.h / 2 + face.h * 452 / 730 }, face.w * 0.11, face.h * 0.05, 5, 12));
@@ -234,8 +286,11 @@ const GAMES = {
       await click(await one('.du-cats .chip', cat)); await sleep(150);
       await click(await one('.du-options .chip', opt)); await sleep(200);
     }
+    if (!(await js(`document.querySelector('#stage .sprite.bob svg').innerHTML.includes('rgba(255,143,196,.45)')`))) throw new Error('the glasses did not go on');
     await shot('dressup-look');
     await click(await one('.stage-button.pink'));
+    await sleep(1200);
+    await shot('dressup-dance');
   },
   async cake() {
     await click(await one('.cake-side .chip', 2)); await sleep(200);
@@ -400,7 +455,8 @@ const GAMES = {
   },
 };
 
-const wanted = process.argv.slice(2).length ? process.argv.slice(2) : Object.keys(GAMES);
+const args = process.argv.slice(2);
+const wanted = (args.length ? args : Object.keys(GAMES)).filter((n) => n !== 'lobby' && n !== 'look');
 let failed = 0;
 await send('Page.navigate', { url: base });
 await sleep(1200);
@@ -427,6 +483,48 @@ for (const name of wanted) {
     await shot(`${name}-FAILED`);
     console.log(`FAIL ${name}: ${err.message}${errors.length ? ` [errors: ${errors.join(' | ')}]` : ''}`);
   }
+}
+// After the rooms: the lobby figure wears what she was given, and the rooms are ticked off.
+if (!args.length || args.includes('look')) {
+  errors.length = 0;
+  await send('Page.navigate', { url: 'about:blank' }); await sleep(150);
+  await send('Page.navigate', { url: `${base}#/salon` }); await sleep(900);
+  const ticks = await count('#salon-grid .card-done'), saved = await js(`JSON.stringify(JSON.parse(localStorage.getItem('kids-playground-v1')).salon.looks[0])`);
+  await shot('lobby-4-after');
+  const done = Object.keys(JSON.parse(saved).done).length;
+  const fine = ticks === done && (args.length ? done > 0 : done === 6 && ['outfit', 'hairCol', 'makeup'].every((k) => JSON.parse(saved)[k])) && !errors.length;
+  if (!fine) failed++;
+  console.log(`${fine ? 'PASS' : 'FAIL'} lobby keeps the look (${ticks}/6 rooms ticked) ${fine ? '' : saved} ${errors.join(' | ')}`);
+}
+// The salon lobby: six rooms, a customer who can be swapped, photographed and reset, and a door on the home screen.
+if (!args.length || args.includes('lobby')) {
+  errors.length = 0;
+  try {
+    await send('Page.navigate', { url: 'about:blank' }); await sleep(150);
+    await send('Page.navigate', { url: base }); await sleep(900);
+    await click(await one('.card-door')); await sleep(700);
+    if (!(await js(`location.hash === '#/salon' && !document.getElementById('salon').hidden`))) throw new Error('the door did not open the salon');
+    if ((await count('#salon-grid .card')) !== 6) throw new Error(`${await count('#salon-grid .card')} rooms in the salon`);
+    await shot('lobby-1');
+    const who = () => js(`JSON.parse(localStorage.getItem('kids-playground-v1') || '{}').salon?.who ?? 0`);
+    const before = await who();
+    await click(await one('#salon-buttons .round', 0)); await sleep(1300);
+    if ((await who()) === before) throw new Error('the customer did not change');
+    await shot('lobby-2-next');
+    await click(await one('#salon-doll')); await sleep(300);
+    await click(await one('#salon-buttons .round', 1)); await sleep(1100);
+    if (!(await count('.salon-photo'))) throw new Error('no photo');
+    await shot('lobby-3-photo');
+    await click(await one('.salon-photo')); await sleep(500);
+    if (await count('.salon-photo')) throw new Error('the photo did not close');
+    await click(await one('#salon-buttons .round', 2)); await sleep(400);
+    await click(await one('#salon-grid .card', 3)); await sleep(900);
+    if (!(await js(`location.hash.startsWith('#/play/') && document.getElementById('stage').children.length > 0`))) throw new Error('a room did not open');
+    await click(await one('#play-home .round')); await sleep(600);
+    if (!(await js(`location.hash === '#/salon'`))) throw new Error('home in a room did not lead back to the salon');
+    if (errors.length) throw new Error(`page errors: ${errors.join(' | ')}`);
+    console.log('PASS lobby');
+  } catch (err) { failed++; await shot('lobby-FAILED'); console.log(`FAIL lobby: ${err.message}${errors.length ? ` [errors: ${errors.join(' | ')}]` : ''}`); }
 }
 // Sound after the app has been in the background: the first touch back must bring a running audio context.
 {

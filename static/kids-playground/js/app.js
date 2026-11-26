@@ -6,11 +6,15 @@ import { sceneSvg, meadow } from './art/scenes.js';
 import { sparkle } from './art/base.js';
 import { animal, LAND, SEA } from './art/animals.js';
 import { food, FRUITS, VEGGIES, TREATS } from './art/food.js';
-import { GAMES, GROUPS } from './games/index.js';
+import { GAMES, GROUPS, SALON } from './games/index.js';
+import { renderSalon, dollLook, saveLook } from './salon.js';
+import { zoeySvg } from './art/girl.js';
 import { Zoey } from './zoey.js';
 
 const $ = (id) => document.getElementById(id);
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+/** Where the home button of a game leads: salon rooms go back to the salon. */
+const homeOf = () => (current?.def.salon ? '#/salon' : '#/');
 
 const hubZoey = new Zoey($('hub-zoey'));
 const winZoey = new Zoey($('win-zoey'));
@@ -168,6 +172,7 @@ class Game {
     this.won = true;
     store.data.wins[this.def.id] = (store.data.wins[this.def.id] || 0) + 1;
     store.save();
+    if (this.def.salon) saveLook(this.def.id);       // the room is ticked off for this customer
     await this.sleep(delay);
     const sticker = awardSticker();
     confetti();
@@ -203,7 +208,7 @@ function startGame(def) {
 /* ---------- screens ---------- */
 
 function show(view) {
-  for (const id of ['hub', 'album', 'play']) $(id).hidden = id !== view;
+  for (const id of ['hub', 'album', 'salon', 'play']) $(id).hidden = id !== view;
   document.body.dataset.view = view;
 }
 
@@ -212,6 +217,14 @@ function renderHub() {
   $('hub-grid').innerHTML = '';
   for (const group of GROUPS) {
     $('hub-grid').append(el('h2', { class: 'hub-title', html: `<svg viewBox="-20 -20 40 40">${sparkle(0, 0, 18, '#fff36b')}</svg>${group.name}` }));
+    if (group.collection) {
+      // a collection is one wide door on the home screen; its rooms are inside
+      $('hub-grid').append(el('a', {
+        class: 'card card-door', href: `#/${group.id}`, style: { '--c1': '#ffe0ee', '--c2': '#d9c2f5' }, 'data-door': group.id,
+        html: `<div class="card-art"><div class="door-doll zoey" data-pose="idle">${zoeySvg(dollLook())}</div>${group.games.slice(0, 4).map((g) => `<div class="door-mini" style="--c1:${g.colors[0]};--c2:${g.colors[1]}">${g.icon()}</div>`).join('')}</div><div class="card-name">${group.name} · ${group.games.length} 个房间</div>`,
+      }));
+      continue;
+    }
     for (const g of group.games) {
       const wins = store.data.wins[g.id] || 0;
       $('hub-grid').append(el('a', {
@@ -255,6 +268,7 @@ function route() {
   current?.destroy();
   current = null;
   if (kind === 'album') { show('album'); renderAlbum(); return; }
+  if (kind === 'salon') { show('salon'); renderSalon(SALON); return; }
   show('hub');
   renderHub();
   hubZoey.setPose('wave');
@@ -262,11 +276,11 @@ function route() {
 
 function init() {
   $('album-back').append(roundButton('back', 'ink', '返回', () => { sfx('tap'); location.hash = '#/'; }));
-  $('play-home').append(roundButton('home', 'ink', '回到首页', () => { sfx('tap'); location.hash = '#/'; }));
+  $('play-home').append(roundButton('home', 'ink', '回到首页', () => { sfx('tap'); location.hash = homeOf(); }));
   $('play-help').append(roundButton('sound', 'ink', '再听一遍', () => { if (current) { sfx('tap'); current.help ? current.help() : current.say(current.def.intro); } }));
   $('win-actions').append(
     roundButton('again', 'orange big', '再玩一次', () => { sfx('tap'); startGame(current.def); }),
-    roundButton('home', 'blue big', '回到首页', () => { sfx('tap'); location.hash = '#/'; }),
+    roundButton('home', 'blue big', '回到首页', () => { sfx('tap'); location.hash = homeOf(); }),
   );
   $('open-album').addEventListener('click', () => { sfx('tap'); location.hash = '#/album'; });
   $('toggle-sound').addEventListener('click', () => {

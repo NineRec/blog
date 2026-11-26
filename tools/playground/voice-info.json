@@ -957,5 +957,45 @@
     "language": "English",
     "seconds": 1.92,
     "pitch_hz": 436
+  },
+  "nails-wash": {
+    "text": "Oh no, germs! Scrub the hand with the soapy sponge.",
+    "fingerprint": "50e2399866fcf655158a01bece02e46802632b33e9f545456625befd875f0e63",
+    "seed": 2955894,
+    "language": "English",
+    "seconds": 3.36,
+    "pitch_hz": 414
+  },
+  "facial-mix": {
+    "text": "Let's make a mask! Drop the yummy things in the bowl, and stir.",
+    "fingerprint": "856eb1ca8fb8a6084ddc2322cd5dcd54dd1d0c73066b99a7dcdf17256c1b774b",
+    "seed": 8155751,
+    "language": "English",
+    "seconds": 3.76,
+    "pitch_hz": 421
+  },
+  "mk-brow": {
+    "text": "Eyebrows!",
+    "fingerprint": "1b8f1415a4e08f8b318ad346330399bf6c483df383f366eb122905b1bfc8ed91",
+    "seed": 7716058,
+    "language": "English",
+    "seconds": 0.72,
+    "pitch_hz": 370
+  },
+  "du-glasses": {
+    "text": "Glasses!",
+    "fingerprint": "8ce7e998d2754dc405617e0466d6147966ce4f1bac46a0c582e65de04db6d04d",
+    "seed": 2597613,
+    "language": "English",
+    "seconds": 0.72,
+    "pitch_hz": 370
+  },
+  "hair-glitter": {
+    "text": "Sparkle, sparkle! Shake the glitter on the hair.",
+    "fingerprint": "95d7c75ad691b858f4b1092599db2943ee5101fd8dfd8a5a21178d634eb8691b",
+    "seed": 8387381,
+    "language": "English",
+    "seconds": 3.6,
+    "pitch_hz": 369
   }
 }

@@ -145,3 +145,30 @@ export class Paint {
     this.last = null;
   }
 }
+
+const HAND = `<svg viewBox="0 0 92 112"><rect x="34" y="84" width="46" height="26" rx="10" fill="#ff8fc4"/><path d="M30 12 a10 10 0 0 1 20 0 V46 q3 -8 11 -6 q7 2 8 9 q4 -5 10 -2 q6 3 6 10 V74 q0 22 -22 22 H46 Q30 96 20 82 L8 64 q-5 -8 2 -13 q7 -4 13 3 l7 8Z" fill="#fff"/><path d="M52 50 v14 M70 54 v12" stroke="#e3e1ec" stroke-width="4" stroke-linecap="round" fill="none"/></svg>`;
+/**
+ * A pointing hand that shows a move again and again: it appears at the first point, presses,
+ * travels through the others and lifts. It goes away at the first touch on the stage (or when stop() is called).
+ */
+export function pointer(ctx, points, o = {}) {
+  const { ms = 1700, wait = 900 } = o;
+  const node = ctx.add(el('div', { class: 'hint-hand', html: HAND }));
+  const at = (p, extra = '') => `translate(${p.x.toFixed(0)}px, ${p.y.toFixed(0)}px) ${extra}`;
+  const n = points.length, frames = [{ transform: at(points[0], 'scale(1.25)'), opacity: 0, offset: 0 }, { transform: at(points[0], 'scale(1)'), opacity: 1, offset: 0.1 }, { transform: at(points[0], 'scale(.86)'), opacity: 1, offset: 0.2 }];
+  points.slice(1).forEach((p, i) => frames.push({ transform: at(p, 'scale(.86)'), opacity: 1, offset: 0.2 + 0.62 * (i + 1) / Math.max(1, n - 1) }));
+  frames.push({ transform: at(points[n - 1], 'scale(1.1)'), opacity: 0, offset: 1 });
+  const a = node.animate(frames, { duration: ms + wait, delay: 500, iterations: Infinity, easing: 'ease-in-out', fill: 'backwards' });
+  let off = false;
+  const stop = () => { if (off) return; off = true; a.cancel(); node.remove(); ctx.stage.removeEventListener('pointerdown', stop, true); };
+  ctx.stage.addEventListener('pointerdown', stop, true);
+  ctx.cleanups.push(stop);
+  return stop;
+}
+
+/** The colour halfway between several colours (#rrggbb). */
+export function blend(colors) {
+  const sum = [0, 0, 0];
+  for (const col of colors) { const v = parseInt(col.slice(1), 16); sum[0] += v >> 16; sum[1] += (v >> 8) & 255; sum[2] += v & 255; }
+  return '#' + sum.map((v) => Math.round(v / colors.length).toString(16).padStart(2, '0')).join('');
+}

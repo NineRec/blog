@@ -1,7 +1,8 @@
-// 化妆间 — pick a colour and rub it on: lipstick, blush, eye shadow. Then lashes, sparkles, bows, earrings and a necklace.
+// 化妆间 — pick a colour and rub it on: lipstick, blush, eye shadow (she shuts her eyes for it). Then brows, lashes, sparkles, bows, earrings and a necklace.
 import { pick, el, dist, anim } from '../core.js';
 import { room, sceneSvg } from '../art/scenes.js';
-import { INK, E, C, P, R, e, c, p, L, tube, rot, starPath, heartPath, nextId } from '../art/base.js';
+import { INK, E, C, P, R, e, c, p, L, tube, rot, shade, starPath, heartPath, nextId } from '../art/base.js';
+import { client, dollLook, saveLook } from '../salon.js';
 import { tray } from './kit.js';
 
 const SKIN = '#f3c6a2';
@@ -38,7 +39,15 @@ const lidLine = (cx, width) => L(`M${lidPoint(cx, 200)} A35 41 0 0 1 ${lidPoint(
 /** Lashes at these angles (340 = outer corner, 270 = top) on the outer side `s` of the eye. */
 const lashes = (cx, s, list) => L(list.map(([deg, length]) => { const d = s > 0 ? deg : 540 - deg; return `M${lidPoint(cx, d)} L${lidPoint(cx, d, length)}`; }).join(' '), 5);
 
+const browAt = (cx, s, d, w, col) => L(d.replace(/([-\d.]+) ([-\d.]+)/g, (m, x, y) => `${(cx + s * +x).toFixed(1)} ${(296 + +y).toFixed(1)}`), w, col);
 const ITEMS = {
+  // eyebrows: x runs from the nose outwards, y is up from the brow line
+  brow: {
+    soft: (cx, s, col) => browAt(cx, s, 'M-30 2 Q2 -12 34 0', 8, col),
+    arch: (cx, s, col) => browAt(cx, s, 'M-32 6 Q4 -26 36 -2', 9, col),
+    straight: (cx, s, col) => browAt(cx, s, 'M-32 -2 L34 -8', 10, col),
+    bold: (cx, s, col) => browAt(cx, s, 'M-32 4 Q0 -14 36 -6', 15, col),
+  },
   lash: {
     soft: (cx, s) => lidLine(cx, 5) + lashes(cx, s, [[322, 15], [302, 15]]),
     long: (cx, s) => lidLine(cx, 5) + lashes(cx, s, [[326, 22], [304, 22], [282, 20], [260, 18], [238, 15]]),
@@ -78,8 +87,8 @@ const ITEMS = {
     gems: () => L('M226 588 Q300 660 374 588', 4, '#e0a100') + [[264, 620, '#7fd3ff'], [300, 630, '#ff5c8a'], [336, 620, '#9be29f']].map(([x, y, col]) => P(`M${x} ${y - 14} l12 14 l-12 16 l-12 -16z`, col, 'stroke-width="3.500"')).join(''),
   },
 };
-const ITEM_VIEW = { lash: '322 292 132 104', gem: '90 350 150 100', hair: '110 20 380 250', ear: '456 394 76 86', neck: '206 570 188 110' };
-const draw = (cat, key) => !key ? '' : cat === 'lash' ? ITEMS.lash[key](218, -1) + ITEMS.lash[key](382, 1) : cat === 'gem' && key !== 'moon' ? `<g transform="translate(0 26)">${ITEMS.gem[key]()}</g>` : cat === 'ear' ? ITEMS.ear[key](92) + ITEMS.ear[key](508) : ITEMS[cat][key]();
+const ITEM_VIEW = { brow: '326 262 112 56', lash: '322 292 132 104', gem: '90 350 150 100', hair: '110 20 380 250', ear: '456 394 76 86', neck: '206 570 188 110' };
+const draw = (cat, key, col) => !key ? '' : cat === 'brow' ? ITEMS.brow[key](218, -1, col) + ITEMS.brow[key](382, 1, col) : cat === 'lash' ? ITEMS.lash[key](218, -1) + ITEMS.lash[key](382, 1) : cat === 'gem' && key !== 'moon' ? `<g transform="translate(0 26)">${ITEMS.gem[key]()}</g>` : cat === 'ear' ? ITEMS.ear[key](92) + ITEMS.ear[key](508) : ITEMS[cat][key]();
 
 const CATS = [
   { key: 'lip', voice: 'mk-lip', icon: `<svg viewBox="0 0 100 100">${R(34, 54, 32, 40, 6, '#ffd447')}${R(38, 38, 24, 20, 3, '#f1f1f1')}${P('M40 40 V18 Q54 4 60 22 V40Z', '#e8364f')}</svg>` },
@@ -90,6 +99,7 @@ const CATS = [
   { key: 'hair', voice: 'mk-hair', icon: `<svg viewBox="-90 -60 180 120">${bowAt(0, 0, '#ff9ec0', 1)}</svg>` },
   { key: 'ear', voice: 'mk-ear', icon: `<svg viewBox="0 0 100 100">${L('M30 10 v22 M70 10 v22', 4)}${P('M30 30 C46 54 46 72 30 72 C14 72 14 54 30 30Z', '#7fd3ff')}${P('M70 30 C86 54 86 72 70 72 C54 72 54 54 70 30Z', '#7fd3ff')}</svg>` },
   { key: 'neck', voice: 'mk-neck', icon: `<svg viewBox="0 0 100 100">${L('M14 20 Q50 84 86 20', 4, '#e0a100')}${P(heartPath(50, 66, 17), '#ff5c8a')}</svg>` },
+  { key: 'brow', voice: 'mk-brow', icon: `<svg viewBox="0 0 100 100">${L('M12 48 Q46 18 88 40', 12, '#6b4433')}${C(50, 72, 11, '#6b4433')}${c(46, 68, 4, '#fff')}</svg>` },
 ];
 
 function faceMarkup(style, hair, blurId) {
@@ -103,7 +113,7 @@ function faceMarkup(style, hair, blurId) {
     e(168, 452, 42, 27, '#f08f7c', 'opacity=".4"') + e(432, 452, 42, 27, '#f08f7c', 'opacity=".4"') +
     `<g filter="url(#${blurId})"><ellipse class="paint paint-blush" cx="168" cy="452" rx="56" ry="38" opacity="0"/><ellipse class="paint paint-blush" cx="432" cy="452" rx="56" ry="38" opacity="0"/></g>` +
     `<path class="paint paint-shadow" d="${lid(218, 346)}" opacity="0"/><path class="paint paint-shadow" d="${lid(382, 346)}" opacity="0"/>` +
-    eye(218, 364) + eye(382, 364) + `<g class="slot" data-slot="lash"></g>` +
+    eye(218, 364) + eye(382, 364) + `<g class="mk-shut">${L('M188 368 Q218 394 248 368 M352 368 Q382 394 412 368', 7, '#3b2a25')}${L('M192 380 l-10 9 M408 380 l10 9', 5, '#3b2a25')}</g><g class="slot" data-slot="lash"></g><g class="slot" data-slot="brow"></g>` +
     L('M291 440 q9 8 18 0', 4, '#c98c6a') +
     P(LIPS, '#f4a3a3', 'stroke-width="4"') + `<path class="paint paint-lip" d="${LIPS}" opacity="0"/>` + L('M268 497 Q300 510 332 497', 3.5) + `<ellipse class="lip-shine" cx="290" cy="514" rx="9" ry="4" fill="#fff" opacity="0"/>` +
     `<g class="slot" data-slot="gem"></g>` + hairFront(hair) + `<g class="slot" data-slot="hair"></g><g class="slot" data-slot="ear"></g>` +
@@ -127,11 +137,12 @@ export default {
 
   start(ctx) {
     const { W } = ctx;
-    const first = !ctx.constructor.madeUp; ctx.constructor.madeUp = true;
-    const [style, hair] = first ? HAIRS[0] : pick(HAIRS);
+    // the customer from the lobby, with the hair she has now
+    const who = client(), mine = dollLook(), hair = mine.hairCol, brow = shade(hair, hair === '#2b2529' ? 0.12 : -0.18);
+    const style = ['long', 'curly'].includes(mine.hair) ? 'long' : ['buns', 'pigtails'].includes(mine.hair) ? 'buns' : 'bob';
     ctx.scene(vanity(W));
     const FW = 520, FH = 632, fx = W * 0.5, fy = 425, k = FW / 600;
-    const face = ctx.sprite(`<svg viewBox="0 0 600 730">${faceMarkup(style, hair, nextId())}</svg>`, fx, fy, FW, FH);
+    const face = ctx.sprite(`<svg class="mk-face" viewBox="0 0 600 730">${faceMarkup(style, hair, nextId()).replaceAll(SKIN, who.skin).replaceAll('#e8a585', shade(who.skin, -0.14)).replaceAll('#c98c6a', shade(who.skin, -0.24)).replaceAll('#6b4433', who.eye)}</svg>`, fx, fy, FW, FH);
     const svg = face.el.firstElementChild;
     const toFace = (pt) => ({ x: (pt.x - (fx - FW / 2)) / k, y: (pt.y - (fy - FH / 2)) / k });
     const state = { cat: 'lip', color: PAL.lip[0], amount: { lip: 0, blush: 0, shadow: 0 }, worn: {}, used: new Set() };
@@ -153,10 +164,10 @@ export default {
         brush.html(cat.icon);
       } else {
         const keys = Object.keys(ITEMS[cat.key]);
-        options = tray(ctx, W - 122, 330, keys.map((key) => ({ key, html: `<svg viewBox="${ITEM_VIEW[cat.key]}">${cat.key === 'lash' ? e(382, EYE_Y, 30, 36, '#d6dbe8') + ITEMS.lash[key](382, 1) : cat.key === 'ear' ? ITEMS.ear[key](494).replace(/translate/g, 'translate') : cat.key === 'gem' && (key === 'moon') ? '' : ITEMS[cat.key][key]()}</svg>` })), (item, chip) => {
+        options = tray(ctx, W - 122, 330, keys.map((key) => ({ key, html: `<svg viewBox="${ITEM_VIEW[cat.key]}">${cat.key === 'brow' ? ITEMS.brow[key](382, 1, brow) : cat.key === 'lash' ? e(382, EYE_Y, 30, 36, '#d6dbe8') + ITEMS.lash[key](382, 1) : cat.key === 'ear' ? ITEMS.ear[key](494).replace(/translate/g, 'translate') : cat.key === 'gem' && (key === 'moon') ? '' : ITEMS[cat.key][key]()}</svg>` })), (item, chip) => {
           const on = state.worn[cat.key] !== item.key;
           state.worn[cat.key] = on ? item.key : null;
-          svg.querySelector(`[data-slot="${cat.key}"]`).innerHTML = draw(cat.key, state.worn[cat.key]);
+          svg.querySelector(`[data-slot="${cat.key}"]`).innerHTML = draw(cat.key, state.worn[cat.key], brow);
           if (!on) options.clear();
           ctx.sfx(on ? 'sparkle' : 'drop');
           if (on) { state.used.add(cat.key); anim(svg.querySelector(`[data-slot="${cat.key}"]`), 'fade', 300); ctx.burst(fx, fy - 60, { n: 7, spread: 240 }); }
@@ -170,7 +181,7 @@ export default {
     cats.select('lip');
     openCat(CATS[0]);
 
-    let lastFx = 0;
+    let lastFx = 0, shutTimer = 0;
     ctx.rub((pt, ev, first) => {
       const cat = state.cat;
       if (!PAL[cat]) return;
@@ -179,6 +190,7 @@ export default {
       const zone = ZONES[cat].find(([cx, cy, rx, ry]) => ((f.x - cx) / rx) ** 2 + ((f.y - cy) / ry) ** 2 < 1.5);
       if (!zone) return;
       const els = paints(cat);
+      if (cat === 'shadow') { clearTimeout(shutTimer); svg.classList.add('shut'); }      // eyes closed while the lids are painted
       if (els[0].getAttribute('fill') !== state.color) { els.forEach((n) => n.setAttribute('fill', state.color)); state.amount[cat] = Math.min(state.amount[cat], 0.3); }
       const before = state.amount[cat];
       state.amount[cat] = Math.min(1, before + (first ? 0.08 : 0.03));
@@ -189,7 +201,7 @@ export default {
       const now = performance.now();
       if (now - lastFx > 130) { lastFx = now; ctx.sfx('brush'); if (Math.random() < 0.5) ctx.burst(pt.x, pt.y, { n: 1, shapes: ['star'], colors: ['#fff', '#ffe26a', state.color], spread: 50, size: 22, ms: 500 }); }
       if (before < 1 && state.amount[cat] >= 1) { state.used.add(cat); ctx.sfx('sparkle'); ctx.burst(pt.x, pt.y, { n: 10 }); ctx.say(pick(['mk-pretty', 'mk-lovely'])); }
-    }, () => { brush.el.style.display = 'none'; });
+    }, () => { brush.el.style.display = 'none'; shutTimer = setTimeout(() => svg.classList.remove('shut'), 350); });
 
     ctx.button('eraser', W - 180, 716, 'blue', '擦掉重来', () => {
       ctx.sfx('water');
@@ -201,6 +213,9 @@ export default {
     ctx.button('camera', W - 72, 716, 'pink', '拍照', async () => {
       if (state.used.size < 1 && !Object.values(state.amount).some((a) => a > 0.3)) { ctx.sfx('bad'); ctx.say('makeup-intro'); return; }
       guides(null);
+      const worn = (cat) => (state.amount[cat] > 0.3 ? paints(cat)[0].getAttribute('fill') : null);
+      saveLook('makeup', { makeup: { lip: worn('lip'), blush: worn('blush'), shadow: worn('shadow') } });
+      svg.classList.remove('shut');
       ctx.sfx('camera');
       const flash = ctx.add(el('div', { class: 'flash' }));
       await ctx.sleep(450); flash.remove();

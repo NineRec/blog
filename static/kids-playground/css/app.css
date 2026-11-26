@@ -442,3 +442,59 @@ svg.salon-svg { position: absolute; left: 0; top: 0; display: block; overflow: v
 .hub-title { grid-column: 1 / -1; display: flex; align-items: center; gap: 8px; margin: 0 0 -8px 6px; font-size: 22px; font-weight: 900; letter-spacing: 2px; color: #fff; text-shadow: 0 3px 0 rgba(31, 26, 58, .18); }
 .hub-title:not(:first-child) { margin-top: 8px; }
 .hub-title svg { width: 30px; height: 30px; flex: none; }
+
+/* ---------- the salon lobby ---------- */
+.salon { display: flex; background: #f6e9ff; padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left); overflow: hidden; }
+.salon-main { position: relative; flex: 1; min-width: 0; display: flex; flex-direction: column; padding: 14px 6px 14px 20px; gap: 8px; }
+.salon-bar { display: flex; align-items: center; gap: 14px; }
+.salon-bar h2 { margin: 0; flex: 1; font-size: clamp(22px, 2.9vw, 38px); font-weight: 900; letter-spacing: 2px; color: #7a5bdb; text-shadow: 0 3px 0 #fff; }
+.salon-bar .album-count { display: flex; align-items: center; gap: 6px; color: #ff9d2e; }
+.salon-bar .album-count .icon { width: 22px; height: 22px; }
+.salon-grid { flex: 1; min-height: 0; overflow-y: auto; display: grid; grid-template-columns: repeat(3, minmax(0, 250px)); gap: 16px; padding: 10px 8px 16px 2px; align-content: center; justify-content: center; }
+.card-done { position: absolute; top: 14px; left: 14px; width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; background: #4fc56a; color: #fff; box-shadow: 0 4px 0 #33a650; animation: acc-in .45s cubic-bezier(.3, 1.7, .5, 1) backwards; }
+.card-done .icon { width: 24px; height: 24px; }
+.salon-side { position: relative; flex: 0 0 34%; max-width: 440px; display: flex; flex-direction: column; align-items: center; padding: 8px 12px 18px; }
+.salon-doll { position: relative; flex: 1; min-height: 0; width: 100%; cursor: pointer; }
+.salon-pedestal { position: absolute; left: 14%; right: 14%; bottom: 0; height: 12%; border-radius: 50%; background: #ffb4d6; box-shadow: 0 12px 0 #e64f8b, 0 0 0 12px rgba(255, 255, 255, .55); }
+.salon-figure { position: absolute; left: 0; right: 0; top: 0; bottom: 6.5%; }
+.salon-buttons { display: flex; gap: 16px; margin-top: 22px; z-index: 1; }
+.salon-photo { position: absolute; inset: 0; z-index: 980; display: grid; place-items: center; background: rgba(56, 51, 77, .45); animation: fade-in .25s both; }
+.salon-print { width: min(62vh, 46vw); padding: 14px 14px 52px; background: #fff; border-radius: 18px; box-shadow: 0 16px 0 rgba(31, 26, 58, .2); transform: rotate(-4deg); animation: print-in .6s cubic-bezier(.3, 1.5, .5, 1) both; }
+.salon-print-art { position: relative; aspect-ratio: 1; border-radius: 10px; overflow: hidden; }
+.salon-print-art > svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.salon-print-art > svg.girl { left: 12%; top: 4%; width: 76%; height: 102%; }
+@keyframes print-in { from { transform: translateY(-120vh) rotate(18deg); } to { transform: translateY(0) rotate(-4deg); } }
+@keyframes fade-in { from { opacity: 0; } }
+/* the door to a collection on the home screen */
+.card-door { grid-column: span 2; }
+.card-door .card-art { aspect-ratio: 2.36; display: grid; place-items: stretch; grid-template-columns: 1.15fr 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 6px; padding: 8px; }
+.card-door .door-doll { grid-row: 1 / 3; pointer-events: none; }
+.card-door .door-doll > svg, .door-mini > svg { position: absolute; }
+.card-door .door-doll { position: relative; }
+.card-door .door-doll > svg { inset: 0; width: 100%; height: 100%; }
+.door-mini { position: relative; border-radius: 16px; background: linear-gradient(160deg, var(--c1), var(--c2)); box-shadow: inset 0 0 0 3px rgba(255, 255, 255, .7); overflow: hidden; }
+.door-mini > svg { inset: 6%; width: 88%; height: 88%; }
+@media (max-height: 520px) {
+  .salon-grid { grid-template-columns: repeat(3, minmax(0, 170px)); gap: 10px; }
+  .salon-buttons { margin-top: 10px; gap: 10px; }
+}
+@media (orientation: portrait) and (max-width: 620px) {
+  .salon { flex-direction: column-reverse; }
+  .salon-side { flex: 0 0 38%; max-width: none; width: 100%; }
+  .salon-grid { grid-template-columns: repeat(2, 1fr); align-content: start; }
+}
+
+/* ---------- salon rooms: the pointing hand, zooming in on a nail, the mixing bowl ---------- */
+.hint-hand { position: absolute; left: 0; top: 0; width: 92px; height: 112px; margin: -8px 0 0 -30px; pointer-events: none; z-index: 900; filter: drop-shadow(0 6px 0 rgba(31, 26, 58, .18)); }
+.hint-hand svg { width: 100%; height: 100%; display: block; overflow: visible; }
+.zoomer { transition: transform .55s cubic-bezier(.4, 0, .2, 1); transform-origin: 0 0; }
+.zoom-ring { position: absolute; border-radius: 50%; box-shadow: 0 0 0 14px #fff, 0 0 0 22px #9fdcff, 0 0 0 3000px rgba(56, 51, 77, .38); pointer-events: none; z-index: 5; animation: fade-in .4s both; }
+.germ { transform-box: fill-box; transform-origin: center; animation: germ 1.1s ease-in-out infinite alternate; }
+@keyframes germ { from { transform: rotate(-9deg) scale(.94); } to { transform: rotate(9deg) scale(1.06); } }
+.swirl { transform-box: fill-box; transform-origin: center; }
+.glits path { transform-box: fill-box; transform-origin: center; animation: twinkle 1.1s ease-in-out infinite alternate; }
+.hair-presets .chip { width: 76px; height: 76px; border-radius: 24px; }
+.mk-face .mk-shut { display: none; }
+.mk-face.shut .mk-shut { display: inline; }
+.mk-face.shut .eye, .mk-face.shut [data-slot="lash"] { display: none; }
+.du-cats .chip { width: 60px; height: 60px; border-radius: 18px; }

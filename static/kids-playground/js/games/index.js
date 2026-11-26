@@ -17,7 +17,9 @@ import maze from './maze.js';
 import catcher from './catch.js';
 
 export const GROUPS = [
-  { name: '美美沙龙', games: [hair, nails, facial, makeup, dressup, spa] },
+  { id: 'salon', name: '美美沙龙', collection: true, games: [hair, makeup, facial, nails, dressup, spa] },
   { name: '游乐园', games: [cake, coloring, logic, icecream, feed, puzzle, memory, seek, maze, catcher] },
 ];
+for (const g of GROUPS[0].games) g.salon = true;     // these go back to the salon lobby, not the home screen
+export const SALON = GROUPS[0].games;
 export const GAMES = GROUPS.flatMap((g) => g.games);

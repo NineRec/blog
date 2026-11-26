@@ -2,7 +2,8 @@
 import { pick, el, anim } from '../core.js';
 import { sceneSvg } from '../art/scenes.js';
 import { E, e } from '../art/base.js';
-import { doll, HAIR, OUTFIT, SHOES, HEAD, HAND, BACK, SCENES, SKIN, shoeAt } from '../art/girl.js';
+import { doll, GLASSES, HAIR, OUTFIT, SHOES, HEAD, HAND, BACK, SCENES, SKIN, shoeAt } from '../art/girl.js';
+import { dollLook, saveLook } from '../salon.js';
 import { tray } from './kit.js';
 
 const mannequin = `<g opacity=".3">${E(200, 180, 122, 112, '#d8c8c0')}</g>`;
@@ -11,11 +12,12 @@ const CATS = [
   { key: 'hair', voice: 'du-hair', keys: Object.keys(HAIR), view: '10 0 380 380', chip: (k) => HAIR[k].back(HAIR[k].col) + E(200, 180, 122, 112, SKIN) + HAIR[k].front(HAIR[k].col) },
   { key: 'shoes', voice: 'du-shoes', keys: SHOES, view: '140 566 120 104', chip: (k) => shoeAt(176, 1, k) + shoeAt(224, -1, k) },
   { key: 'head', voice: 'du-head', keys: Object.keys(HEAD), view: '70 -50 260 200', chip: (k) => HEAD[k]() },
+  { key: 'glasses', voice: 'du-glasses', keys: Object.keys(GLASSES), view: '104 160 192 100', chip: (k) => GLASSES[k]() },
   { key: 'hand', voice: 'du-hand', keys: Object.keys(HAND), view: '236 110 190 420', chip: (k) => HAND[k]() },
   { key: 'back', voice: 'du-back', keys: Object.keys(BACK), view: '-20 190 440 430', chip: (k) => BACK[k]() },
   { key: 'scene', voice: 'du-scene', keys: Object.keys(SCENES), view: '0 0 1200 800', chip: (k) => SCENES[k](1200) },
 ];
-const randomLook = () => ({ hair: pick(Object.keys(HAIR)), outfit: pick(Object.keys(OUTFIT).filter((k) => k !== 'zoey')), shoes: pick(SHOES), head: pick([...Object.keys(HEAD), null]), hand: pick([...Object.keys(HAND), null]), back: pick([...Object.keys(BACK), null, null]) });
+const randomLook = () => ({ hair: pick(Object.keys(HAIR)), outfit: pick(Object.keys(OUTFIT).filter((k) => k !== 'zoey')), shoes: pick(SHOES), head: pick([...Object.keys(HEAD), null]), glasses: pick([...Object.keys(GLASSES), null, null]), hand: pick([...Object.keys(HAND), null]), back: pick([...Object.keys(BACK), null, null]) });
 
 export default {
   id: 'dressup', name: '换装派对', colors: ['#efe3ff', '#cdb4ff'], intro: 'dressup-intro',
@@ -23,7 +25,7 @@ export default {
 
   start(ctx) {
     const { W } = ctx;
-    const look = { hair: 'bob', outfit: null, shoes: null, head: null, hand: null, back: null };
+    const look = dollLook();       // the customer from the lobby, as the other rooms left her
     let scene = 'castle', changes = 0;
     const bg = ctx.scene(SCENES[scene](W));
     const dx = W * 0.27, dy = 436;
@@ -64,8 +66,13 @@ export default {
       ctx.sfx('camera');
       const flash = ctx.add(el('div', { class: 'flash' }));
       await ctx.sleep(450); flash.remove();
-      girl.anim('jump', 700); ctx.burst(dx, 400, { n: 22, spread: 380, size: 44 });
-      ctx.win({ voice: 'dressup-done', delay: 900 });
+      saveLook('dressup', { hair: look.hair, outfit: look.outfit, shoes: look.shoes, head: look.head, hand: look.hand, back: look.back, glasses: look.glasses });
+      // a little dance: she hops, twirls and cheers
+      girl.el.dataset.pose = 'cheer';
+      girl.anim('jump', 700).then(() => girl.anim('spin', 700)).then(() => girl.anim('jump', 600));
+      for (let i = 0; i < 4; i++) ctx.after(i * 450, () => ctx.burst(dx + (i % 2 ? 90 : -90), 300 + i * 60, { n: 8, shapes: ['heart'], spread: 170, size: 34 }));
+      ctx.burst(dx, 400, { n: 22, spread: 380, size: 44 });
+      ctx.win({ voice: 'dressup-done', delay: 2100 });
     });
   },
 };

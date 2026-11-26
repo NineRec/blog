@@ -10,6 +10,8 @@ export const CLIENTS = [
   { skin: '#f8d6ba', hair: '#f2c14e', eye: '#4f8fd0' },
   { skin: '#d9a273', hair: '#5a3b2e', eye: '#5a3b2e' },
   { skin: '#f6ccae', hair: '#c9603c', eye: '#4c9a5a' },
+  { skin: '#b57a52', hair: '#33221c', eye: '#3b2a25' },
+  { skin: '#8f5c3e', hair: '#4a2f24', eye: '#5a3b2e' },
 ];
 
 /**
@@ -82,13 +84,17 @@ export const TOOLS = {
   clipper: svg('0 0 130 110', P('M12 70 Q10 60 20 60 L112 64 q10 2 8 12 q-2 8 -12 8 L20 76 q-8 -1 -8 -6Z', METAL) + `<g class="lever">${P('M22 56 L110 26 q10 -3 12 7 q1 8 -8 11 L30 64Z', '#b6bfd3')}${C(104, 38, 6, '#fff')}</g>` + C(40, 62, 6, STEEL) + P('M12 58 l10 -2 v6z', STEEL)),
   file: svg('0 0 150 100', `<g transform="rotate(-16 75 50)">${R(8, 38, 106, 24, 12, '#ffb4d6')}${R(14, 42, 94, 16, 8, '#ff8fc4')}${[24, 38, 52, 66, 80, 94].map((x) => c(x, 50, 2.5, '#ffd9ec')).join('')}${R(104, 34, 40, 32, 14, '#7a5bdb')}${C(126, 50, 6, '#c9b8ff')}</g>`),
   puff: svg('0 0 120 120', C(60, 64, 46, '#ff9ecb') + C(60, 64, 34, '#ffb4d6') + L('M30 64 Q60 44 90 64', 5, '#ff7fb0') + C(34, 30, 15, '#fff') + C(58, 22, 18, '#fff') + C(84, 32, 14, '#fff') + c(54, 20, 5, '#dff4ff')),
+  // a shaker of glitter: stars come out of the top (on the left) when it is tipped over the hair
+  glitter: svg('0 0 120 120', `<g transform="rotate(-38 60 66)">${R(36, 40, 50, 70, 16, '#ffe26a')}${R(36, 40, 16, 70, 8, '#fff3a8')}${R(32, 24, 58, 22, 9, '#ff8fc4')}${[44, 56, 68, 80].map((x) => c(x, 32, 3, '#fff')).join('')}${P(starPath(61, 78, 15, 6.5), '#fff')}</g>` + P(starPath(20, 22, 9, 4), '#ffd23f') + P(starPath(34, 44, 6, 2.7), '#ff8fc4') + sparkle(12, 50, 7, '#fff')),
+  // a soapy sponge for hands
+  sponge: svg('0 0 120 120', R(16, 40, 88, 62, 22, '#ffd447') + R(16, 40, 88, 22, 11, '#ffe26a') + [[38, 74, 7], [62, 86, 5], [80, 68, 8], [56, 62, 4]].map(([x, y, r]) => c(x, y, r, '#f2b632')).join('') + C(36, 34, 15, '#fff') + C(60, 26, 18, '#fff') + C(86, 36, 14, '#fff') + c(56, 24, 5, '#dff4ff')),
   cream: svg('0 0 120 120', P('M32 34 h56 l-7 74 q-1 6 -7 6 h-28 q-6 0 -7 -6z', '#9fdcff') + P('M32 34 h18 l-3 80 h-1 q-6 0 -7 -6z', '#c4eaff') + P('M34 52 h52 l-2 24 h-48z', '#fff') + P(heartPath(60, 64, 8), '#ff6fa8') + R(46, 14, 28, 22, 6, '#ff6fa8') + R(46, 14, 10, 22, 5, '#ff8fc4')),
 };
 
 /** Where the working end of each tool is, from the middle of its picture, as a share of its width and height. */
 export const TIP = {
   scissors: [-0.3, 0], potion: [-0.5, -0.3], curler: [-0.18, 0], iron: [-0.2, 0], spray: [-0.52, -0.31], dryer: [-0.47, -0.15], comb: [0, 0.14],
-  shampoo: [-0.28, 0.25], shower: [0, 0.1], towel: [0, 0], clipper: [-0.4, 0.06], file: [-0.2, 0.08], puff: [0, 0.05], cream: [-0.27, 0.24],
+  glitter: [-0.34, -0.3], sponge: [0, 0.1], shampoo: [-0.28, 0.25], shower: [0, 0.1], towel: [0, 0], clipper: [-0.4, 0.06], file: [-0.2, 0.08], puff: [0, 0.05], cream: [-0.27, 0.24],
 };
 
 export const foamArt = () => `<svg viewBox="0 0 100 80">${C(30, 46, 26, '#fff')}${C(62, 40, 30, '#fff')}${C(46, 26, 20, '#fff')}${c(24, 38, 6, '#dff4ff')}${c(66, 30, 7, '#dff4ff')}${c(48, 52, 5, '#eaf7ff')}</svg>`;
@@ -140,6 +146,17 @@ export const cucumberArt = () => `<svg viewBox="-50 -50 100 100">${C(0, 0, 46, '
 export const plateArt = () => `<svg viewBox="0 0 220 120">${E(110, 70, 104, 44, '#fff')}${E(110, 66, 80, 30, '#eef3f8')}</svg>`;
 export const steamerArt = () => `<svg viewBox="0 0 200 280">${E(100, 264, 74, 14, STEEL)}${R(90, 130, 20, 132, 10, '#b6bfd3')}${tube('M150 86 Q186 70 190 34', '#b6bfd3', 12)}${R(176, 16, 28, 22, 8, STEEL)}${R(32, 56, 128, 90, 38, '#7fd3ff')}${R(32, 56, 128, 34, 17, '#a9e2ff')}` +
   `${[68, 100, 132].map((x) => `<circle class="lamp" cx="${x}" cy="112" r="11" fill="#fff"/>`).join('')}${c(60, 74, 6, '#fff')}</svg>`;
+/* mixing a mask: something to put in the bowl, the bowl (its mix takes the colour --mix), and the spoon */
+export const tokenArt = (m) => `<svg viewBox="0 0 100 100">${C(50, 50, 46, '#fff')}${C(50, 50, 38, shade(m.col, 0.55))}<g transform="translate(-10 -28) scale(1.2)">${m.glyph}</g></svg>`;
+export const bowlArt = () => `<svg viewBox="0 0 250 190">${E(125, 70, 116, 34, '#bfe8ff')}<ellipse cx="125" cy="74" rx="104" ry="27" fill="var(--mix, #f1e9ff)" style="transition:fill .5s"/><g class="blobs"></g>` +
+  `<g class="swirl" opacity="0"><path d="M60 74 Q92 56 125 74 T190 74" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" opacity=".55"/><path d="M84 84 Q106 72 128 84 T172 84" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" opacity=".4"/></g>` +
+  `${P('M9 72 Q125 118 241 72 C236 150 190 182 125 182 C60 182 14 150 9 72Z', '#7fd3ff')}${P('M9 72 Q125 118 241 72 C240 96 236 110 230 124 Q125 152 20 124 C14 110 10 96 9 72Z', '#9fdcff')}${e(60, 132, 9, 18, '#fff', 'opacity=".5" transform="rotate(24 60 132)"')}${P(starPath(125, 148, 16, 7), '#fff')}</svg>`;
+export const spoonArt = () => `<svg viewBox="0 0 60 170">${R(22, 8, 16, 112, 8, '#c98a5c')}${R(22, 8, 6, 112, 3, '#dba777')}${E(30, 134, 24, 32, '#c98a5c')}${e(26, 130, 12, 18, '#dba777')}</svg>`;
+/** A little germ with a worried face: it runs away from soap. */
+export const germArt = (col) => { const d = shade(col, -0.16);
+  return [0, 51, 103, 154, 206, 257, 309].map((a) => `<circle cx="${(25 * Math.cos(a * Math.PI / 180)).toFixed(1)}" cy="${(25 * Math.sin(a * Math.PI / 180)).toFixed(1)}" r="7" fill="${d}"/>`).join('') +
+    C(0, 0, 23, col) + c(-8, -4, 5.5, '#fff') + c(8, -4, 5.5, '#fff') + c(-7, -3, 2.8, '#38334d') + c(9, -3, 2.8, '#38334d') + `<ellipse class="d" cx="0" cy="9" rx="5" ry="4" fill="#38334d"/>`; };
+export const mudArt = (s = 1) => `<g transform="scale(${s})"><path d="M0 -30 C16 -34 32 -20 28 -4 C36 10 24 30 6 28 C-6 36 -28 28 -28 10 C-38 -4 -24 -24 0 -30Z" fill="#8a5a36"/><circle cx="-10" cy="-6" r="6" fill="#a8744a"/><circle cx="10" cy="10" r="4.500" fill="#a8744a"/></g>`;
 export const creamDotArt = () => `<svg viewBox="-20 -20 40 40">${C(0, 2, 15, '#fff')}${C(-2, -6, 9, '#fff')}${c(-5, -3, 4, '#ffe9f2')}</svg>`;
 
 /* ---------- rooms ---------- */

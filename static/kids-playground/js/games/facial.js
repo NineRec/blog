@@ -1,15 +1,16 @@
-// 美容 SPA — a facial, step by step: wash the face with a soapy puff, wipe the foam away, paint on a mask
+// 美容 SPA — a facial, step by step: wash the face with a soapy puff, wipe the foam away, mix a mask in a bowl (drop things in, stir with the spoon), paint it on
 // (it goes on stroke by stroke), lay cucumber slices on the eyes, steam, take everything off again,
 // then dab on cream and rub it in. The customer closes her eyes when something comes near them.
 import { pick, el, rand, clamp, anim } from '../core.js';
 import { P, R, E, C, L, sparkle, nextId } from '../art/base.js';
-import { clientFace, bust, turban, CLIENTS, HEAD, EYES, TOOLS, TIP, spaRoom, foamArt, MASKS, jarArt, maskBrushArt, cucumberArt, plateArt, steamerArt } from '../art/salon.js';
+import { clientFace, bust, turban, CLIENTS, HEAD, EYES, TOOLS, TIP, spaRoom, foamArt, MASKS, maskBrushArt, cucumberArt, plateArt, steamerArt, tokenArt, bowlArt, spoonArt } from '../art/salon.js';
+import { client, look as salonLook } from '../salon.js';
 import { tray } from './kit.js';
-import { toolbox, spray, Paint, svgEl } from './salonkit.js';
+import { toolbox, spray, Paint, svgEl, pointer, blend } from './salonkit.js';
 
 const K = 0.86;
-const STEPS = ['wash', 'rinse', 'mask', 'cucumber', 'relax', 'peel', 'cream'];
-const VOICE = { wash: 'facial-wash', rinse: 'facial-rinse', mask: 'facial-mask', cucumber: 'facial-cucumber', relax: 'facial-relax', peel: 'facial-peel', cream: 'facial-cream' };
+const STEPS = ['wash', 'rinse', 'mix', 'mask', 'cucumber', 'relax', 'peel', 'cream'];
+const VOICE = { wash: 'facial-wash', rinse: 'facial-rinse', mix: 'facial-mix', mask: 'facial-mask', cucumber: 'facial-cucumber', relax: 'facial-relax', peel: 'facial-peel', cream: 'facial-cream' };
 // in face units
 const DIRT = [[218, 286, 1], [398, 296, 0.8], [158, 452, 0.9], [440, 446, 1], [300, 424, 0.6], [338, 552, 0.7]];
 const CREAM = [[300, 272], [172, 448], [428, 448], [300, 426], [300, 552]];
@@ -28,7 +29,7 @@ export default {
   start(ctx) {
     const { W } = ctx;
     const hx = Math.round(W * 0.47), hy = 404, ox = hx - 300 * K, oy = hy - 339 * K;
-    let who = pick(CLIENTS); while (who === lastWho) who = pick(CLIENTS); lastWho = who;
+    const who = { ...client(), hair: salonLook().hairCol || client().hair };
     ctx.scene(spaRoom(W, hx));
     const toFace = (pt) => ({ x: (pt.x - ox) / K, y: (pt.y - oy) / K });
     const toStage = (x, y) => ({ x: ox + x * K, y: oy + y * K });
@@ -64,7 +65,7 @@ export default {
     const lastTick = {};
     const tick = (name, gap) => { const now = performance.now(); if (now - (lastTick[name] || 0) < gap) return false; lastTick[name] = now; return true; };
 
-    let index = -1, foams = [], flavour = MASKS[0], jars = null, slices = [], plate = null, steamer = null, puffs = 0, dots = [], rubbing = false, finger = null;
+    let index = -1, foams = [], flavour = MASKS[0], bowl = null, stopHint = null, slices = [], plate = null, steamer = null, puffs = 0, dots = [], rubbing = false, finger = null;
     const step = () => STEPS[index];
 
     /* ---------- puff, towel and cream ---------- */
@@ -153,19 +154,17 @@ export default {
       if (index > 0) { ctx.sfx('great'); ctx.burst(hx, hy - 60, { n: 10, spread: 260 }); }
       ctx.help = () => ctx.say(VOICE[now]);
       ctx.after(index ? 600 : 2500, () => { if (step() === now) ctx.say(VOICE[now]); });
-      if (now === 'wash') box.enable('puff');
-      else if (now === 'rinse') box.enable('towel');
+      stopHint?.();
+      const show = (key, pts) => { const t = box.tools.get(key); stopHint = pointer(ctx, [{ x: t.cx, y: t.cy }, ...pts.map(([x, y]) => toStage(x, y))]); };
+      if (now === 'wash') { box.enable('puff'); show('puff', [[218, 286], [398, 296], [158, 452], [440, 446]]); }
+      else if (now === 'rinse') { box.enable('towel'); show('towel', [[180, 300], [420, 320], [180, 460], [420, 480]]); }
+      else if (now === 'mix') mixing();
       else if (now === 'mask') {
         box.enable(); mood('open', 'happy', 1200);
+        brush.el.style.setProperty('--dye', flavour.col);
         for (let i = 0; i < 5; i++) ctx.after(i * 120, () => { const at = toStage(rand(150, 450), rand(260, 520)); spray(ctx, at.x, at.y, { n: 1, shape: 'spark', color: '#fff', cone: 180, reach: 16, size: 40, ms: 700 }); });
-        jars = tray(ctx, 130, 560, MASKS.map((m) => ({ key: m.key, html: jarArt(m) })), (item, chip) => {
-          flavour = MASKS.find((m) => m.key === item.key); ctx.sfx('pop'); anim(chip, 'pop', 300);
-          brush.el.style.setProperty('--dye', flavour.col);
-        }, { width: 226, cls: 'spa-jars' });
-        jars.select(flavour.key); brush.el.style.setProperty('--dye', flavour.col);
-        anim(jars.el, 'fade', 300);
       } else if (now === 'cucumber') {
-        anim(jars.el, 'out', 250, { fill: 'forwards' }).then(() => jars.el.remove());
+        anim(bowl.el, 'out', 250, { fill: 'forwards' }).then(() => bowl.remove());
         plate = ctx.sprite(plateArt(), W - 126, 664, 220, 120); plate.el.style.pointerEvents = 'none'; plate.anim('in', 350);
         slices = [-1, 1].map((s) => {
           const slice = ctx.sprite(cucumberArt(), W - 126 + s * 46, 650, 96, 96, 'shadowed pulse');
@@ -215,6 +214,60 @@ export default {
         });
       }
     }
+    /* ---------- mixing the mask: drop things into the bowl, then stir until it is one colour ---------- */
+    function mixing() {
+      box.enable(); mood('open', 'happy', 1200);
+      const bx = 168, by = 628, picked = [];
+      let stirred = 0, spoon = null, last = null, done = false;
+      bowl = ctx.sprite(bowlArt(), bx, by, 290, 220); bowl.el.style.pointerEvents = 'none'; bowl.anim('in', 350);
+      const blobs = bowl.el.querySelector('.blobs'), swirl = bowl.el.querySelector('.swirl');
+      const tokens = MASKS.map((m, i) => {
+        const t = ctx.sprite(tokenArt(m), 74 + (i % 2) * 108 + (i === 4 ? 54 : 0), 196 + Math.floor(i / 2) * 106, 92, 92, 'shadowed');
+        t.anim('in', 300 + i * 70);
+        return ctx.drag(t, { enabled: () => step() === 'mix' && !t.used && !done, end: () => {
+          if (Math.hypot(t.cx - bx, t.cy - (by - 40)) > 135) { ctx.sfx('drop'); t.goHome(); return; }
+          t.used = true; t.el.style.pointerEvents = 'none'; t.el.classList.remove('shadowed');
+          t.glide(bx, by - 46, 200, 'ease-in').then(() => anim(t.el, 'out', 180, { fill: 'forwards' })).then(() => t.remove());
+          ctx.sfx('splash'); bowl.anim('pop', 300); mood('joy', 'happy', 700);
+          spray(ctx, bx, by - 50, { n: 9, shape: 'drop', color: [m.col, '#fff'], angle: 270, cone: 60, reach: 130, size: 22, ms: 650, fall: 90 });
+          picked.push(m.col); ctx.note(picked.length * 2);
+          flavour = { key: 'mix', col: blend(picked) };
+          // what was dropped in floats there as a blob until it is stirred in
+          blobs.append(svgEl('circle', { cx: 80 + ((picked.length * 53) % 90), cy: 70 + (picked.length % 2) * 9, r: 21, fill: m.col }));
+          if (picked.length === 1) bowl.el.style.setProperty('--mix', m.col);
+          if (picked.length === 2) addSpoon();
+        } });
+      });
+      stopHint = pointer(ctx, [{ x: tokens[0].cx, y: tokens[0].cy }, { x: bx, y: by - 50 }]);
+      function addSpoon() {
+        spoon = ctx.sprite(spoonArt(), bx + 190, by - 110, 62, 176, 'shadowed pulse');
+        spoon.anim('in', 350); swirl.setAttribute('opacity', 1);
+        stopHint?.();
+        stopHint = pointer(ctx, [{ x: spoon.cx, y: spoon.cy }, { x: bx - 50, y: by - 60 }, { x: bx + 50, y: by - 60 }, { x: bx - 50, y: by - 60 }, { x: bx + 50, y: by - 60 }], { ms: 2400 });
+        ctx.drag(spoon, { start: () => spoon.el.classList.remove('pulse'), move: (sp, q) => {
+          const inBowl = Math.abs(sp.cx - bx) < 118 && Math.abs(sp.cy + 60 - (by - 40)) < 80;
+          if (inBowl && last && !done) {
+            stirred += Math.hypot(q.x - last.x, q.y - last.y);
+            const k = Math.min(1, stirred / 1300);
+            swirl.style.transform = `rotate(${(stirred * 0.5).toFixed(0)}deg)`;
+            blobs.style.opacity = (1 - k).toFixed(2);
+            bowl.el.style.setProperty('--mix', flavour.col);
+            if (tick('stir', 170)) { ctx.sfx('bubble'); spray(ctx, sp.cx, by - 60, { n: 1, shape: 'bubble', angle: 270, cone: 50, reach: 80, size: 24, ms: 700 }); }
+            if (k >= 1) mixed();
+          }
+          last = q;
+        }, end: () => { last = null; if (!done) spoon.goHome(); } });
+      }
+      function mixed() {
+        done = true; stopHint?.();
+        for (const t of tokens) if (!t.used) anim(t.el, 'out', 250, { fill: 'forwards' }).then(() => t.remove());
+        anim(spoon.el, 'out', 250, { fill: 'forwards' }).then(() => spoon.remove());
+        blobs.innerHTML = ''; bowl.anim('jump', 600); ctx.sfx('sparkle');
+        ctx.burst(bx, by - 60, { n: 12, shapes: ['star'], colors: ['#fff', '#fff36b', flavour.col], spread: 170, size: 30 });
+        ctx.after(500, () => { if (step() === 'mix') next(); });
+      }
+    }
+
     function peeled() { if (step() === 'peel' && mask.cover === 0 && slices.every((n) => !n.eye)) ctx.after(350, () => { if (step() === 'peel') next(); }); }
 
     function finish() {

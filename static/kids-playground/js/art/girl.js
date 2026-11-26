@@ -129,23 +129,41 @@ const mouth = () => { const id = nextId(), d = 'M175 249 Q200 261 225 249 Q219 2
     `<path clip-path="url(#${id})" d="M170 246 Q200 262 230 246 L228 258 Q200 270 172 258Z" fill="#fff"/></g>`; };
 
 /** The whole girl for a look: { hair, outfit, shoes, head, hand, back }. */
-export function doll(look) {
-  const hair = HAIR[look.hair], legs = !HIDE_LEGS.includes(look.outfit), arm2 = shade(SKIN, -0.06);
+function dollBase(look) {
+  const hair = HAIR[look.hair], hc = look.hairCol || hair.col, legs = !HIDE_LEGS.includes(look.outfit), arm2 = shade(SKIN, -0.06);
   const arm = (s) => tube(`M${mx(s, 148)} 322 Q${mx(s, 114)} 370 ${mx(s, 106)} 428`, s > 0 ? SKIN : arm2, 16) + C(mx(s, 106), 436, 15, s > 0 ? SKIN : arm2);
   const head = 'transform="translate(200 292) scale(.88) translate(-200 -292)"';
-  return (look.back ? `<g class="a-wings">${BACK[look.back]()}</g>` : '') + `<g ${head}>${hair.back(hair.col)}</g>` +
+  return (look.back ? `<g class="a-wings">${BACK[look.back]()}</g>` : '') + `<g ${head}>${hair.back(hc)}</g>` +
     (legs ? R(158, 440, 37, 204, 18, SKIN) + R(205, 440, 37, 204, 18, arm2) + (look.shoes ? shoeAt(176, 1, look.shoes) + shoeAt(224, -1, look.shoes) : E(172, 646, 28, 15, SKIN) + E(228, 646, 28, 15, arm2))
       : look.outfit === 'pajama' ? E(172, 642, 26, 14, '#fff') + E(228, 642, 26, 14, '#f1eef5') : '') +
     `<g class="a-arm a-arm-l">${arm(1)}</g><g class="a-arm a-arm-r">${arm(-1)}${look.hand ? HAND[look.hand]() : ''}</g>` +
     R(184, 268, 32, 44, 12, shade(SKIN, -0.1)) + P('M146 300 Q200 286 254 300 L262 456 Q200 470 138 456Z', '#fff') +
     (look.outfit ? OUTFIT[look.outfit]() : '') +
     `<g ${head}><g class="a-head">` + both((s) => E(mx(s, 82), 198, 18, 24, SKIN) + e(mx(s, 82), 198, 8, 12, CHEEK, 'opacity=".5"')) + E(200, 180, 122, 112, SKIN) +
-    both((s) => c(mx(s, 122), 240, 20, CHEEK, 'opacity=".5"')) + L('M192 234 q8 6 16 0', 3.2, shade(SKIN, -0.24)) + eyes() + mouth() +
-    hair.front(hair.col) + L('M118 132 Q136 96 172 84', 9, 'rgba(255,255,255,.2)') + (look.head ? HEAD[look.head]() : '') + `</g></g>`;
+    both((s) => c(mx(s, 122), 240, 20, CHEEK, 'opacity=".5"')) + L('M192 234 q8 6 16 0', 3.2, shade(SKIN, -0.24)) + made(look.makeup, 0) + eyes() + mouth() + made(look.makeup, 1) +
+    hair.front(hc) + (look.glasses ? GLASSES[look.glasses]() : '') + L('M118 132 Q136 96 172 84', 9, 'rgba(255,255,255,.2)') + (look.head ? HEAD[look.head]() : '') + `</g></g>`;
+}
+
+// Makeup from the salon (colours for the lids, cheeks and lips) and glasses, drawn on the small face.
+const made = (m, top) => !m ? '' : top
+  ? (m.lip ? `<path class="d" d="M175 249 Q200 261 225 249 Q219 277 200 277 Q181 277 175 249Z" fill="none" stroke="${m.lip}" stroke-width="6" stroke-linejoin="round"/>` : '')
+  : (m.shadow ? both((s) => e(mx(s, 157), 195, 20, 10, m.shadow, 'opacity=".9"')) : '') + (m.blush ? both((s) => c(mx(s, 122), 240, 22, m.blush, 'opacity=".6"')) : '');
+const GLASSES = {
+  round: () => both((s) => `<circle cx="${mx(s, 157)}" cy="209" r="27" fill="rgba(255,255,255,.28)" stroke="#ff5c8a" stroke-width="7"/>`) + L('M184 209 h32', 6, '#ff5c8a'),
+  heart: () => both((s) => `<path d="${heartPath(mx(s, 157), 206, 25)}" fill="rgba(255,143,196,.45)" stroke="#e64f8b" stroke-width="6" stroke-linejoin="round"/>`) + L('M187 204 h26', 6, '#e64f8b'),
+  star: () => both((s) => `<path d="${starPath(mx(s, 157), 209, 33, 18)}" fill="rgba(255,226,106,.5)" stroke="#ffb21f" stroke-width="6" stroke-linejoin="round"/>`) + L('M188 209 h24', 6, '#ffb21f'),
+  shades: () => both((s) => R(mx(s, 157) - 30, 190, 60, 40, 16, '#38334d') + e(mx(s, 157) - 10, 202, 8, 5, '#fff', 'opacity=".35"')) + L('M186 204 h28', 7, '#38334d'),
+};
+
+/** The whole girl for a look: { hair, outfit, shoes, head, hand, back } and, from the salon, { skin, hairCol, makeup, glasses }. */
+export function doll(look) {
+  let out = dollBase(look);
+  if (look.skin && look.skin !== SKIN) for (const k of [-0.24, -0.1, -0.06, 0]) out = out.replaceAll(k ? shade(SKIN, k) : SKIN, k ? shade(look.skin, k) : look.skin);
+  return out;
 }
 
 export const ZOEY_LOOK = { hair: 'bob', outfit: 'zoey', shoes: null, head: null, hand: null, back: null };
 /** Zoey as a standalone picture. Poses come from a data-pose attribute on a parent (see the CSS). */
 export const zoeySvg = (look = ZOEY_LOOK) => `<svg class="art girl" viewBox="-70 -30 540 720" xmlns="http://www.w3.org/2000/svg">${e(200, 668, 130, 16, 'rgba(31,26,58,.12)')}<g class="girl-body">${doll(look)}</g></svg>`;
 
-export { HAIR, OUTFIT, SHOES, HEAD, HAND, BACK, SCENES, SKIN, shoeAt, castle, palm };
+export { GLASSES, HAIR, OUTFIT, SHOES, HEAD, HAND, BACK, SCENES, SKIN, shoeAt, castle, palm };
