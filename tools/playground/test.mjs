@@ -97,7 +97,7 @@ const GAMES = {
     await untilStars(3, async (i) => { await path(zigzag(head, 380 * k, 260 * k, 8, 12), 12); if (i === 1) await shot('hair-2-foam'); }, 10, 'foam');
     await untilStars(4, () => pull('shower', zigzag({ x: head.x + 30 * k, y: head.y - 100 * k }, 520 * k, 420 * k, 7, 10), 20), 10, 'rinsed');
     await untilStars(5, () => pull('dryer', zigzag({ x: head.x + 120 * k, y: head.y }, 380 * k, 320 * k, 7, 10), 20), 10, 'dry');
-    for (let i = 0; i < 10 && (await count('.sl-item[data-item="comb"]')); i++) for (const dx of [-220, -120, 120, 220]) if (await count('.sl-item[data-item="comb"]')) await pull('comb', line({ x: head.x + dx * k, y: crown.y + 80 * k }, { x: head.x + dx * k, y: chin.y }, 12), 14);
+    for (let i = 0; i < 10 && (await count('.sl-item[data-item="comb"]')); i++) for (const dx of [-220, -120, 120, 220]) if (await count('.sl-item[data-item="comb"]')) await pull('comb', line({ x: head.x + dx * k, y: crown.y + 80 * k }, { x: head.x + dx * k, y: chin.y }, 12), 14).catch(async (e) => { if (await count('.sl-item[data-item="comb"]')) throw e; });   // the last stroke can finish the step and take the comb away
     await until(() => count('.sl-tab'), 5000, 'the styling tabs');
     await sleep(1500);
     await shot('hair-3-clean');
@@ -139,13 +139,12 @@ const GAMES = {
     await untilStars(5, async () => { for (let i = 0; i < 5 && (await stars()) < 5; i++) { const c = await nail(i, -30); await pull('file', [c, ...zigzag(c, 60 * k, 20 * k, 3, 6)], 14); } }, 4, 'filed');
     await untilStars(6, async (r) => { for (let i = 0; i < 5 && (await stars()) < 6; i++) { await pull('oil', [await nail(i)]); await sleep(200); if (r === 0 && i === 2) await shot('nails-3c-oil'); } }, 3, 'oiled');
     await until(() => count('.sl-tab'), 5000, 'the decorating tabs');
-    await click(await nail(2)); await sleep(700);
-    if ((await js('window.__salon.zoomed()')) !== 2) throw new Error('tapping a nail did not zoom in');
-    await shot('nails-4-zoom');
-    for (let t = 0; t < 4 && ((await js('window.__salon.polish[2].key')) !== 'red' || (await js('window.__salon.polish[2].wet'))); t++) await pull('red', zigzag(await nail(2), 190 * k, 260 * k, 10, 8), 12);
-    await sleep(800);
-    if ((await js('window.__salon.zoomed()')) !== null) throw new Error(`the nail did not zoom back out after painting (cover ${await js('window.__salon.polish[2].cover')}, key ${await js('window.__salon.polish[2].key')})`);
-    for (const [i, c] of [[0, 'glitter-pink'], [1, 'rainbow'], [3, 'mint'], [4, 'pearl']]) for (let t = 0; t < 4 && (await js(`window.__salon.polish[${i}].wet !== false`)); t++) await pull(c, zigzag(await nail(i), 45 * k, 70 * k, 8, 5), 12);
+    // the hand stays where it is (no zooming): paint each nail in place
+    const box = await js('JSON.stringify(document.querySelector(".sl-rig").getBoundingClientRect())');
+    await click(await nail(2)); await sleep(500);
+    if (await js('JSON.stringify(document.querySelector(".sl-rig").getBoundingClientRect())') !== box) throw new Error('tapping a nail moved the hand');
+    await shot('nails-4-paint');
+    for (const [i, c] of [[2, 'red'], [0, 'glitter-pink'], [1, 'rainbow'], [3, 'mint'], [4, 'pearl']]) for (let t = 0; t < 4 && (await js(`window.__salon.polish[${i}].wet !== false`)); t++) await pull(c, zigzag(await nail(i), 45 * k, 70 * k, 8, 5), 12);
     await click(await one('.sl-tab[data-tab="stickers"]')); await sleep(400); await pull('st-heart', [await nail(3)]);
     await click(await one('.sl-tab[data-tab="gems"]')); await sleep(400); await pull('gem-pink', [await nail(4)]);
     const finger = async (i, t) => { const p = await js(`window.__salon.fingerPoint(${i}, ${t})`); return { x: st.x + p.x * st.k, y: st.y + p.y * st.k }; };
@@ -158,6 +157,11 @@ const GAMES = {
     const worn = await js('JSON.stringify(window.__salon.worn())');
     if (!/"1":"ring-heart"/.test(worn) || !/"3":"ring-blue"/.test(worn) || !/bracelet-hearts/.test(worn)) throw new Error(`rings or bracelet not worn: ${worn}`);
     if ((await count('.sl-nail-deco, .sl-stuck')) < 2) throw new Error('decorations missing');
+    if (process.env.EVERY) {
+      // every ring on every finger, one picture per ring
+      const rings = await js(`(async () => Object.keys((await import('/kids-playground/js/salon/manifest.js')).HAND.rings || {}))()`);
+      for (const r of rings) { for (let i = 0; i < 5; i++) await js(`window.__salon.ring(${i}, '${r}')`); await sleep(400); await shot(`nails-ring-${r}`); }
+    }
     await shot('nails-5-done');
     await click(await one('.sl-done'));
   },

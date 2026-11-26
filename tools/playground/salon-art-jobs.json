@@ -578,6 +578,7 @@
   },
   {
    "out": "worn/hat-sun.png",
+   "max_change": 0.45,
    "kind": "edit",
    "input": "master/m0.png",
    "prompt": "Change: she is now wearing a straw sun hat with a pink ribbon on her head, sitting naturally on top of her round head, sized exactly for her head, covering the top of the head down to just above the eyebrows (the forehead and eyebrows stay visible). Nothing else changes: the face, eyes, ears, neck, cape, framing and background stay exactly the same."

@@ -52,7 +52,7 @@ export class Rig {
     const skinned = this.def.skin && this.who.skin && (this.def.skin !== this.who.skin || eye);
     let node;
     if (skinned && spec.skin !== false) {
-      node = reskin(img, this.def.skin, this.who.skin, { eye, eyeBox: this.def.eyeBox, at: [spec.x, spec.y] });
+      node = reskin(img, this.def.skin, this.who.skin, { eye, eyeBox: this.def.eyeBox, at: [spec.x, spec.y], k: img.naturalWidth / spec.w });
       node = node.cloneNode ? copyCanvas(node) : node;
     } else {
       node = el('img', { src: ART + spec.src, alt: '', draggable: 'false' });

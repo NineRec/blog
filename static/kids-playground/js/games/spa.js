@@ -86,8 +86,8 @@ const tubFront = (cx) => R(cx - 330, 500, 660, 200, 90, '#ffffff') + R(cx - 350,
 
 export default {
   id: 'spa', name: '宠物澡堂', colors: ['#d6f1ff', '#9fdcff'],
-  icon: () => `<svg viewBox="0 0 230 200"><g transform="translate(52 0) scale(.62)">${ANIMALS.dog()}</g>${R(26, 112, 178, 70, 34, '#fff')}${R(18, 104, 194, 20, 10, '#fff')}${R(60, 150, 110, 10, 5, '#9fdcff')}
-    ${C(44, 100, 16, '#fff')}${C(70, 92, 20, '#eef7ff')}${C(180, 98, 18, '#fff')}${C(156, 90, 14, '#eef7ff')}<circle cx="196" cy="40" r="12" fill="none" stroke="#fff" stroke-width="4"/><circle cx="170" cy="22" r="7" fill="none" stroke="#fff" stroke-width="3"/></svg>`,
+  icon: () => `<svg viewBox="0 0 230 200"><g transform="translate(52 0) scale(.62)">${ANIMALS.dog()}</g>${E(62, 186, 14, 9, '#ffc21f')}${E(168, 186, 14, 9, '#ffc21f')}${R(26, 112, 178, 72, 34, '#9fdcff')}${R(26, 112, 178, 30, 15, '#bfe8ff')}${R(18, 102, 194, 20, 10, '#7cc8f5')}${R(60, 152, 110, 10, 5, '#fff', 'opacity=".55"')}
+    ${C(44, 100, 16, '#fff')}${C(70, 92, 20, '#f3faff')}${C(98, 100, 14, '#fff')}${C(134, 98, 15, '#fff')}${C(180, 98, 18, '#fff')}${C(156, 90, 14, '#f3faff')}<circle cx="196" cy="40" r="12" fill="#e8f6ff" stroke="#7cc8f5" stroke-width="3"/><circle cx="170" cy="20" r="7" fill="#e8f6ff" stroke="#7cc8f5" stroke-width="2.5"/><circle cx="26" cy="56" r="9" fill="#e8f6ff" stroke="#7cc8f5" stroke-width="2.5"/></svg>`,
 
   start(ctx) {
     const { W } = ctx;

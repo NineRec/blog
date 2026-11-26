@@ -1,5 +1,5 @@
 // 美甲店 — a muddy hand with germs on it. Soap and scrub (the germs squeal and run), rinse, clip the long
-// nails, file them, a drop of oil; then decorate: tap a nail to zoom in and paint it stroke by stroke,
+// nails, file them, a drop of oil; then decorate: paint each nail stroke by stroke,
 // add stickers and gems, and slide rings onto the fingers and a bracelet onto the wrist.
 import { el, rand, pick, anim } from '../core.js';
 import { spray, pointer } from './salonkit.js';
@@ -249,30 +249,8 @@ export default {
     await ctx.sleep(700);
 
     /* ---- decorate ---- */
-    ctx.say('sl-nail-zoom');
+    ctx.say('nails-polish');
     ctx.progress(0, 0);
-    const home = { k: rig.k, left: rig.left, top: rig.top };
-    let zoomed = null;
-    const place = (k, left, top) => { rig.k = k; rig.left = left; rig.top = top; rig.node.style.transform = `translate(${left}px, ${top}px) scale(${k})`; };
-    const zoomTo = (n) => {
-      zoomed = n;
-      rig.node.classList.add('sl-zooming');
-      const k = home.k * 2.3, cx = stageMid(ctx), cy = 400;
-      if (n) place(k, cx - n.c[0] * k, cy - n.c[1] * k);
-      else place(home.k, home.left, home.top);
-      ctx.sfx('whoosh');
-      back.hidden = !n;
-      setTimeout(() => rig.node.classList.remove('sl-zooming'), 450);
-    };
-    const back = ctx.button('back', 70, 160, 'blue', '返回', () => zoomTo(null));
-    back.hidden = true;
-    ctx.stage.addEventListener('pointerup', (ev) => {
-      if (!ctx.alive || ev.target.closest('.sl-shelf, .round, .sl-ghost')) return;
-      if (dragging) return;
-      const n = nailAt(ctx.point(ev), zoomed ? 70 : 100);
-      if (n && n !== zoomed && tab !== 'rings' && tab !== 'bracelets') zoomTo(n);
-      else if (!n && zoomed) zoomTo(null);
-    });
     let dragging = false, tab = 'polish';
     const coat = (i, key) => {
       const [, col, kind] = POLISH.find((x) => x[0] === key), layer = polish[i];
@@ -299,7 +277,7 @@ export default {
       },
     });
     const stick = (k, p, scale) => {
-      const n = nailAt(p, zoomed ? 60 : 80);
+      const n = nailAt(p, 80);
       if (!n) return false;
       const q = rig.local(p);
       const node = placeOn(rig, 'top', { key: k, x: q.x, y: q.y, s: scale, r: rand(-15, 15) });
@@ -356,7 +334,6 @@ export default {
     function wearRing(k, p) {
       const i = fingerAt(p);
       if (i === null) return false;
-      if (zoomed) zoomTo(null);
       putRing(i, k).then(() => { ctx.sfx('sparkle'); const f = HAND.fingers[i], s = rig.stage(...f.ring); ctx.burst(s.x, s.y, { n: 7, spread: 60 }); rig.react('wiggle'); });
       ctx.sfx('slide');
       return true;
@@ -383,7 +360,6 @@ export default {
     function wearBracelet(k, p, moved) {
       const q = rig.local(p), at = HAND.bracelets?.[k]?.at || HAND.wrist?.at || [handBox.w / 2, handBox.h - 200];
       if (moved && !(q.y > at[1] - 420 && q.x > at[0] - 380 && q.x < at[0] + 380)) return false;
-      if (zoomed) zoomTo(null);
       putBracelet(k).then(() => { ctx.sfx('sparkle'); const s = rig.stage(...at); ctx.burst(s.x, s.y, { n: 9, spread: 90 }); rig.react('shake'); });
       ctx.sfx('whoosh');
       return true;
@@ -396,20 +372,20 @@ export default {
       })), {
         size: 150, tip: [0, 66],
         move: (k, p, ghost) => {
-          const n = nailIn(p, zoomed ? 8 : 14);
+          const n = nailIn(p, 14);
           if (!n) return;
           const [, col] = POLISH.find((x) => x[0] === k), layer = polish[n.i];
           if (layer.key !== k) { layer.recoat(); layer.key = k; layer.wet = true; }
           if (oil[n.i] && !oil[n.i].fading) { oil[n.i].fading = true; anim(oil[n.i], 'out', 400, { fill: 'forwards' }); }
           if (!layer.wet) return;
           const q = rig.local(p), c = col === 'rainbow' ? RAINBOW[Math.floor(Math.max(0, Math.min(0.99, (q.y - n.y) / n.h)) * 6)] : Array.isArray(col) ? col[1] : col;
-          const cover = layer.dab(q.x, q.y, zoomed ? 16 : 24, c, { soft: 0.2, from: ghost.last && nailIn(ghost.last) === n ? rig.local(ghost.last) : null });
+          const cover = layer.dab(q.x, q.y, 24, c, { soft: 0.2, from: ghost.last && nailIn(ghost.last) === n ? rig.local(ghost.last) : null });
           if (Math.random() < 0.1) ctx.sfx('brush');
-          if (cover > 0.85) { layer.wet = false; coat(n.i, k); ctx.sfx('sparkle'); const s = rig.stage(n.c[0], n.c[1]); ctx.burst(s.x, s.y, { n: 6, spread: 60 }); if (zoomed) ctx.after(500, () => zoomTo(null)); }
+          if (cover > 0.85) { layer.wet = false; coat(n.i, k); ctx.sfx('sparkle'); const s = rig.stage(n.c[0], n.c[1]); ctx.burst(s.x, s.y, { n: 6, spread: 60 }); }
         },
       }),
-      stickers: () => tools(STICKERS.map((k) => ({ key: k, art: prop(k) })), { size: 70, drop: (k, p) => stick(k, p, zoomed ? 0.32 : 0.45) }),
-      gems: () => tools(GEMS.map((k) => ({ key: k, art: prop(k) })), { size: 60, drop: (k, p) => stick(k, p, zoomed ? 0.22 : 0.3) }),
+      stickers: () => tools(STICKERS.map((k) => ({ key: k, art: prop(k) })), { size: 70, drop: (k, p) => stick(k, p, 0.45) }),
+      gems: () => tools(GEMS.map((k) => ({ key: k, art: prop(k) })), { size: 60, drop: (k, p) => stick(k, p, 0.3) }),
       rings: () => tools(RINGS.map((k) => ({ key: k, art: prop(k) })), { size: 110, drop: (k, p) => wearRing(k, p) }),
       bracelets: () => tools(BRACELETS.map((k) => ({ key: k, art: prop(k) })), { size: 160, drop: (k, p, ghost, moved) => wearBracelet(k, p, moved) }),
     };
@@ -417,18 +393,18 @@ export default {
     const deck = shelf = new Shelf(ctx, {
       color: '#b48cf5', width: SHELF_W,
       tabs: TABS.map(([key, icon, voice]) => ({ key, art: prop(key === 'polish' && PROPS['pr-polish'] ? 'pr-polish' : icon), label: voice })),
-      onTab: (key) => { tab = key; ctx.say(TABS.find((t) => t[0] === key)[2]); if ((key === 'rings' || key === 'bracelets') && zoomed) zoomTo(null); open[key](); },
+      onTab: (key) => { tab = key; ctx.say(TABS.find((t) => t[0] === key)[2]); open[key](); },
     });
     window.__salon.deck = deck;
-    window.__salon.zoomed = () => zoomed?.i ?? null;
     window.__salon.polish = polish;
     deck.open('polish', true);
     open.polish();
     window.__salon.worn = () => ({ rings: Object.fromEntries(Object.entries(worn.rings).map(([i, n]) => [i, n.dataset.key])), bracelet: worn.bracelet?.dataset.key || null });
     window.__salon.fingerPoint = (i, t = 1) => { const f = HAND.fingers[i]; return rig.stage(f.c[0] + (f.ring[0] - f.c[0]) * t, f.c[1] + (f.ring[1] - f.c[1]) * t); };
+    window.__salon.ring = (i, k) => putRing(i, k, true);
     window.__salon.wrist = HAND.wrist?.at || [handBox.w / 2, handBox.h - 200];
     finishButton(ctx, rig, 'nails', () => ({ nails: { polish: polish.map((p) => (p.key ? p.snapshot('image/png') : null)), deco: deco.map((n) => n.save()), rings: window.__salon.worn().rings, bracelet: worn.bracelet?.dataset.key || null } }), {
-      before: async () => { if (zoomed) zoomTo(null); back.hidden = true; shelf.hide(); await ctx.sleep(450); },
+      before: async () => { shelf.hide(); await ctx.sleep(450); },
       photo: { all: true },
     });
   },

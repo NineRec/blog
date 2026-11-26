@@ -52,7 +52,8 @@ export function tinted(img, col, { key = img.src, scale = 1 } = {}) {
  * A copy of a character picture with its skin moved from one tone to another (shading kept),
  * and optionally its eye colour moved too (`eye: [fromHex, toHex]`).
  */
-export function reskin(img, from, to, { eye = null, eyeBox = null, at = [0, 0] } = {}) {
+/** k: picture pixels per master unit (pictures may be stored sharper than their box). */
+export function reskin(img, from, to, { eye = null, eyeBox = null, at = [0, 0], k = 1 } = {}) {
   const id = `skin|${img.src}|${from}|${to}|${eye}`;
   if (cache.has(id)) return cache.get(id);
   const w = img.naturalWidth, h = img.naturalHeight;
@@ -75,7 +76,7 @@ export function reskin(img, from, to, { eye = null, eyeBox = null, at = [0, 0] }
       d[i + 2] = b + (Math.min(255, b / f[2] * t[2]) - b) * wgt;
       continue;
     }
-    if (dark < 0.95 && !(eyeBox && inBox(i / 4, w, eyeBox, at))) {
+    if (dark < 0.95 && !(eyeBox && inBox(i / 4, w, eyeBox, at, k))) {
       const [hh, ss, ll] = hsl(r, gg, b);
       if (hh > 0.01 && hh < 0.12 && ss > 0.22 && ll < 0.8) {
         const k = Math.min(1, (ss - 0.22) / 0.12) * Math.min(1, (0.8 - ll) / 0.1), m = 1 - (1 - dark) * 0.9 * k;
@@ -83,7 +84,7 @@ export function reskin(img, from, to, { eye = null, eyeBox = null, at = [0, 0] }
         continue;
       }
     }
-    if (eye && inBox(i / 4, w, eyeBox, at)) {
+    if (eye && inBox(i / 4, w, eyeBox, at, k)) {
       // the iris: brownish, saturated, mid-dark — turn its hue and saturation to the new eye colour, keep its light
       const [hh, ss, ll] = hsl(r, gg, b);
       if (ss > 0.28 && ll > 0.1 && ll < 0.62 && (hh < 0.12 || hh > 0.95)) {
@@ -99,9 +100,9 @@ export function reskin(img, from, to, { eye = null, eyeBox = null, at = [0, 0] }
 }
 
 /** Is pixel number `n` of a picture placed at `at` inside `box` (both in the character's coordinates)? */
-function inBox(n, w, box, at) {
+function inBox(n, w, box, at, k = 1) {
   if (!box) return true;
-  const x = (n % w) + at[0], y = Math.floor(n / w) + at[1];
+  const x = (n % w) / k + at[0], y = Math.floor(n / w) / k + at[1];
   return x >= box[0] && y >= box[1] && x <= box[2] && y <= box[3];
 }
 

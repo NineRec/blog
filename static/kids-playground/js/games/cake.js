@@ -21,7 +21,9 @@ function cakeSvg(s) {
   let out = E(220, 418, 215, 20, '#ffffff') + e(220, 414, 190, 12, '#eef1f7') + R(200, 420, 40, 26, 8, '#e3e7f0') + E(220, 446, 80, 10, '#e3e7f0');
   for (let i = 0; i < s.tiers; i++) {
     const w = WIDTHS[i], x = 220 - w / 2, y = 410 - (i + 1) * TH;
-    out += R(x, y, w, TH + (i ? 20 : 0), 22, s.flavor) + R(x, y + TH * 0.52, w, 10, 5, shade(s.flavor, 0.35)) + R(x + w * 0.7, y, w * 0.3, TH + (i ? 20 : 0), 22, 'rgba(31,26,58,.05)');
+    out += R(x, y, w, TH + (i ? 20 : 0), 22, s.flavor) + R(x, y + TH * 0.52, w, 10, 5, shade(s.flavor, 0.35)) ;
+    const sid = nextId(), h = TH + (i ? 20 : 0);     // the shaded side, kept inside the tier's rounded outline
+    out += `<clipPath id="${sid}"><rect x="${x}" y="${y}" width="${w}" height="${h}" rx="22"/></clipPath><rect clip-path="url(#${sid})" x="${x + w * 0.72}" y="${y}" width="${w * 0.28}" height="${h}" fill="rgba(31,26,58,.05)"/>`;
     const pr = s.cream[i];
     if (pr > 0) {
       const id = nextId();

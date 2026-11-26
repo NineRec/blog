@@ -6,7 +6,11 @@ import { R, E, C, P, e, c, L, tube, shade } from '../art/base.js';
 import { host } from './kit.js';
 
 const GOAL = 15;
-const sock = () => `<svg viewBox="0 0 100 100">${P('M34 8 h34 v44 q0 10 8 16 q16 12 6 24 q-10 10 -30 2 q-20 -10 -18 -34z', '#9aa7b8')}${R(32, 6, 38, 16, 6, '#ff6fa8')}${L('M36 34 h30 M36 46 h30', 6, '#fff')}${L('M12 30 q-8 -8 0 -16 M90 44 q8 -8 0 -16 M20 62 q-8 -6 -2 -14', 4, '#8fbf4f')}</svg>`;
+// a stripy sock with a darned toe, a muddy smudge and stink lines: plainly a sock, plainly not food
+const sock = () => `<svg viewBox="0 0 100 100">${P('M28 12 h34 v40 q0 6 8 9 l14 5 q12 5 10 17 q-3 11 -16 11 h-30 q-20 0 -20 -22z', '#a9b6c8')}
+  ${P('M28 66 q0 28 22 28 h6 v-14 q-18 0 -28 -16z', '#8a97ab')}${P('M80 64 q16 5 14 19 q-3 11 -16 11 h-4 z', '#8a97ab')}
+  ${R(25, 6, 40, 16, 6, '#ff6fa8')}${L('M33 32 h26 M33 44 h26', 5, '#fff')}${E(54, 80, 9, 6, '#9c7a52', 'opacity=".55"')}
+  ${L('M8 40 q-7 -7 0 -14 q7 -7 0 -14 M82 46 q-7 -7 0 -14 q7 -7 0 -14 M94 44 q-6 -6 0 -12', 4, '#8fbf4f')}</svg>`;
 const basket = () => `<svg viewBox="0 0 160 110">${P('M10 30 h140 l-16 70 q-54 12 -108 0z', '#e0a868')}${L('M26 52 h108 M32 74 h96 M50 34 l8 66 M80 34 v70 M110 34 l-8 66', 5, '#c98a4c')}${R(4, 22, 152, 18, 9, '#c98a4c')}</svg>`;
 const canopy = (W) => Array.from({ length: Math.ceil((W + 400) / 110) }, (_, i) => C(-200 + i * 110, 10 + (i % 3) * 14, 92, i % 2 ? '#3fae5a' : '#4fc56a')).join('') +
   Array.from({ length: Math.ceil((W + 400) / 170) }, (_, i) => C(-140 + i * 170, 70 + (i % 2) * 22, 15, i % 3 ? '#ff5a5a' : '#ffb14a')).join('');

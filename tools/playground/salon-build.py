@@ -5,12 +5,16 @@
 Writes static/kids-playground/assets/salon/*.webp and static/kids-playground/js/salon/manifest.js.
 Every layer keeps the box it occupies in its master picture, so layers stack back into place.
 """
+import hashlib
 import json
+import sys
 from pathlib import Path
 
 import numpy as np
-from PIL import Image, ImageFilter
+from PIL import Image, ImageDraw, ImageFilter
 from scipy import ndimage
+
+from salonart import slice_items, contact_sheet
 
 ROOT = Path(__file__).resolve().parents[2]
 RAW = ROOT / '.salon-art'
@@ -19,8 +23,33 @@ MANIFEST = ROOT / 'static/kids-playground/js/salon/manifest.js'
 OUT.mkdir(parents=True, exist_ok=True)
 
 
+HIRES, HI = RAW / 'hires', 1.5      # salon-upscale.py's SeedVR2 upscales, and their factor
+
+
+class Pic(np.ndarray):
+    """A picture array that remembers the file it came from, through copies and edits, so save() can use its upscale."""
+    def __array_finalize__(self, obj):
+        self.src = getattr(obj, 'src', None)
+
+
 def load(p):
-    return np.asarray(Image.open(RAW / p).convert('RGBA')).astype(np.float32)
+    a = np.asarray(Image.open(RAW / p).convert('RGBA')).astype(np.float32).view(Pic)
+    a.src = p
+    return a
+
+
+_hi = {}
+
+
+def hires(src, shape):
+    """The colours of `src` 1.5x sharper (float RGB), when its upscale exists and was made from the file as it is now."""
+    if not src:
+        return None
+    if src not in _hi:
+        f, tag = HIRES / src, (HIRES / src).with_suffix('.sha')
+        ok = f.exists() and tag.exists() and tag.read_text() == hashlib.sha1((RAW / src).read_bytes()).hexdigest()
+        _hi[src] = np.asarray(Image.open(f).convert('RGB').resize((round(shape[1] * HI), round(shape[0] * HI)), Image.LANCZOS)).astype(np.float32) if ok else None
+    return _hi[src]
 
 
 def have(*ps):
@@ -86,7 +115,82 @@ def green(a):
     return m
 
 
-def save(a, name, scale=1.0, trim=True, q=86):
+REVIEW = []      # (name, picture, suspect pixels) for the review sheets
+WARN = []        # other things to look at (an item cut off by its sheet's edge)
+
+
+def strays(alpha, r=5, keep=200):
+    """Pixels that are neither a solid shape nor touching one: thin lines and specks left over from a diff."""
+    A = alpha > 6
+    core = ndimage.binary_opening(A, iterations=r)
+    lab, n = ndimage.label(core)
+    if n:
+        sizes = ndimage.sum(core, lab, range(1, n + 1))
+        core = np.isin(lab, [i + 1 for i, s in enumerate(sizes) if s >= keep])
+    return A & ~ndimage.binary_dilation(core, iterations=r + 3)
+
+
+def outline_coloured(rgb):
+    """Is a colour the warm orange-brown of her outline (what a redrawn arm or finger leaves behind in a diff)?"""
+    r, g, b = rgb / 255
+    mx, mn = max(r, g, b), min(r, g, b)
+    if mx - mn < 1e-3:
+        return False
+    s = (mx - mn) / mx
+    h = ((g - b) / (mx - mn) / 6) % 1 if mx == r else ((b - r) / (mx - mn) + 2) / 6 if mx == g else ((r - g) / (mx - mn) + 4) / 6
+    return 0.025 < h < 0.08 and s > 0.42 and 0.45 < mx < 0.92
+
+
+def outline_strays(a):
+    """The stray pieces of a layer (see strays) that are outline-coloured, as one mask."""
+    bad = strays(a[..., 3])
+    lab, n = ndimage.label(bad, structure=np.ones((3, 3)))
+    out = np.zeros(bad.shape, bool)
+    for i, sl in enumerate(ndimage.find_objects(lab)):
+        m = lab[sl] == i + 1
+        px = a[sl][m]
+        solid = px[px[:, 3] > 120]
+        if len(solid) and outline_coloured(np.median(solid[:, :3], 0)):
+            out[sl] |= m
+    return out
+
+
+def no_outline_strays(a):
+    """A layer without its outline-coloured stray lines (thin parts in its own colours, a balloon string, stay)."""
+    for _ in range(3):              # taking a piece away can leave the next one hanging loose
+        m = outline_strays(a)
+        if not m.any():
+            break
+        a = a.copy()
+        a[..., 3] *= ~ndimage.binary_dilation(m, iterations=1)
+    return a
+
+
+def extract(e, m, solo=False):
+    """
+    A worn thing out of its picture: the layer (outline strays dropped) and the mask of what is left.
+    solo: the thing is one compact piece (a ring, a bracelet): pieces away from the biggest one are dropped too.
+    """
+    L = no_outline_strays(layer_from(e, m))
+    if solo:
+        A = L[..., 3] > 40
+        lab, n = ndimage.label(ndimage.binary_dilation(A, iterations=2))
+        if n > 1:
+            sizes = ndimage.sum(A, lab, range(1, n + 1))
+            main = ndimage.find_objects(lab)[int(np.argmax(sizes))]
+            y0, y1, x0, x1 = main[0].start, main[0].stop, main[1].start, main[1].stop
+            py, px = (y1 - y0) * 0.15 + 6, (x1 - x0) * 0.15 + 6
+            keep = np.zeros(A.shape, bool)
+            for i, sl in enumerate(ndimage.find_objects(lab)):
+                cy, cx = (sl[0].start + sl[0].stop) / 2, (sl[1].start + sl[1].stop) / 2
+                if y0 - py <= cy <= y1 + py and x0 - px <= cx <= x1 + px:
+                    keep |= lab == i + 1
+            L = L.copy()
+            L[..., 3] *= keep
+    return L, L[..., 3] > 40
+
+
+def save(a, name, scale=1.0, trim=True, q=86, check=True):
     im = Image.fromarray(np.clip(a, 0, 255).astype(np.uint8), 'RGBA')
     W, H = im.size
     box = (0, 0, W, H)
@@ -97,7 +201,17 @@ def save(a, name, scale=1.0, trim=True, q=86):
         pad = 3
         box = (max(0, bb[0] - pad), max(0, bb[1] - pad), min(W, bb[2] + pad), min(H, bb[3] + pad))
         im = im.crop(box)
-    if scale != 1:
+    if check and REVIEW is not None:
+        arr = np.asarray(im)
+        arr = arr.astype(np.float32)
+        REVIEW.append((name, im, strays(arr[..., 3]), outline_strays(arr)))
+    hi = hires(getattr(a, 'src', None), a.shape) if scale == 1 and a.ndim == 3 and a.shape[2] == 4 else None
+    if hi is not None:
+        # the same shape, 1.5x sharper: colours from the upscale, the edge from this picture's own alpha
+        al = Image.fromarray(np.clip(a[..., 3], 0, 255).astype(np.uint8)).resize((hi.shape[1], hi.shape[0]), Image.LANCZOS)
+        big = Image.fromarray(np.dstack([np.clip(hi, 0, 255), np.asarray(al, np.float32)]).astype(np.uint8), 'RGBA')
+        im = big.crop(tuple(round(v * HI) for v in box))
+    elif scale != 1:
         im = im.resize((max(1, round(im.size[0] * scale)), max(1, round(im.size[1] * scale))), Image.LANCZOS)
     im.save(OUT / name, 'WEBP', quality=q, method=6, alpha_quality=88)
     return {'src': name, 'x': box[0], 'y': box[1], 'w': box[2] - box[0], 'h': box[3] - box[1]}
@@ -108,7 +222,7 @@ def mask_img(m, name, blur=1.2):
     a[..., :3] = 255
     a[..., 3] = m * 255
     soft = np.asarray(Image.fromarray(a.astype(np.uint8)).filter(ImageFilter.GaussianBlur(blur))).astype(np.float32)
-    return save(soft, name, q=80)
+    return save(soft, name, q=80, check=False)
 
 
 def centre(m):
@@ -244,7 +358,19 @@ def hand():
         lm = diff_mask(h, lg, grow=4)
         lab, n = ndimage.label(lm)
         parts = sorted([lab == i + 1 for i in range(n) if (lab == i + 1).sum() > 600], key=lambda m: centre(m)[0])
-        D['long'] = [save(layer_from(lg, m, 1.4), f'hand-long{i}.webp') for i, m in enumerate(parts)]
+        # the long nail tips only: redrawn finger outlines are stripped, and pieces that were nothing else dropped
+        # (the clipper would knock them off the finger)
+        def tip_only(L):
+            rgb = L[..., :3] / 255
+            mx, mn = rgb.max(-1), rgb.min(-1)
+            pink = (L[..., 3] > 120) & (rgb[..., 0] >= rgb[..., 1]) & (rgb[..., 2] > rgb[..., 1]) & ((mx - mn) / (mx + 1e-3) > 0.12)
+            L = L.copy()
+            L[..., 3] *= ndimage.binary_dilation(pink, iterations=10)     # the nail and its own rim, not the finger
+            return L
+        tips = [L for L in (tip_only(no_outline_strays(layer_from(lg, m, 1.4))) for m in parts) if (L[..., 3] > 120).sum() > 1500]
+        for f in OUT.glob('hand-long*.webp'):
+            f.unlink()
+        D['long'] = [save(L, f'hand-long{i}.webp') for i, L in enumerate(tips)]
     D['skin'] = hexcol(np.median(h[h.shape[0] // 2 - 20:h.shape[0] // 2 + 20, h.shape[1] // 2 - 20:h.shape[1] // 2 + 20, :3].reshape(-1, 3), axis=0))
     if D.get('nails'):
         worn_jewelry(h, D, nails)
@@ -259,7 +385,8 @@ def worn_hats(m0):
         m = no_threads(diff_mask(m0, e, keep=600, grow=2), r=3)
         if not m.any():
             continue
-        spec = save(layer_from(e, m), f'worn-{p.stem}.webp')
+        L, m = extract(e, m)
+        spec = save(L, f'worn-{p.stem}.webp')
         cols = np.nonzero(m.any(0))[0]
         bottom = {int(x): int(np.nonzero(m[:, x])[0].max()) for x in cols}
         hide = np.zeros(m.shape, bool)
@@ -268,7 +395,7 @@ def worn_hats(m0):
         hide = ndimage.binary_opening(hide, iterations=3)
         keep = np.zeros(m.shape + (4,), np.float32); keep[..., :3] = 255
         keep[..., 3] = np.where(hide, 0, 255)
-        spec['keep'] = save(keep, f'worn-{p.stem}-keep.webp', scale=0.25, trim=False, q=70)['src']
+        spec['keep'] = save(keep, f'worn-{p.stem}-keep.webp', scale=0.25, trim=False, q=70, check=False)['src']
         hats[p.stem] = spec
     return hats
 
@@ -315,7 +442,8 @@ def worn_jewelry(h, D, nails):
         m = diff_mask(h, e, keep=200, grow=2)
         if not m.any():
             continue
-        rings[p.stem] = save(layer_from(e, m), f'worn-{p.stem}.webp')
+        L, m = extract(e, m, solo=True)
+        rings[p.stem] = save(L, f'worn-{p.stem}.webp')
         rings[p.stem]['at'] = centre(m)
         at = at or centre(m)
     g = geo[mid]
@@ -339,7 +467,8 @@ def worn_jewelry(h, D, nails):
         e = clean(load(f'worn/{p.name}'))
         m = diff_mask(h, e, keep=300, grow=2)
         if m.any():
-            bracelets[p.stem] = save(layer_from(e, m), f'worn-{p.stem}.webp')
+            L, m = extract(e, m, solo=True)
+            bracelets[p.stem] = save(L, f'worn-{p.stem}.webp')
             bracelets[p.stem]['at'] = centre(m)
     if bracelets:
         D['bracelets'] = bracelets
@@ -354,11 +483,11 @@ def body():
     if not have('master/body.png'):
         return
     b = clean(load('master/body.png'))
-    M['BODY'] = {'size': [b.shape[1], b.shape[0]], 'base': save(b, 'body-base.webp', scale=0.75)}
+    M['BODY'] = {'size': [b.shape[1], b.shape[0]], 'base': save(b, 'body-base.webp')}
     M['BODY']['skin'] = hexcol(np.median(b[int(b.shape[0] * 0.75):int(b.shape[0] * 0.75) + 10, b.shape[1] // 2 - 120:b.shape[1] // 2 - 110, :3].reshape(-1, 3), axis=0))
     for p in sorted((RAW / 'wear').glob('*.png')) if (RAW / 'wear').exists() else []:
         e = clean(load(f'wear/{p.name}'))
-        layer = layer_from(e, no_threads(diff_mask(b, e, keep=800, grow=2)))
+        layer, _ = extract(e, no_threads(diff_mask(b, e, keep=800, grow=2)))
         # and once more on the picture itself: a stray outline the hole filling joined to the clothes
         # (a wider radius only where a thick stray outline is known: it would eat thin ties and straps elsewhere)
         layer[..., 3] *= no_threads(layer[..., 3] > 6, r={'dress-sailor': 8, 'dress-mermaid': 8}.get(p.stem, 4))
@@ -368,8 +497,8 @@ def body():
             cut = ankle(layer[..., 3] > 40)
             shoes = layer.copy(); shoes[:cut, :, 3] = 0
             layer[cut:, :, 3] = 0
-            wear['shoes-' + p.stem[6:]] = save(shoes, f'wear-shoes-{p.stem[6:]}.webp', scale=0.75)
-        wear[p.stem] = save(layer, f'wear-{p.stem}.webp', scale=0.75)
+            wear['shoes-' + p.stem[6:]] = save(shoes, f'wear-shoes-{p.stem[6:]}.webp')
+        wear[p.stem] = save(layer, f'wear-{p.stem}.webp')
 
 
     holds = {}
@@ -378,7 +507,8 @@ def body():
         m = no_threads(diff_mask(b, e, keep=600, grow=2))
         if not m.any():
             continue
-        spec = save(layer_from(e, m), f'worn-{p.stem}.webp', scale=0.75)
+        L, m = extract(e, m)
+        spec = save(L, f'worn-{p.stem}.webp')
         # where her open hand was and is no longer (fingers now curled): hide that part of the body picture
         near = ndimage.binary_dilation(m, iterations=30)
         hole = near & (b[..., 3] > 128) & (e[..., 3] < 60)
@@ -386,7 +516,7 @@ def body():
         bx, by, bw, bh = M['BODY']['base']['x'], M['BODY']['base']['y'], M['BODY']['base']['w'], M['BODY']['base']['h']
         keep = np.zeros((bh, bw, 4), np.float32); keep[..., :3] = 255
         keep[..., 3] = np.where(hole[by:by + bh, bx:bx + bw], 0, 255)
-        k = save(keep, f'worn-{p.stem}-keep.webp', scale=0.5, trim=False, q=70)
+        k = save(keep, f'worn-{p.stem}-keep.webp', scale=0.5, trim=False, q=70, check=False)
         spec['keep'] = k['src']
         holds[p.stem] = spec
     if holds:
@@ -437,29 +567,16 @@ def sheets():
         if not have(p):
             continue
         a = clean(load(p))
-        solid = a[..., 3] > 24
-        blob = ndimage.binary_dilation(solid, iterations=12)
-        lab, n = ndimage.label(blob)
-        items = []
-        for i, sl in enumerate(ndimage.find_objects(lab)):
-            if solid[sl].sum() < 900:
-                continue
-            items.append((sl[0].start, sl[0].stop, sl[1].start, sl[1].stop, i + 1))
-        items.sort(key=lambda t: (t[0] + t[1]) / 2)
-        rows, row = [], []
-        for t in items:
-            if row and (t[0] + t[1]) / 2 - (row[0][0] + row[0][1]) / 2 > (row[0][1] - row[0][0]) * 0.6:
-                rows.append(row); row = []
-            row.append(t)
-        if row:
-            rows.append(row)
-        ordered = [t for r in rows for t in sorted(r, key=lambda t: t[2])]
+        ordered = slice_items(a[..., 3])          # shared with salon-gen.py's sheet check
         names = names.split()
         if len(ordered) != len(names):
             print(f'!! {sheet}: {len(ordered)} items for {len(names)} names')
-        for k, (y0, y1, x0, x1, label) in enumerate(ordered[:len(names)]):
+        for k, it in enumerate(ordered[:len(names)]):
+            y0, y1, x0, x1 = it['box']
             piece = a[y0:y1, x0:x1].copy()
-            piece[..., 3] *= (lab[y0:y1, x0:x1] == label)
+            piece[..., 3] *= it['mask']
+            if it['edge']:
+                WARN.append(f'p-{names[k]}.webp: touches the edge of {sheet}.png (cut off?)')
             scale = min(1.0, 360 / max(piece.shape[:2]))
             e = save(piece, f'p-{names[k]}.webp', scale=scale, q=84)
             P[names[k]] = {'src': e['src'], 'w': e['w'], 'h': e['h']}
@@ -491,15 +608,48 @@ def backgrounds():
     G = {}
     for p in sorted((RAW / 'bg').glob('*.png')) if (RAW / 'bg').exists() else []:
         im = Image.open(p).convert('RGB')
+        up = HIRES / 'bg' / p.name
         w = 1800
+        if up.exists() and up.with_suffix('.sha').exists() and up.with_suffix('.sha').read_text() == hashlib.sha1(p.read_bytes()).hexdigest():
+            im, w = Image.open(up).convert('RGB'), 2400      # an iPad in landscape is ~2400 device px wide
         im = im.resize((w, round(im.size[1] * w / im.size[0])), Image.LANCZOS)
         im.save(OUT / f'bg-{p.stem}.webp', 'WEBP', quality=78, method=6)
         G[p.stem] = f'bg-{p.stem}.webp'
     M['BG'] = G
 
 
+def review(limit=150):
+    """
+    Contact sheets of every picture (on flat grey, suspect pixels in magenta) in .salon-art/review/, one per group,
+    review.json with the numbers for each picture, and a warning for each picture with more than `limit` stray
+    outline-coloured pixels or other trouble. Look at the sheets after every build.
+    """
+    out = RAW / 'review'
+    out.mkdir(exist_ok=True)
+    for f in out.glob('*.png'):
+        f.unlink()
+    groups, warn, stats = {}, list(WARN), {}
+    for name, im, bad, line in REVIEW:
+        a = np.asarray(im)[..., 3]
+        stats[name] = {'size': list(im.size), 'opaque': int((a > 128).sum()), 'thin': int(bad.sum()), 'outline_strays': int(line.sum())}
+        if line.sum() > limit:
+            warn.append(f'{name}: {int(line.sum())} outline-coloured stray px')
+    for name, im, bad, line in REVIEW:
+        hot = any(w.startswith(name + ':') for w in warn)
+        groups.setdefault(name.split('-')[0], []).append((name, im, bad, hot))
+    for g, items in groups.items():
+        contact_sheet(items).save(out / f'{g}.png')
+    (out / 'warnings.txt').write_text('\n'.join(warn) + '\n')
+    (out / 'review.json').write_text(json.dumps({'warnings': warn, 'pictures': stats}, indent=1))
+    print(f'review: {len(REVIEW)} pictures in {len(groups)} sheets (.salon-art/review/), {len(warn)} warnings (magenta: every thin piece, to look over)')
+    for w in warn:
+        print('  !', w)
+
+
 if __name__ == '__main__':
     bust(); hand(); body(); sheets(); local_props(); backgrounds()
+    if '--no-review' not in sys.argv:
+        review()
     js = '// Generated by tools/playground/salon-build.py — do not edit by hand.\n// Every layer: its file and the box it covers in its master picture.\n'
     for k, v in M.items():
         js += f'export const {k} = {json.dumps(v, separators=(",", ":"))};\n'

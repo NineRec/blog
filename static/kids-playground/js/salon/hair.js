@@ -12,7 +12,7 @@ const BIN = 6;                  // width of one column of the length profile, in
 export class Hair {
   /** rig: the Rig; styles: manifest hair entries ({src, x, y, w, h, top}); o.res: canvas density. */
   constructor(rig, styles, o = {}) {
-    this.rig = rig; this.styles = styles; this.res = o.res ?? 0.6;
+    this.rig = rig; this.styles = styles; this.res = o.res ?? 1;
     this.canvas = rig.add(o.slot || 'hair', el('canvas', { class: 'sl-hair' }));
     this.fuzz = rig.add(o.slot || 'hair', el('canvas', { class: 'sl-hair sl-fuzz' }));
     this.glits = rig.add('top', el('div', { class: 'sl-glits' }));
