@@ -1,296 +1,367 @@
-// 美容 SPA — a facial, step by step: wash the face with a soapy puff, wipe the foam away, mix a mask in a bowl (drop things in, stir with the spoon), paint it on
-// (it goes on stroke by stroke), lay cucumber slices on the eyes, steam, take everything off again,
-// then dab on cream and rub it in. The customer closes her eyes when something comes near them.
-import { pick, el, rand, clamp, anim } from '../core.js';
-import { P, R, E, C, L, sparkle, nextId } from '../art/base.js';
-import { clientFace, bust, turban, CLIENTS, HEAD, EYES, TOOLS, TIP, spaRoom, foamArt, MASKS, maskBrushArt, cucumberArt, plateArt, steamerArt, tokenArt, bowlArt, spoonArt } from '../art/salon.js';
-import { client, look as salonLook } from '../salon.js';
-import { tray } from './kit.js';
-import { toolbox, spray, Paint, svgEl, pointer, blend } from './salonkit.js';
+// 美颜 SPA — her face is muddy and spotty and she is sad. Wash it with face wash and a sponge, rinse,
+// pat it dry, put patches on the spots, mix a mask from fruit in a bowl, brush it on, rest with cucumbers,
+// wipe the mask away to a glowing face, and finish with cream.
+import { el, rand, pick, anim } from '../core.js';
+import { spray, pointer } from './salonkit.js';
+import { PROPS, BUST } from '../salon/manifest.js';
+import { PaintLayer, image } from '../salon/paint.js';
+import { Shelf, ART, img, guide, bubble } from '../salon/ui.js';
+import { bustRoom, prop, finishButton, faceSave, visibleFace, SHELF_W } from '../salon/room.js';
 
-const K = 0.86;
-const STEPS = ['wash', 'rinse', 'mix', 'mask', 'cucumber', 'relax', 'peel', 'cream'];
-const VOICE = { wash: 'facial-wash', rinse: 'facial-rinse', mix: 'facial-mix', mask: 'facial-mask', cucumber: 'facial-cucumber', relax: 'facial-relax', peel: 'facial-peel', cream: 'facial-cream' };
-// in face units
-const DIRT = [[218, 286, 1], [398, 296, 0.8], [158, 452, 0.9], [440, 446, 1], [300, 424, 0.6], [338, 552, 0.7]];
-const CREAM = [[300, 272], [172, 448], [428, 448], [300, 426], [300, 552]];
-const HOLES = [[218, 360, 54, 52], [382, 360, 54, 52], [300, 506, 62, 36]];
-const BELOW = 'M-20 800 L-20 300 L78 300 C118 244 196 218 300 218 C404 218 482 244 522 300 L620 300 L620 800Z';   // the face under the towel
-const blob = (x, y, s) => `<g class="dirt-spot" transform="translate(${x} ${y}) scale(${s})"><path d="M0 -42 C20 -46 42 -28 38 -6 C48 12 34 40 10 38 C-6 50 -36 40 -36 16 C-50 -2 -34 -32 0 -42Z" fill="#8a5a36"/><circle cx="-14" cy="-8" r="8" fill="#a8744a"/><circle cx="14" cy="14" r="6" fill="#a8744a"/></g>`;
-
-let lastWho = null;
+const STEPS = 9;
+/** What goes in the mask bowl, and the colour each one gives. */
+const FOOD = [['strawberry', '#ff8fa8'], ['cucumber', '#a8e07a'], ['lemon', '#ffe066'], ['avocado', '#9ccc5a'], ['blueberry', '#8f8cf0'], ['rose', '#ff9ec8'], ['honey', '#ffc247'], ['oats', '#e8d3a8'], ['kiwi', '#8fd16a']];
+const PATCHES = ['patch-star', 'patch-heart', 'patch-flower', 'patch-cloud'];
+/** The colour of fruit stirred together: their average, kept bright and creamy (never a muddy grey). */
+function mixCol(cols) {
+  const rgb = [0, 2, 4].map((i) => cols.reduce((s, c) => s + parseInt(c.slice(1 + i, 3 + i), 16), 0) / cols.length / 255);
+  const mx = Math.max(...rgb), mn = Math.min(...rgb), d = mx - mn || 1e-6;
+  let h = mx === rgb[0] ? ((rgb[1] - rgb[2]) / d) % 6 : mx === rgb[1] ? (rgb[2] - rgb[0]) / d + 2 : (rgb[0] - rgb[1]) / d + 4;
+  h = ((h * 60) + 360) % 360;
+  return `hsl(${Math.round(h)} 70% 74%)`;
+}
 
 export default {
-  id: 'facial', name: '美容SPA', colors: ['#dff5ec', '#a9e6cf'], intro: 'facial-intro',
-  icon: () => `<svg viewBox="0 0 230 200">${C(115, 24, 26, '#ff8fc4')}${E(115, 70, 84, 58, '#ff9ecb')}${E(115, 122, 64, 68, '#f3c6a2')}${E(115, 126, 56, 58, '#a8dc7a')}` +
-    `${P('M40 104 C34 36 196 36 190 104 C166 76 64 76 40 104Z', '#ff9ecb')}${C(89, 116, 20, '#7dbb4e')}${C(89, 116, 15, '#d9f2a8')}${C(141, 116, 20, '#7dbb4e')}${C(141, 116, 15, '#d9f2a8')}` +
-    `${E(115, 160, 18, 10, '#f3c6a2')}${L('M106 158 q9 7 18 0', 3.5, '#b8475a')}${sparkle(196, 46, 16, '#fff')}${sparkle(30, 150, 11, '#fff')}</svg>`,
+  id: 'facial',
+  name: '美颜 SPA',
+  colors: ['#c9f5e0', '#7fd8b4'],
+  intro: 'sl-spa-hi',
+  icon: () => img(PROPS.sponge?.src || ''),
+  async start(ctx) {
+    const room = await bustRoom(ctx, { bg: 'spa', headband: true }), { rig, face } = room;
+    const A = BUST.anchors, faceBox = BUST.masks.face;
+    rig.settle('sad');
+    const shelf = new Shelf(ctx, { color: '#7fd8b4', width: SHELF_W });
+    const onFace = (p) => { const q = rig.local(p); return q.x > faceBox.x && q.x < faceBox.x + faceBox.w && q.y > faceBox.y && q.y < faceBox.y + faceBox.h; };
+    let step = 0;
+    const next = () => { step++; ctx.progress(step, STEPS); ctx.sfx('star'); };
+    ctx.progress(0, STEPS);
+    const faceImg = await visibleFace(room);
+    const layer = (cls, o = {}) => { const l = new PaintLayer(rig.slots.skin, faceBox, { res: 0.5, cls, ...o }); l.setMask(faceImg); return l; };
 
-  start(ctx) {
-    const { W } = ctx;
-    const hx = Math.round(W * 0.47), hy = 404, ox = hx - 300 * K, oy = hy - 339 * K;
-    const who = { ...client(), hair: salonLook().hairCol || client().hair };
-    ctx.scene(spaRoom(W, hx));
-    const toFace = (pt) => ({ x: (pt.x - ox) / K, y: (pt.y - oy) / K });
-    const toStage = (x, y) => ({ x: ox + x * K, y: oy + y * K });
-    const onFace = (f) => ((f.x - 300) / 212) ** 2 + ((f.y - 339) / 232) ** 2 < 1 && f.y > 214 + 82 * ((f.x - 300) / 222) ** 2;
-
-    const clipHead = nextId(), clipBelow = nextId(), holes = nextId();
-    const holder = ctx.add(el('div', { class: 'salon-holder', html:
-      `<svg class="salon-svg" viewBox="0 0 ${W} 800" width="${W}" height="800"><g class="salon-face" data-eyes="open" data-mouth="smile" transform="translate(${ox.toFixed(1)} ${oy.toFixed(1)}) scale(${K})">` +
-      bust(who, 'robe') + clientFace(who) + `<g class="dirt">${DIRT.map(([x, y, s]) => blob(x, y, s)).join('')}</g>` +
-      `<clipPath id="${clipHead}"><path d="${HEAD}"/></clipPath><clipPath id="${clipBelow}"><path d="${BELOW}"/></clipPath>` +
-      `<mask id="${holes}" maskUnits="userSpaceOnUse" x="-20" y="0" width="640" height="800"><rect x="-20" y="0" width="640" height="800" fill="#fff"/>${HOLES.map(([x, y, rx, ry]) => `<ellipse cx="${x}" cy="${y}" rx="${rx}" ry="${ry}" fill="#000"/>`).join('')}<g class="erase"></g></mask>` +
-      `<g clip-path="url(#${clipHead})"><g clip-path="url(#${clipBelow})"><g mask="url(#${holes})"><g class="mask-paint"></g></g></g></g>` +
-      `<g class="guides"></g><g class="creams"></g><g class="glow"></g>${turban(who)}</g></svg>` }));
-    const root = holder.firstElementChild, faceG = root.querySelector('.salon-face'), pupils = [...root.querySelectorAll('.pupil')];
-    const dirt = [...root.querySelectorAll('.dirt-spot')].map((node, i) => ({ node, x: DIRT[i][0], y: DIRT[i][1], hp: 1 }));
-    const guidesG = root.querySelector('.guides'), creamsG = root.querySelector('.creams'), glowG = root.querySelector('.glow');
-    // sample points over the part of the face a mask covers
-    const samples = [];
-    for (let x = 110; x <= 490; x += 38) for (let y = 244; y <= 552; y += 36) {
-      const f = { x, y };
-      if (((x - 300) / 196) ** 2 + ((y - 339) / 218) ** 2 < 1 && y > 232 + 82 * ((x - 300) / 222) ** 2 && !HOLES.some(([cx, cy, rx, ry]) => ((x - cx) / (rx + 8)) ** 2 + ((y - cy) / (ry + 8)) ** 2 < 1) && onFace(f)) samples.push([x, y]);
+    /* ---- the mess: mud on the face, three spots ---- */
+    const dirt = layer('pl-dirt');
+    const muds = await Promise.all(['mud1', 'mud2', 'smudge'].map((k) => image(ART + PROPS[k].src)));
+    for (const [x, y] of [[A.browL[0] + 40, A.browL[1] + 10], [A.cheekL[0] + 10, A.cheekL[1] + 40], [A.cheekR[0] - 10, A.cheekR[1] + 20], [A.mouth[0] + 70, A.chin[1] - 60], [A.browR[0] - 30, A.browR[1] + 20]]) {
+      const m = pick(muds), s = rand(150, 210);
+      dirt.stamp(m, x, y, s, s * m.naturalHeight / m.naturalWidth, rand(-0.6, 0.6));
     }
-    const mask = new Paint(root.querySelector('.mask-paint'), samples, 34, root.querySelector('.erase'));
-    const onSkin = ctx.add(el('div', { class: 'layer' }));
-
-    let moodTimer = 0;
-    const mood = (eyes, mouth, ms = 0) => {
-      clearTimeout(moodTimer);
-      if (eyes) faceG.dataset.eyes = eyes;
-      if (mouth) faceG.dataset.mouth = mouth;
-      if (ms) moodTimer = ctx.after(ms, () => { faceG.dataset.mouth = 'smile'; if (faceG.dataset.eyes === 'joy') faceG.dataset.eyes = 'open'; });
-    };
-    const lastTick = {};
-    const tick = (name, gap) => { const now = performance.now(); if (now - (lastTick[name] || 0) < gap) return false; lastTick[name] = now; return true; };
-
-    let index = -1, foams = [], flavour = MASKS[0], bowl = null, stopHint = null, slices = [], plate = null, steamer = null, puffs = 0, dots = [], rubbing = false, finger = null;
-    const step = () => STEPS[index];
-
-    /* ---------- puff, towel and cream ---------- */
-    const box = toolbox(ctx, (key, pt, dt, tool) => {
-      const f = toFace(pt);
-      if (key === 'puff' && step() === 'wash') {
-        if (!onFace(f)) return;
-        mood('shut', 'smile');
-        for (const d of dirt) if (d.hp > 0 && Math.hypot(d.x - f.x, d.y - f.y) < 84) { d.hp -= dt * 1.7; d.node.style.opacity = Math.max(0, d.hp); }
-        if (tick('foam', 100) && foams.length < 24) {
-          const at = { x: pt.x + rand(-34, 34), y: pt.y + rand(-30, 30) };
-          if (onFace(toFace(at))) {
-            const s = rand(62, 96), puff = ctx.sprite(foamArt(), at.x, at.y, s, s * 0.8, 'foam');
-            puff.el.style.pointerEvents = 'none'; puff.el.style.animationDelay = `${-rand(0, 2)}s`; onSkin.append(puff.el); puff.anim('in', 240); foams.push(puff);
-            ctx.sfx('bubble'); spray(ctx, pt.x, pt.y, { n: 1, shape: 'bubble', angle: 270, cone: 60, reach: 110, size: 26, ms: 900 });
-          }
-        }
-        if (dirt.every((d) => d.hp <= 0) && foams.length >= 11) next();
-      } else if (key === 'towel' && step() === 'rinse') {
-        const before = foams.length;
-        foams = foams.filter((puff) => {
-          if (Math.hypot(puff.cx - pt.x, puff.cy - pt.y) > 86) return true;
-          anim(puff.el, 'out', 220, { fill: 'forwards' }).then(() => puff.remove());
-          return false;
-        });
-        if (foams.length < before && tick('wipe', 130)) { ctx.sfx('brush'); spray(ctx, pt.x, pt.y, { n: 2, shape: 'drop', color: '#9fdcff', angle: 90, cone: 60, reach: 60, size: 16, ms: 500, fall: 30 }); }
-        if (!foams.length) next();
-      } else if (key === 'towel' && step() === 'peel') {
-        if (!onFace(f) || mask.cover === 0) return;
-        const left = mask.wipe(f.x, f.y, 46);
-        if (tick('wipe', 130)) { ctx.sfx('brush'); spray(ctx, pt.x, pt.y, { n: 1, shape: 'dot', color: flavour.col, angle: 90, cone: 80, reach: 50, size: 14, ms: 450, fall: 30 }); }
-        if (left <= 0.08) { mask.clear(); ctx.sfx('star'); peeled(); }
-      } else if (key === 'cream' && step() === 'cream' && !rubbing) {
-        const spot = dots.find((d) => !d.on && Math.hypot(d.at.x - pt.x, d.at.y - pt.y) < 46);
-        if (!spot) return;
-        spot.on = true; spot.hp = 1; spot.guide.remove();
-        spot.node = svgEl('g', { transform: `translate(${spot.x} ${spot.y})` });
-        spot.node.innerHTML = `<g class="acc-in"><circle cy="3" r="19" fill="#fff"/><circle cx="-3" cy="-8" r="11" fill="#fff"/><circle cx="-7" cy="-3" r="5" fill="#ffe9f2"/></g>`;
-        creamsG.append(spot.node);
-        ctx.sfx('squirt'); tool.anim('pop', 200); ctx.note(dots.filter((d) => d.on).length);
-        if (dots.every((d) => d.on)) {
-          rubbing = true; box.enable();
-          ctx.help = () => ctx.say('facial-rub');
-          ctx.after(500, () => ctx.say('facial-rub'));
-        }
-      }
+    const dirt0 = dirt.measure();
+    const spots = [[A.cheekL[0] + 40, A.cheekL[1] + 30], [A.cheekR[0] - 20, A.cheekR[1] + 50], [A.mouth[0] - 90, A.chin[1] - 50]].map(([x, y]) => {
+      const s = 46;
+      return rig.add('skin', el('div', { class: 'sl-spot', html: prop('pimple'), style: { left: `${x - s / 2}px`, top: `${y - s / 2}px`, width: `${s}px`, height: `${s}px` } }));
     });
 
-    /* ---------- what a finger does: paint the mask, rub the cream in ---------- */
-    const brush = ctx.sprite(maskBrushArt(), 0, 0, 120, 120, 'paint-cursor');
-    brush.el.style.display = 'none';
-    ctx.rub((pt) => {
-      if (box.held) return;
-      finger = pt;
-      const f = toFace(pt);
-      if (step() === 'mask') {
-        brush.el.style.display = ''; brush.set(pt.x + 44, pt.y - 44);
-        if (!onFace(f) || mask.cover === 1) return;
-        const cover = mask.dab(f.x, f.y, flavour.col);
-        if (tick('brush', 130)) ctx.sfx('brush');
-        if (cover >= 0.88) {
-          mask.fill(flavour.col, true);
-          ctx.sfx('sparkle'); brush.el.style.display = 'none';
-          ctx.after(400, next);
-        }
-      } else if (step() === 'cream' && rubbing) {
-        for (const d of dots) {
-          if (d.hp <= 0 || Math.hypot(d.at.x - pt.x, d.at.y - pt.y) > 62) continue;
-          d.hp -= 0.09;
-          d.node.firstChild.style.transform = `scale(${(1 + (1 - d.hp) * 1.5).toFixed(2)})`; d.node.style.opacity = Math.max(0, d.hp);     // the cream spreads out and sinks in
-          if (tick('rub', 140)) ctx.sfx('brush');
-          if (d.hp > 0) continue;
-          d.node.remove();
-          glowG.insertAdjacentHTML('beforeend', sparkle(d.x - 12, d.y - 10, 20, '#fff') + sparkle(d.x + 18, d.y + 12, 11, '#fff'));
-          ctx.sfx('star'); ctx.burst(d.at.x, d.at.y, { n: 5, shapes: ['star'], colors: ['#fff', '#fff36b'], spread: 80, size: 26, ms: 600 });
-          if (dots.every((n) => n.hp <= 0)) finish();
-        }
-      }
-    }, () => { finger = null; brush.el.style.display = 'none'; });
-
-    /* ---------- the steps ---------- */
-    function next() {
-      index += 1;
-      const now = step();
-      ctx.progress(index, STEPS.length);
-      if (index > 0) { ctx.sfx('great'); ctx.burst(hx, hy - 60, { n: 10, spread: 260 }); }
-      ctx.help = () => ctx.say(VOICE[now]);
-      ctx.after(index ? 600 : 2500, () => { if (step() === now) ctx.say(VOICE[now]); });
-      stopHint?.();
-      const show = (key, pts) => { const t = box.tools.get(key); stopHint = pointer(ctx, [{ x: t.cx, y: t.cy }, ...pts.map(([x, y]) => toStage(x, y))]); };
-      if (now === 'wash') { box.enable('puff'); show('puff', [[218, 286], [398, 296], [158, 452], [440, 446]]); }
-      else if (now === 'rinse') { box.enable('towel'); show('towel', [[180, 300], [420, 320], [180, 460], [420, 480]]); }
-      else if (now === 'mix') mixing();
-      else if (now === 'mask') {
-        box.enable(); mood('open', 'happy', 1200);
-        brush.el.style.setProperty('--dye', flavour.col);
-        for (let i = 0; i < 5; i++) ctx.after(i * 120, () => { const at = toStage(rand(150, 450), rand(260, 520)); spray(ctx, at.x, at.y, { n: 1, shape: 'spark', color: '#fff', cone: 180, reach: 16, size: 40, ms: 700 }); });
-      } else if (now === 'cucumber') {
-        anim(bowl.el, 'out', 250, { fill: 'forwards' }).then(() => bowl.remove());
-        plate = ctx.sprite(plateArt(), W - 126, 664, 220, 120); plate.el.style.pointerEvents = 'none'; plate.anim('in', 350);
-        slices = [-1, 1].map((s) => {
-          const slice = ctx.sprite(cucumberArt(), W - 126 + s * 46, 650, 96, 96, 'shadowed pulse');
-          slice.anim('in', 350);
-          return ctx.drag(slice, { enabled: () => step() === 'cucumber' && !slice.eye, end: () => {
-            const eye = EYES.map(([x, y], i) => ({ i, at: toStage(x, y) })).filter((e) => !slices.some((n) => n.eye === e.i + 1)).find((e) => Math.hypot(e.at.x - slice.cx, e.at.y - slice.cy) < 90);
-            if (!eye) { ctx.sfx('drop'); slice.goHome(); return; }
-            slice.eye = eye.i + 1; slice.el.classList.remove('pulse', 'shadowed');
-            slice.glide(eye.at.x, eye.at.y, 200); ctx.sfx('pop'); mood('shut', 'smile'); ctx.note(slices.filter((n) => n.eye).length * 2);
-            if (slices.every((n) => n.eye)) ctx.after(500, next);
-          } });
-        });
-      } else if (now === 'relax') {
-        steamer = ctx.sprite(steamerArt(), 128, 540, 190, 266, 'pulse');
-        steamer.anim('in', 400);
-        steamer.tap(() => {
-          if (step() !== 'relax' || !tick('steam', 650) || puffs >= 3) return;
-          steamer.el.querySelectorAll('.lamp')[puffs].setAttribute('fill', '#ffd23f');
-          puffs += 1;
-          ctx.sfx('steam'); ctx.note(puffs * 2); steamer.anim('pop', 300);
-          const from = { x: steamer.cx + 85, y: steamer.cy - 110 }, a = Math.atan2(hy - 30 - from.y, hx - from.x) * 180 / Math.PI;
-          for (let i = 0; i < 5; i++) ctx.after(i * 150, () => spray(ctx, from.x, from.y, { n: 3, shape: 'puff', color: '#fff', angle: a, cone: 16, reach: Math.hypot(hx - from.x, hy - from.y) * 1.1, size: 76, ms: 1700, opacity: 0.8, grow: 2 }));
-          mood('shut', 'happy', 1500);
-          if (puffs === 3) { steamer.el.classList.remove('pulse'); ctx.after(1700, next); }
-        });
-      } else if (now === 'peel') {
-        anim(steamer.el, 'out', 250, { fill: 'forwards' }).then(() => steamer.remove());
-        box.enable('towel');
-        // the slices come off with a tap and fly back to the plate
-        for (const slice of slices) {
-          slice.el.classList.add('pulse');
-          slice.tap(() => {
-            if (!slice.eye || step() !== 'peel') return;
-            slice.eye = 0; slice.el.classList.remove('pulse');
-            ctx.sfx('pop'); slice.goHome(350).then(() => slice.el.classList.add('shadowed'));
-            if (slices.every((n) => !n.eye)) mood('open', 'smile');
-            peeled();
-          });
-        }
-      } else if (now === 'cream') {
-        anim(plate.el, 'out', 250, { fill: 'forwards' }).then(() => plate.remove()); slices.forEach((n) => anim(n.el, 'out', 250, { fill: 'forwards' }).then(() => n.remove()));
-        box.enable('cream'); mood('open', 'happy', 1200);
-        dots = CREAM.map(([x, y]) => {
-          const guide = svgEl('circle', { class: 'guide', cx: x, cy: y, r: 24, fill: 'none', stroke: '#ff6fa8', 'stroke-width': 5, 'stroke-dasharray': '4 12', 'stroke-linecap': 'round' });
-          guidesG.append(guide);
-          return { x, y, at: toStage(x, y), on: false, hp: 1, guide };
-        });
-      }
-    }
-    /* ---------- mixing the mask: drop things into the bowl, then stir until it is one colour ---------- */
-    function mixing() {
-      box.enable(); mood('open', 'happy', 1200);
-      const bx = 168, by = 628, picked = [];
-      let stirred = 0, spoon = null, last = null, done = false;
-      bowl = ctx.sprite(bowlArt(), bx, by, 290, 220); bowl.el.style.pointerEvents = 'none'; bowl.anim('in', 350);
-      const blobs = bowl.el.querySelector('.blobs'), swirl = bowl.el.querySelector('.swirl');
-      const tokens = MASKS.map((m, i) => {
-        const t = ctx.sprite(tokenArt(m), 74 + (i % 2) * 108 + (i === 4 ? 54 : 0), 196 + Math.floor(i / 2) * 106, 92, 92, 'shadowed');
-        t.anim('in', 300 + i * 70);
-        return ctx.drag(t, { enabled: () => step() === 'mix' && !t.used && !done, end: () => {
-          if (Math.hypot(t.cx - bx, t.cy - (by - 40)) > 135) { ctx.sfx('drop'); t.goHome(); return; }
-          t.used = true; t.el.style.pointerEvents = 'none'; t.el.classList.remove('shadowed');
-          t.glide(bx, by - 46, 200, 'ease-in').then(() => anim(t.el, 'out', 180, { fill: 'forwards' })).then(() => t.remove());
-          ctx.sfx('splash'); bowl.anim('pop', 300); mood('joy', 'happy', 700);
-          spray(ctx, bx, by - 50, { n: 9, shape: 'drop', color: [m.col, '#fff'], angle: 270, cone: 60, reach: 130, size: 22, ms: 650, fall: 90 });
-          picked.push(m.col); ctx.note(picked.length * 2);
-          flavour = { key: 'mix', col: blend(picked) };
-          // what was dropped in floats there as a blob until it is stirred in
-          blobs.append(svgEl('circle', { cx: 80 + ((picked.length * 53) % 90), cy: 70 + (picked.length % 2) * 9, r: 21, fill: m.col }));
-          if (picked.length === 1) bowl.el.style.setProperty('--mix', m.col);
-          if (picked.length === 2) addSpoon();
-        } });
+    /** A tool on the shelf: pull it onto her and use it. Resolves when `use` says the job is done. */
+    const job = (items, use, o = {}) => new Promise((done) => {
+      let fin = false, last = null;
+      const finish = (v) => { if (fin) return; fin = true; done(v); };
+      shelf.setItems(items.map((k) => ({ key: k, art: prop(k) })), {
+        drag: {
+          size: o.size || 150, tip: o.tip || [0, 0],
+          start: (k, p) => { last = null; o.start?.(k, p); },
+          move: (k, p, ghost) => { if (!fin) { const r = use(k, p, last, ghost, false); last = p; if (r) finish(r); } },
+          drop: (k, p, ghost, moved) => {
+            if (fin) return false;
+            const r = use(k, p, last, ghost, true, moved);
+            last = null;
+            if (!r) return false;
+            setTimeout(() => ghost.remove(), 260);         // the thing was used up (a patch, a squeeze of face wash)
+            if (r === true) finish(true);
+            return true;
+          },
+        },
       });
-      stopHint = pointer(ctx, [{ x: tokens[0].cx, y: tokens[0].cy }, { x: bx, y: by - 50 }]);
-      function addSpoon() {
-        spoon = ctx.sprite(spoonArt(), bx + 190, by - 110, 62, 176, 'shadowed pulse');
-        spoon.anim('in', 350); swirl.setAttribute('opacity', 1);
-        stopHint?.();
-        stopHint = pointer(ctx, [{ x: spoon.cx, y: spoon.cy }, { x: bx - 50, y: by - 60 }, { x: bx + 50, y: by - 60 }, { x: bx - 50, y: by - 60 }, { x: bx + 50, y: by - 60 }], { ms: 2400 });
-        ctx.drag(spoon, { start: () => spoon.el.classList.remove('pulse'), move: (sp, q) => {
-          const inBowl = Math.abs(sp.cx - bx) < 118 && Math.abs(sp.cy + 60 - (by - 40)) < 80;
-          if (inBowl && last && !done) {
-            stirred += Math.hypot(q.x - last.x, q.y - last.y);
-            const k = Math.min(1, stirred / 1300);
-            swirl.style.transform = `rotate(${(stirred * 0.5).toFixed(0)}deg)`;
-            blobs.style.opacity = (1 - k).toFixed(2);
-            bowl.el.style.setProperty('--mix', flavour.col);
-            if (tick('stir', 170)) { ctx.sfx('bubble'); spray(ctx, sp.cx, by - 60, { n: 1, shape: 'bubble', angle: 270, cone: 50, reach: 80, size: 24, ms: 700 }); }
-            if (k >= 1) mixed();
-          }
-          last = q;
-        }, end: () => { last = null; if (!done) spoon.goHome(); } });
-      }
-      function mixed() {
-        done = true; stopHint?.();
-        for (const t of tokens) if (!t.used) anim(t.el, 'out', 250, { fill: 'forwards' }).then(() => t.remove());
-        anim(spoon.el, 'out', 250, { fill: 'forwards' }).then(() => spoon.remove());
-        blobs.innerHTML = ''; bowl.anim('jump', 600); ctx.sfx('sparkle');
-        ctx.burst(bx, by - 60, { n: 12, shapes: ['star'], colors: ['#fff', '#fff36b', flavour.col], spread: 170, size: 30 });
-        ctx.after(500, () => { if (step() === 'mix') next(); });
-      }
-    }
-
-    function peeled() { if (step() === 'peel' && mask.cover === 0 && slices.every((n) => !n.eye)) ctx.after(350, () => { if (step() === 'peel') next(); }); }
-
-    function finish() {
-      ctx.progress(STEPS.length, STEPS.length);
-      box.clear();
-      mood('joy', 'happy');
-      root.querySelectorAll('.cheek').forEach((n) => n.setAttribute('opacity', '.75'));
-      anim(holder, 'jump', 700);
-      ctx.sfx('great');
-      ctx.burst(hx, hy - 20, { n: 24, shapes: ['heart', 'star'], spread: 400, size: 44 });
-      ctx.win({ voice: 'facial-done', delay: 1500 });
-    }
-
-    // her eyes follow the tool or the finger
-    const look = { x: 0, y: 0 };
-    ctx.loop((dt) => {
-      const at = box.held ? box.held.point() : finger;
-      const tx = at ? clamp((at.x - hx) / 44, -8, 8) : 0, ty = at ? clamp((at.y - (hy + 20)) / 44, -11, 5) : 0;
-      look.x += (tx - look.x) * Math.min(1, dt * 8); look.y += (ty - look.y) * Math.min(1, dt * 8);
-      for (const node of pupils) node.style.transform = `translate(${look.x.toFixed(1)}px, ${look.y.toFixed(1)}px)`;
+      if (o.hint) { const stop = pointer(ctx, o.hint.map(([x, y]) => rig.stage(x, y))); ctx.cleanups.push(stop); }
     });
 
-    ['puff', 'towel', 'cream'].forEach((k, i) => box.add(k, TOOLS[k], W - 116, 190 + i * 150, 120, 120, { tip: [TIP[k][0] * 120, TIP[k][1] * 120] }));
+    /* ---- 1. face wash, then the sponge ---- */
+    ctx.say('sl-spa-wash');
+    const ring = guide(ctx, rig.anchor('face').x, rig.anchor('face').y, 230, 270);
+    let washed = false;
+    const blobs = [];
+    await job(['wash'], (k, p, last, ghost, up) => {
+      if (!up || !onFace(p)) return false;
+      ghost.animate([{ transform: 'scale(1,1)' }, { transform: 'scale(1.15,.82)' }, { transform: 'scale(1,1)' }], { duration: 300 });
+      ctx.sfx('squirt');
+      const q = rig.local(p);
+      for (const [dx, dy] of [[0, 0], [-120, 60], [130, 40]]) blobs.push(rig.add('fx', el('div', { class: 'sl-blob', style: { left: `${q.x + dx - 50}px`, top: `${q.y + dy - 40}px` } })));
+      rig.mood('surprise', 700);
+      washed = true;
+      return true;
+    }, { hint: [[A.nose[0], A.nose[1] - 100]] });
+    const foam = [];
+    const addFoam = (q) => {
+      if (foam.length > 70) return;
+      const s = rand(36, 80);
+      foam.push(rig.add('fx', el('div', { class: 'sl-foam', style: { left: `${q.x - s / 2 + rand(-30, 30)}px`, top: `${q.y - s / 2 + rand(-30, 30)}px`, width: `${s}px`, height: `${s}px` } })));
+    };
+    let tickle = 0;
+    await job(['sponge'], (k, p, last) => {
+      if (!washed || !last || !onFace(p)) return false;
+      const q = rig.local(p), from = rig.local(last);
+      if (Math.hypot(q.x - from.x, q.y - from.y) < 3) return false;
+      dirt.erase(q.x, q.y, 70, { strength: 0.35 });
+      if (Math.random() < 0.35) addFoam(q);
+      blobs.forEach((b) => { b.style.opacity = Math.max(0, (+b.style.opacity || 1) - 0.02); });
+      if ((tickle += Math.hypot(q.x - from.x, q.y - from.y)) > 900) { tickle = 0; rig.mood('giggle', 900); rig.react('giggle'); ctx.sfx('bubble'); }
+      if (Math.random() < 0.08) { ctx.sfx('brush'); }
+      return dirt.measure() < dirt0 * 0.12;
+    }, { size: 170, hint: [[A.cheekL[0], A.cheekL[1]], [A.cheekR[0], A.cheekR[1]], [A.forehead[0], A.forehead[1] + 40]] });
+    blobs.forEach((b) => b.remove());
+    dirt.clear();
+    ring();
+    rig.settle('idle');
     next();
+
+    /* ---- 2. rinse the foam away ---- */
+    ctx.say('sl-spa-rinse');
+    await job(['shower'], (k, p) => {
+      spray(ctx, p.x - 30, p.y + 50, { n: 3, angle: 100, cone: 14, reach: 230, size: 14, color: ['#9fdcff', '#e3f6ff'], shape: 'drop', fall: 40, ms: 420 });
+      if (Math.random() < 0.2) ctx.sfx('water');
+      const q = rig.local({ x: p.x - 30, y: p.y + 120 });
+      rig.mood('shut', 500);
+      for (const f of foam) {
+        if (f.gone) continue;
+        const fx = parseFloat(f.style.left), fy = parseFloat(f.style.top);
+        if (Math.abs(fx - q.x) < 160 && fy > q.y - 260 && fy < q.y + 200) {
+          f.gone = true;
+          f.animate([{ transform: 'translateY(0)', opacity: 1 }, { transform: `translateY(${rand(160, 300)}px)`, opacity: 0 }], { duration: 700, easing: 'ease-in', fill: 'forwards' }).finished.then(() => f.remove(), () => f.remove());
+        }
+      }
+      return foam.every((f) => f.gone);
+    }, { tip: [-30, 50], hint: [[A.forehead[0] - 150, A.forehead[1] - 120], [A.forehead[0] + 150, A.forehead[1] - 120]] });
+    next();
+
+    /* ---- 3. pat dry ---- */
+    ctx.say('sl-spa-towel');
+    const drops = [];
+    for (let i = 0; i < 9; i++) {
+      const x = rand(faceBox.x + 90, faceBox.x + faceBox.w - 90), y = rand(faceBox.y + 120, faceBox.y + faceBox.h - 90);
+      drops.push(rig.add('fx', el('div', { class: 'sl-drop', style: { left: `${x}px`, top: `${y}px`, animationDelay: `${-rand(0, 2)}s` } })));
+    }
+    await job(['towel'], (k, p) => {
+      const q = rig.local(p);
+      for (const d of drops) {
+        if (d.gone || Math.hypot(parseFloat(d.style.left) - q.x, parseFloat(d.style.top) - q.y) > 110) continue;
+        d.gone = true; ctx.sfx('puff');
+        anim(d, 'out', 200, { fill: 'forwards' }).then(() => d.remove());
+      }
+      return drops.every((d) => d.gone);
+    }, { size: 170 });
+    rig.mood('giggle', 900);
+    next();
+
+    /* ---- 4. patches on the spots ---- */
+    ctx.say('sl-spa-patch');
+    const spotRings = spots.map((s) => { const r = rig.stage(parseFloat(s.style.left) + 23, parseFloat(s.style.top) + 23); return guide(ctx, r.x, r.y, 46); });
+    await job(PATCHES, (k, p, last, ghost, up) => {
+      if (!up) return false;
+      const q = rig.local(p);
+      const i = spots.findIndex((s) => !s.patched && Math.hypot(parseFloat(s.style.left) + 23 - q.x, parseFloat(s.style.top) + 23 - q.y) < 110);
+      if (i < 0) return false;
+      const s = spots[i];
+      s.patched = true; s.classList.add('patched'); spotRings[i]();
+      const patch = rig.add('fx', el('div', { class: 'sl-patch', html: prop(k), style: { left: `${parseFloat(s.style.left) - 32}px`, top: `${parseFloat(s.style.top) - 32}px` } }));
+      anim(patch, 'squash', 350);
+      ctx.sfx('pop');
+      rig.mood('surprise', 500);
+      // a moment later the patch peels off and the spot is gone
+      ctx.after(1300, () => {
+        s.remove();
+        ctx.sfx('whoosh');
+        patch.animate([{ transform: 'rotate(0) translate(0,0)', opacity: 1 }, { transform: 'rotate(-40deg) translate(-40px,-120px)', opacity: 0 }], { duration: 600, easing: 'ease-in', fill: 'forwards' }).finished.then(() => patch.remove(), () => patch.remove());
+        const c = rig.stage(parseFloat(s.style.left) + 23, parseFloat(s.style.top) + 23);
+        ctx.burst(c.x, c.y, { n: 6, spread: 60 });
+      });
+      return spots.every((v) => v.patched) ? true : 'used';
+    }, { size: 110 });
+    await ctx.sleep(1500);
+    rig.mood('love', 1000);
+    next();
+
+    /* ---- 5. mix a mask in the bowl ---- */
+    ctx.say('sl-spa-mix');
+    const bx = 150, by = 640;
+    const bowl = ctx.add(el('div', { class: 'sl-bowl', html: `${prop('bowl')}<div class="sl-bowl-mix"></div>`, style: { left: `${bx - 120}px`, top: `${by - 100}px` } }));
+    anim(bowl, 'in', 400);
+    const mixNode = bowl.querySelector('.sl-bowl-mix');
+    const picked = [];
+    let spoon = null;
+    const inBowl = (p) => Math.hypot(p.x - bx, p.y - (by - 10)) < 130;
+    await new Promise((done) => {
+      const refresh = () => shelf.setItems(FOOD.map(([k]) => ({ key: k, art: prop(k), cls: picked.includes(k) ? 'used' : '' })), {
+        drag: {
+          size: 120,
+          drop: (k, p, ghost) => {
+            if (!inBowl(p) || picked.length >= 4 || picked.includes(k)) return false;
+            picked.push(k);
+            const col = FOOD.find((f) => f[0] === k)[1];
+            ghost.dataset.keep = 1;
+            ghost.animate([{ transform: 'translateY(0) scale(1)', opacity: 1 }, { transform: `translate(${bx - p.x}px, ${by - p.y}px) scale(.5)`, opacity: 0 }], { duration: 320, easing: 'ease-in', fill: 'forwards' }).finished.then(() => ghost.remove(), () => ghost.remove());
+            ctx.after(300, () => {
+              ctx.sfx('splash');
+              spray(ctx, bx, by - 20, { n: 8, angle: 270, cone: 60, reach: 90, size: 16, color: col, shape: 'drop', fall: 70 });
+              mixNode.insertAdjacentHTML('beforeend', `<i style="--c:${col};left:${rand(20, 60)}%;top:${rand(25, 60)}%"></i>`);
+              mixNode.classList.add('on');
+            });
+            if (picked.length === 2) {
+              ctx.say('sl-spa-stir');
+              spoon = ctx.sprite(prop('spoon'), bx + 150, by - 120, 140, 120, 'sl-spoon');
+              anim(spoon.el, 'in', 400);
+              let turn = 0, lastA = null;
+              ctx.drag(spoon, {
+                move: (s, q) => {
+                  const a = Math.atan2(q.y - by, q.x - bx);
+                  if (lastA !== null && Math.hypot(q.x - bx, q.y - by) < 170) {
+                    let d = a - lastA; if (d > Math.PI) d -= 2 * Math.PI; if (d < -Math.PI) d += 2 * Math.PI;
+                    turn += Math.abs(d);
+                    mixNode.style.transform = `rotate(${turn * 57}deg)`;
+                    if (Math.random() < 0.1) ctx.sfx('brush');
+                    const t = Math.min(1, turn / (Math.PI * 4));
+                    mixNode.style.setProperty('--blend', t);
+                    mixNode.style.background = mixCol(picked.map((k2) => FOOD.find((f) => f[0] === k2)[1]));
+                    if (t >= 1 && !mixNode.done) { mixNode.done = true; mixNode.classList.add('done'); ctx.sfx('sparkle'); ctx.burst(bx, by - 30, { n: 10, spread: 120 }); done(); }
+                  }
+                  lastA = a;
+                },
+                end: () => { lastA = null; spoon.goHome(); },
+              });
+            }
+            refresh();
+            return true;
+          },
+        },
+      });
+      refresh();
+      pointer(ctx, [{ x: ctx.W - SHELF_W, y: 220 }, { x: bx, y: by - 20 }]);
+    });
+    const maskCol = mixCol(picked.map((k) => FOOD.find((f) => f[0] === k)[1]));
+    spoon.el.style.pointerEvents = 'none';
+    anim(spoon.el, 'out', 250, { fill: 'forwards' }).then(() => spoon.remove());
+    next();
+
+    /* ---- 6. brush the mask on ---- */
+    ctx.say('sl-spa-mask');
+    const mask = layer('pl-mask');
+    const ring2 = guide(ctx, rig.anchor('face').x, rig.anchor('face').y, 230, 270);
+    await job(['brush'], (k, p, last) => {
+      if (!onFace(p)) return false;
+      const q = rig.local(p);
+      rig.mood('shut', 600);
+      if (Math.random() < 0.15) ctx.sfx('brush');
+      const c = mask.dab(q.x, q.y, 62, maskCol, { soft: 0.2, from: last && onFace(last) ? rig.local(last) : null });
+      if (c > 0.82) {
+        mask.fill((g, w, h) => {
+          g.fillStyle = maskCol; g.fillRect(0, 0, w, h);
+          const gr = g.createLinearGradient(0, 0, w * 0.4, h);         // a creamy shine across the top
+          gr.addColorStop(0, 'rgba(255,255,255,.45)'); gr.addColorStop(0.45, 'rgba(255,255,255,0)'); gr.addColorStop(1, 'rgba(0,0,0,.06)');
+          g.fillStyle = gr; g.fillRect(0, 0, w, h);
+        });
+        mask.canvas.classList.add('set');
+        return true;
+      }
+      return false;
+    }, { size: 160, tip: [-40, -60], hint: [[A.cheekL[0], A.cheekL[1]], [A.forehead[0], A.forehead[1] + 30], [A.cheekR[0], A.cheekR[1]]] });
+    ring2();
+    anim(bowl, 'out', 300, { fill: 'forwards' }).then(() => bowl.remove());
+    ctx.sfx('sparkle');
+    next();
+
+    /* ---- 7. cucumbers on the eyes, and rest ---- */
+    ctx.say('sl-spa-cucumber');
+    const eyeSpots = [A.eyeL, A.eyeR].map(([x, y]) => ({ x, y, on: null }));
+    const eyeRings = eyeSpots.map((e) => { const r = rig.stage(e.x, e.y); return guide(ctx, r.x, r.y, 60); });
+    rig.mood('shut');
+    rig.rest = 'shut';
+    await job(['cucumber'], (k, p, last, ghost, up) => {
+      if (!up) return false;
+      const q = rig.local(p), e = eyeSpots.find((v) => !v.on && Math.hypot(v.x - q.x, v.y - q.y) < 150);
+      if (!e) return false;
+      e.on = rig.add('top', el('div', { class: 'sl-cuke', html: prop('cucumber'), style: { left: `${e.x - 85}px`, top: `${e.y - 85}px` } }));
+      anim(e.on, 'squash', 350);
+      ctx.sfx('pop');
+      eyeRings[eyeSpots.indexOf(e)]();
+      return eyeSpots.every((v) => v.on) ? true : 'used';
+    }, { size: 130 });
+    shelf.setItems([]);
+    ctx.say('sl-spa-relax');
+    const zz = bubble(ctx, rig.anchor('crown').x + 170, rig.anchor('crown').y + 60, 'Zzz…', 3200);
+    zz.classList.add('sl-zzz');
+    const clock = ctx.add(el('div', { class: 'sl-clock', style: { left: `${ctx.W - SHELF_W + 40}px`, top: '360px' } }));
+    anim(clock, 'in', 300);
+    await ctx.sleep(3400);
+    ctx.sfx('bell');
+    anim(clock, 'out', 250, { fill: 'forwards' }).then(() => clock.remove());
+    for (const e of eyeSpots) {
+      e.on.animate([{ transform: 'translate(0,0) rotate(0)', opacity: 1 }, { transform: `translate(${e.x < rig.W / 2 ? -160 : 160}px, -200px) rotate(${e.x < rig.W / 2 ? -60 : 60}deg)`, opacity: 0 }], { duration: 600, easing: 'ease-in', fill: 'forwards' }).finished.then(() => e.on.remove(), () => e.on.remove());
+    }
+    ctx.sfx('whoosh');
+    rig.settle('idle');
+    next();
+
+    /* ---- 8. wipe the mask away: she glows ---- */
+    ctx.say('sl-spa-wipe');
+    mask.canvas.classList.remove('set');
+    await job(['cotton'], (k, p, last) => {
+      if (!onFace(p)) return false;
+      const q = rig.local(p);
+      mask.erase(q.x, q.y, 70, { strength: 0.8 });
+      if (Math.random() < 0.1) ctx.sfx('brush');
+      return mask.measure() < 0.06;
+    }, { size: 140 });
+    mask.remove();
+    face.glow.fill((g, w, h) => { const gr = g.createRadialGradient(w / 2, h * 0.45, 10, w / 2, h * 0.45, w * 0.6); gr.addColorStop(0, 'rgba(255,255,255,.8)'); gr.addColorStop(1, 'rgba(255,240,230,.15)'); g.fillStyle = gr; g.fillRect(0, 0, w, h); });
+    face.glow.painted = true;
+    const shine = rig.add('fx', el('div', { class: 'sl-shine', style: { left: `${faceBox.x}px`, top: `${faceBox.y}px`, width: `${faceBox.w}px`, height: `${faceBox.h}px`, '--mask': `url(${ART}${faceBox.src})` } }));
+    ctx.after(1400, () => shine.remove());
+    ctx.sfx('sparkle');
+    rig.mood('love', 1400);
+    rig.react('hop');
+    for (const n of ['forehead', 'cheekL', 'cheekR', 'nose']) { const a = rig.anchor(n); ctx.burst(a.x, a.y, { n: 5, spread: 80 }); }
+    ctx.say('sl-spa-glow');
+    next();
+
+    /* ---- 9. cream ---- */
+    await ctx.sleep(1200);
+    ctx.say('sl-spa-cream');
+    // the jar leaves thick white dollops where it touches; rubbing on spreads them thin into a shine
+    const sheen = layer('pl-sheen', { blend: 'screen', opacity: 0.7 });
+    const cream = new PaintLayer(rig.slots.face, faceBox, { res: 0.5, cls: 'pl-cream' });     // over her features, as cream is
+    cream.setMask(faceImg);
+    cream.canvas.style.filter = 'drop-shadow(0 3px 2px rgba(190, 120, 110, .45))';
+    const dollops = [];
+    await job(['cream'], (k, p, last) => {
+      if (!onFace(p)) return false;
+      const q = rig.local(p);
+      if (!dollops.some((d) => Math.hypot(d.x - q.x, d.y - q.y) < 130)) {
+        dollops.push(q);
+        for (let i = 0; i < 3; i++) cream.dab(q.x + rand(-18, 18), q.y + rand(-12, 12), rand(40, 50), '#f7f2f4', { soft: 0.1, alpha: 1 });
+        cream.dab(q.x - 12, q.y - 14, 24, '#ffffff', { soft: 0.4, alpha: 1 });          // the shine on top of the dollop
+        ctx.sfx('squirt');
+        const E = BUST.eyeBox;
+        if (E && q.x > E[0] && q.x < E[2] && q.y > E[1] - 60 && q.y < E[3]) rig.mood('shut', 1200); else if (Math.random() < 0.4) rig.mood('giggle', 600);
+        return false;
+      }
+      if (!last) return false;
+      const from = onFace(last) ? rig.local(last) : null;
+      if (dollops.some((d) => Math.hypot(d.x - q.x, d.y - q.y) < 160)) cream.dab(q.x, q.y, 36, '#f7f2f4', { soft: 0.6, alpha: 0.12, from });   // smeared about
+      cream.erase(q.x, q.y, 55, { strength: 0.06 });
+      if (Math.random() < 0.1) ctx.sfx('brush');
+      if (Math.random() < 0.06) { rig.mood('giggle', 600); }
+      return sheen.dab(q.x, q.y, 70, 'rgba(255,255,255,.6)', { soft: 0.8, from }) > 0.6;
+    }, { size: 140 });
+    cream.canvas.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 500, fill: 'forwards' }).finished.then(() => cream.remove(), () => cream.remove());
+    const glint = rig.add('fx', el('div', { class: 'sl-shine', style: { left: `${faceBox.x}px`, top: `${faceBox.y}px`, width: `${faceBox.w}px`, height: `${faceBox.h}px`, '--mask': `url(${ART}${faceBox.src})` } }));
+    ctx.after(1400, () => glint.remove());
+    for (const n of ['forehead', 'cheekL', 'cheekR']) { const a = rig.anchor(n); ctx.burst(a.x, a.y, { n: 4, spread: 60 }); }
+    sheen.fill('rgba(255,255,255,.35)');
+    next();
+    ctx.sfx('great');
+    shelf.hide();
+    rig.settle('idle');
+    rig.mood('love', 1600);
+    ctx.say('sl-spa-done');
+    finishButton(ctx, rig, 'facial', () => ({ face: faceSave(face, ['glow']) }));
   },
 };

@@ -1,78 +1,142 @@
-// 换装派对 — dress the doll: outfit, hair, shoes, something on her head, in her hand, on her back, and where the party is.
-import { pick, el, anim } from '../core.js';
-import { sceneSvg } from '../art/scenes.js';
-import { E, e } from '../art/base.js';
-import { doll, GLASSES, HAIR, OUTFIT, SHOES, HEAD, HAND, BACK, SCENES, SKIN, shoeAt } from '../art/girl.js';
-import { dollLook, saveLook } from '../salon.js';
-import { tray } from './kit.js';
+// 换装 — the style studio: the customer stands on a little stage, head to toe, wearing the hair and makeup
+// from the other rooms. Dresses, tops, bottoms, shoes, hats, glasses, things to hold and wings fly
+// from the shelf onto her; tap something she wears to take it off. The tick: a dance and a photo.
+import { el, rand, pick } from '../core.js';
+import { BODY, PROPS, BG } from '../salon/manifest.js';
+import { Shelf, img, backdrop, doneButton } from '../salon/ui.js';
+import { prop, photo, SHELF_W } from '../salon/room.js';
+import { customer, look, saveLook } from '../salon/look.js';
+import { Doll, WEAR } from '../salon/doll.js';
+import { ART } from '../salon/ui.js';
 
-const mannequin = `<g opacity=".3">${E(200, 180, 122, 112, '#d8c8c0')}</g>`;
-const CATS = [
-  { key: 'outfit', voice: 'du-outfit', keys: Object.keys(OUTFIT).filter((k) => k !== 'zoey'), view: '30 280 340 400', chip: (k) => OUTFIT[k]() },
-  { key: 'hair', voice: 'du-hair', keys: Object.keys(HAIR), view: '10 0 380 380', chip: (k) => HAIR[k].back(HAIR[k].col) + E(200, 180, 122, 112, SKIN) + HAIR[k].front(HAIR[k].col) },
-  { key: 'shoes', voice: 'du-shoes', keys: SHOES, view: '140 566 120 104', chip: (k) => shoeAt(176, 1, k) + shoeAt(224, -1, k) },
-  { key: 'head', voice: 'du-head', keys: Object.keys(HEAD), view: '70 -50 260 200', chip: (k) => HEAD[k]() },
-  { key: 'glasses', voice: 'du-glasses', keys: Object.keys(GLASSES), view: '104 160 192 100', chip: (k) => GLASSES[k]() },
-  { key: 'hand', voice: 'du-hand', keys: Object.keys(HAND), view: '236 110 190 420', chip: (k) => HAND[k]() },
-  { key: 'back', voice: 'du-back', keys: Object.keys(BACK), view: '-20 190 440 430', chip: (k) => BACK[k]() },
-  { key: 'scene', voice: 'du-scene', keys: Object.keys(SCENES), view: '0 0 1200 800', chip: (k) => SCENES[k](1200) },
-];
-const randomLook = () => ({ hair: pick(Object.keys(HAIR)), outfit: pick(Object.keys(OUTFIT).filter((k) => k !== 'zoey')), shoes: pick(SHOES), head: pick([...Object.keys(HEAD), null]), glasses: pick([...Object.keys(GLASSES), null, null]), hand: pick([...Object.keys(HAND), null]), back: pick([...Object.keys(BACK), null, null]) });
+/** Shelf tabs: key, the item shown on the tab, voice line. */
+const TABS = [['dress', 'dress-princess', 'du-outfit'], ['top', 'top-star', 'sl-du-top'], ['bottom', 'bottom-tutu', 'sl-du-bottom'], ['shoes', 'shoes-ballerina', 'du-shoes'],
+  ['hat', 'hat-party', 'du-head'], ['glasses', 'gl-heart', 'du-glasses'], ['hand', 'hold-balloon', 'du-hand'], ['back', 'back-butterfly', 'du-back']];
+/** Where the clothes land on her (body landmark), for the sparkles. */
+const LAND = { dress: 'chest', top: 'chest', bottom: 'waist', shoes: 'feet', back: 'chest', hand: 'handR' };
+
+/** Shelf art: the whole thing (wings and capes have their own pictures, not the worn ones cut by her body). */
+const art = (key) => (PROPS[`icon-${key}`] ? prop(`icon-${key}`) : BODY.wear?.[key] ? img(BODY.wear[key].src, 'sl-wear-icon') : prop(key));
 
 export default {
-  id: 'dressup', name: '换装派对', colors: ['#efe3ff', '#cdb4ff'], intro: 'dressup-intro',
-  icon: () => `<svg viewBox="-80 0 560 700">${doll({ hair: 'bob', outfit: 'princess', shoes: 'mary', head: 'crown', hand: 'wand', back: 'fairy' })}</svg>`,
+  id: 'dressup',
+  name: '换装',
+  colors: ['#efe3ff', '#cdb4ff'],
+  intro: 'sl-du-hi',
+  icon: () => img(BODY.wear?.['dress-princess']?.src || PROPS['hold-wand']?.src || ''),
+  async start(ctx) {
+    backdrop(ctx, BG.studio);
+    const who = customer(), l = look();
+    // she stands on the stage painted in the middle of the room (the picture covers the room, bottom-aligned)
+    const k = Math.max(ctx.W / 1800, ctx.H / 1200), cx = Math.min(ctx.W / 2, ctx.W - SHELF_W - 230), feet = ctx.H - (1200 - 1012) * k;
+    const doll = new Doll(ctx, { cx, bottom: feet + 18, height: feet - 70 }, who, l);     // room above her head for a hat
+    doll.node.classList.add('sl-enter');
+    await doll.ready;
+    doll.head.blinking = true;
+    let shelf = null, busy = false;
 
-  start(ctx) {
-    const { W } = ctx;
-    const look = dollLook();       // the customer from the lobby, as the other rooms left her
-    let scene = 'castle', changes = 0;
-    const bg = ctx.scene(SCENES[scene](W));
-    const dx = W * 0.27, dy = 436;
-    ctx.sprite(`<svg viewBox="0 0 200 40">${e(100, 20, 96, 16, 'rgba(90,59,46,.18)')}</svg>`, dx, 748, 300, 60);
-    const girl = ctx.sprite('', dx, dy, 412, 721, 'bob');
-    const render = () => girl.html(`<svg class="art" viewBox="0 0 400 700">${doll(look)}</svg>`);
-    render();
-
-    let options = null;
-    function openCat(cat) {
-      options?.el.remove();
-      ctx.say(cat.voice);
-      options = tray(ctx, W * 0.72, 452, cat.keys.map((key) => ({ key, html: `<svg viewBox="${cat.view}" ${cat.key === 'scene' ? 'preserveAspectRatio="xMidYMid slice"' : ''}>${cat.chip(key)}</svg>`, cls: cat.key === 'scene' ? 'scene-chip' : '' })), (item) => {
-        changes++;
-        if (cat.key === 'scene') { scene = item.key; bg.innerHTML = sceneSvg(W, SCENES[scene](W)); ctx.sfx('whoosh'); return; }
-        const off = look[cat.key] === item.key && cat.key !== 'hair' && cat.key !== 'outfit';
-        look[cat.key] = off ? null : item.key;
-        if (off) options.clear();
-        render();
-        ctx.sfx(off ? 'drop' : 'sparkle'); girl.anim('pop', 320);
-        if (!off) ctx.burst(dx, cat.key === 'shoes' ? 720 : cat.key === 'head' || cat.key === 'hair' ? 180 : 440, { n: 8, spread: 200 });
-      }, { width: Math.min(500, W * 0.46), cls: 'du-options' });
-      options.select(cat.key === 'scene' ? scene : look[cat.key]);
+    /** Fly a copy of the shelf item onto her, then put the thing on. */
+    async function put(slot, key, from) {
+      if (busy) return;
+      busy = true;
+      try {
+        const target = slot === 'hat' ? doll.headPoint(627, 260) : slot === 'glasses' ? doll.headPoint(624, 600) : doll.anchor(LAND[slot] || 'chest');
+        if (from) {
+          const r = from.getBoundingClientRect(), a = ctx.point({ clientX: r.left + r.width / 2, clientY: r.top + r.height / 2 });
+          const fly = ctx.add(el('div', { class: 'sl-fly', html: art(key), style: { left: `${a.x - 60}px`, top: `${a.y - 60}px` } }));
+          const dx = target.x - a.x, dy = target.y - a.y;
+          await fly.animate([
+            { transform: 'translate(0,0) scale(1) rotate(0deg)' },
+            { transform: `translate(${dx * 0.5}px, ${dy * 0.5 - 160}px) scale(1.25) rotate(-12deg)`, offset: 0.5 },
+            { transform: `translate(${dx}px, ${dy}px) scale(.6) rotate(0deg)`, opacity: 0.2 },
+          ], { duration: 460, easing: 'ease-in-out', fill: 'forwards' }).finished.catch(() => {});
+          fly.remove();
+        }
+        ctx.sfx('whoosh');
+        await doll.wear(slot, key);
+        ctx.burst(target.x, target.y, { n: 9, spread: 190 });
+        ctx.sfx('sparkle');
+        doll.mood('surprise', 500);
+        ctx.after(520, () => doll.mood('love', 900));
+        if (slot === 'dress' || slot === 'top' || slot === 'bottom') doll.spin(); else doll.react('hop');
+        if (Math.random() < 0.35) ctx.say(pick(['mk-pretty', 'mk-lovely']));
+      } finally { busy = false; }
     }
-    const cats = tray(ctx, W * 0.72, 132, CATS.map((cat) => ({ key: cat.key, html: `<svg viewBox="${cat.view}" ${cat.key === 'scene' ? 'preserveAspectRatio="xMidYMid slice"' : ''}>${cat.chip(cat.keys[cat.key === 'outfit' ? 0 : cat.key === 'hair' ? 2 : 0])}</svg>`, cls: cat.key === 'scene' ? 'scene-chip' : '' })),
-      (item) => { ctx.sfx('tap'); openCat(CATS.find((x) => x.key === item.key)); }, { cls: 'du-cats' });
-    cats.select('outfit');
-    openCat(CATS[0]);
 
-    ctx.button('dice', W * 0.72 - 64, 722, 'purple', '随机', () => {
-      Object.assign(look, randomLook()); scene = pick(Object.keys(SCENES)); changes += 3;
-      bg.innerHTML = sceneSvg(W, SCENES[scene](W)); render();
-      ctx.sfx('sparkle'); girl.anim('spin', 600); ctx.burst(dx, 400, { n: 14, spread: 300 });
-      options.select(null);
+    function open(tab) {
+      const items = WEAR[tab] || [];
+      shelf.setItems(items.map((k) => ({ key: k, art: art(k), cls: `sl-wear-item sl-wear-item-${tab}` })), {
+        on: doll.worn[tab],
+        tap: (k, b) => {
+          if (doll.worn[tab] === k) { takeOff(tab); return; }
+          put(tab, k, b);
+        },
+      });
+    }
+    function takeOff(slot) {
+      doll.off(slot);
+      ctx.sfx('drop');
+      doll.mood('surprise', 400);
+      if (shelf.tab === slot) shelf.select(null);
+    }
+    shelf = new Shelf(ctx, {
+      color: '#b68cff', width: SHELF_W,
+      tabs: TABS.map(([key, icon, voice]) => ({ key, art: art(icon), label: voice })),
+      onTab: (key) => { ctx.say(TABS.find((t) => t[0] === key)[2]); open(key); },
     });
-    ctx.button('camera', W * 0.72 + 64, 722, 'pink', '拍照', async () => {
-      if (!look.outfit) { ctx.sfx('bad'); ctx.say('du-outfit'); cats.select('outfit'); openCat(CATS[0]); return; }
-      ctx.sfx('camera');
-      const flash = ctx.add(el('div', { class: 'flash' }));
-      await ctx.sleep(450); flash.remove();
-      saveLook('dressup', { hair: look.hair, outfit: look.outfit, shoes: look.shoes, head: look.head, hand: look.hand, back: look.back, glasses: look.glasses });
-      // a little dance: she hops, twirls and cheers
-      girl.el.dataset.pose = 'cheer';
-      girl.anim('jump', 700).then(() => girl.anim('spin', 700)).then(() => girl.anim('jump', 600));
-      for (let i = 0; i < 4; i++) ctx.after(i * 450, () => ctx.burst(dx + (i % 2 ? 90 : -90), 300 + i * 60, { n: 8, shapes: ['heart'], spread: 170, size: 34 }));
-      ctx.burst(dx, 400, { n: 22, spread: 380, size: 44 });
-      ctx.win({ voice: 'dressup-done', delay: 2100 });
+    shelf.open('dress', true);
+    open('dress');
+
+    // tap her: take off what was tapped, or she giggles
+    const box = doll.node.getBoundingClientRect(), a = ctx.point({ clientX: box.left, clientY: box.top }), b = ctx.point({ clientX: box.right, clientY: box.bottom });
+    const hit = ctx.add(el('div', { class: 'sl-hit', style: { left: `${a.x + (b.x - a.x) * 0.1}px`, top: `${Math.max(0, a.y)}px`, width: `${(b.x - a.x) * 0.8}px`, height: `${b.y - Math.max(0, a.y)}px` } }));
+    hit.addEventListener('pointerdown', (ev) => {
+      if (busy) return;
+      const slot = doll.slotAt(ctx.point(ev));
+      if (slot) { takeOff(slot); return; }
+      ctx.sfx('squeak');
+      doll.mood('giggle', 700);
+      doll.react('giggle');
     });
+
+    // a dice: a whole new outfit at once
+    const dice = ctx.button('dice', 92, ctx.H - 210, 'purple', '随机', async () => {
+      if (busy) return;
+      busy = true;
+      const full = Math.random() < 0.5;
+      const pickOr = (slot, p) => (Math.random() < p ? pick(WEAR[slot]) : null);
+      const next = full ? { dress: pick(WEAR.dress) } : { top: pick(WEAR.top), bottom: pick(WEAR.bottom) };
+      Object.assign(next, { shoes: pick(WEAR.shoes), hat: pickOr('hat', 0.5), glasses: pickOr('glasses', 0.3), hand: pickOr('hand', 0.5), back: pickOr('back', 0.3) });
+      for (const s of Object.keys(doll.worn)) doll.off(s, true);
+      for (const [s, k] of Object.entries(next)) if (k) await doll.wear(s, k, true);
+      busy = false;
+      ctx.sfx('sparkle');
+      doll.spin();
+      doll.mood('love', 900);
+      ctx.burst(cx, ctx.H / 2, { n: 16, spread: 360 });
+      if (shelf.tab) shelf.select(doll.worn[shelf.tab] || null);
+    });
+
+    let done = false;
+    const tickBtn = doneButton(ctx, async () => {
+      if (done) return;
+      done = true;
+      tickBtn.remove();
+      dice.remove();
+      saveLook('dressup', { wear: Object.fromEntries(Object.keys(WEAR).map((slot) => [slot, doll.worn[slot] || null])) });
+      shelf.hide();
+      ctx.say('sl-du-dance');
+      // a little dance: hop, twirl, hop, with hearts
+      doll.mood('love');
+      for (let i = 0; i < 5; i++) ctx.after(i * 420, () => ctx.burst(cx + (i % 2 ? 150 : -150), ctx.H * 0.35 + rand(-40, 40), { n: 6, shapes: ['heart'], spread: 160, size: 34 }));
+      await doll.react('hop');
+      await doll.spin();
+      await doll.react('hop');
+      await photo(ctx, { node: doll.node, mood: (m) => doll.mood(m), react: (k) => doll.react(k) });
+      ctx.win({ delay: 300 });
+    });
+
+    window.__salon = { doll, shelf, open: (k) => shelf.open(k), put, ready: true };
+    void ART; void rand;
   },
 };

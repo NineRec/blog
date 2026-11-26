@@ -1,444 +1,287 @@
-// 美发沙龙 — wash the hair (shampoo, lather, rinse), blow it dry and comb it, then be the hairdresser:
-// cut, grow, curl, straighten and colour it, and finish with something pretty.
-// The hair is made of strands. They hang and sway, go dark and limp when wet, fly in the dryer's wind,
-// and can be cut anywhere along their length — so every tool does to the hair what it does in real life.
-import { pick, el, rand, clamp, anim } from '../core.js';
-import { shade, P, R, E, C, L, c, p, starPath, heartPath, sparkle, nextId } from '../art/base.js';
-import { clientFace, bust, CLIENTS, HEAD, TOOLS, TIP, hairRoom, foamArt, dollopArt } from '../art/salon.js';
-import { tray } from './kit.js';
-import { toolbox, spray, svgEl, pointer } from './salonkit.js';
-import { client, look as salonLook, saveLook } from '../salon.js';
+// 美发屋 — her hair is a tangle with leaves in it. Wet it, shampoo it, rub up a foam, rinse, blow it dry
+// and comb it smooth; then style it freely: cut, grow, curl, straighten, dye (patches, ombre, rainbow),
+// pick a new hairstyle, sprinkle glitter and clip on bows, tiaras and flowers.
+import { el, rand, anim } from '../core.js';
+import { spray, pointer } from './salonkit.js';
+import { PROPS, BUST, HAIR } from '../salon/manifest.js';
+import { Shelf, img, guide } from '../salon/ui.js';
+import { bustRoom, prop, finishButton, placeOn, SHELF_W, products, productArt } from '../salon/room.js';
 
-const K = 0.68;                 // the face is drawn in a 600×730 box and shown at this size
-const A = 141, B = 156;         // half the width and height of the head on the stage
-const SEG = 20;                 // a strand is a chain of points this far apart
-const END_L = -Math.PI + 0.1, END_R = -0.1;   // where the hair leaves the head and hangs (just above the ears)
-const DYES = ['#2b2529', '#8a5a36', '#f2c14e', '#ff6fa8', '#9a7bf5', '#3fb4ff', '#4fc56a', 'rainbow'];
-const RAINBOW = ['#ff5a6e', '#ff9d2e', '#ffd23f', '#4fc56a', '#3fb4ff', '#9a7bf5'];
-const RAINBOW_CSS = `linear-gradient(${RAINBOW.join(',')})`;
-const CAPES = ['#7fd3ff', '#9be27a', '#ffb347', '#c4adff'];
-const STEPS = ['shampoo', 'lather', 'rinse', 'dry', 'comb', 'style', 'deco'];
-const VOICE = { shampoo: 'hair-shampoo', lather: 'hair-lather', rinse: 'hair-rinse', dry: 'hair-dry', comb: 'hair-comb', style: 'hair-style', deco: 'hair-deco' };
-// ready-made hairstyles: how far the hair hangs below the ears, how long the fringe is, how curly
-const PRESETS = [
-  { key: 'bob', drop: 62, fringe: 40, curl: 0 },
-  { key: 'long', drop: 335, fringe: 50, curl: 0 },
-  { key: 'wavy', drop: 200, fringe: 58, curl: 0.5 },
-  { key: 'curly', drop: 285, fringe: 74, curl: 1 },
+const CLEAN_STEPS = 6;
+const SHAMPOO = { 'shampoo-pink': '#ffc2dc', 'shampoo-mint': '#c4f2dc', 'shampoo-blue': '#c9dcff' };
+const DYES = [
+  ['chestnut', '#8a5233'], ['blonde', '#efc86a'], ['black', '#2b2226'], ['red', '#d4402f'], ['orange', '#f08a2c'], ['pink', '#ff7fb6'],
+  ['purple', '#a77cf0'], ['blue', '#4c9df0'], ['mint', '#5fd6b4'], ['silver', '#d6d8e6'],
 ];
-const presetIcon = (p) => { const h = '#9a7bf5', n = 28 + p.drop * 0.2;
-  return `<svg viewBox="0 0 100 110">${p.curl ? [-1, 1].map((sd) => Array.from({ length: Math.ceil(n / 13) }, (_, i) => C(50 + sd * (30 + (p.curl > 0.7 ? (i % 2) * 6 : 0)), 44 + i * 13, p.curl > 0.7 ? 11 : 9, h)).join('')).join('') : R(16, 30, 18, n + 12, 9, h) + R(66, 30, 18, n + 12, 9, h)}${P('M16 46 C12 8 88 8 84 46Z', h)}${E(50, 48, 27, 29, '#f3c6a2')}${P('M22 44 C22 18 78 18 78 44 C70 32 30 32 22 44Z', h)}${c(41, 52, 3.5, '#3b2a25')}${c(59, 52, 3.5, '#3b2a25')}</svg>`; };
-// what the lobby figure wears for each thing chosen here
-const DOLL_HEAD = { tiara: 'crown', royal: 'crown', hearts: 'crown', ice: 'crown', mini: 'crown', stars: 'stars', flowers: 'wreath', ears: 'bunny', unicorn: 'bunny', bow: 'bow', clips: 'bow', butterfly: 'bow' };
-const TOOL_VOICE = { glitter: 'hair-glitter', scissors: 'hair-snip', potion: 'hair-grow', curler: 'hair-curl', iron: 'hair-straight', spray: 'hair-color' };
-
-// everything above the hairline is hair (in face units)
-const CAP = 'M20 310 L20 20 L580 20 L580 310 C520 220 400 196 300 196 C200 196 80 220 20 310Z';
-
-const bowAt = (x, y, col, s, dark) => `<g transform="translate(${x} ${y}) scale(${s})">${P('M0 0 C-30 -46 -84 -44 -78 0 C-84 44 -30 46 0 0Z', col)}${P('M0 0 C30 -46 84 -44 78 0 C84 44 30 46 0 0Z', col)}${R(-17, -20, 34, 40, 12, dark)}</g>`;
-const flowerAt = (x, y, col, s = 1) => `<g transform="translate(${x} ${y}) scale(${s})">${[0, 72, 144, 216, 288].map((a) => `<ellipse cx="0" cy="-15" rx="10" ry="13" fill="${col}" transform="rotate(${a})"/>`).join('')}<circle r="9" fill="#ffd447"/></g>`;
-// things for the hair, in face units; one from the top and one from the side can be worn together
-const GOLD = '#ffc21f', CROWN_VIEW = '180 -6 240 150';
-const WEAR = {
-  tiara: { slot: 'top', view: CROWN_VIEW, art: () => P('M196 124 L212 50 L250 96 L276 26 L300 84 L324 26 L350 96 L388 50 L404 124 Q300 100 196 124Z', '#ffd447') + C(276, 34, 10, '#ff5c8a') + C(324, 34, 10, '#7fd3ff') + C(300, 96, 12, '#b388ff') + C(212, 56, 8, '#fff') + C(388, 56, 8, '#fff') },
-  // a queen's crown: red velvet under golden arches
-  royal: { slot: 'top', view: CROWN_VIEW, art: () => P('M212 104 C206 28 394 28 388 104Z', '#e8364f') + L('M214 100 C226 44 286 36 300 30 C314 36 374 44 386 100', 12, GOLD) + L('M300 32 V100', 12, GOLD) + C(300, 20, 13, GOLD) + c(296, 16, 4, '#fff3a8') +
-    P('M200 96 Q300 76 400 96 L404 128 Q300 106 196 128Z', GOLD) + C(240, 106, 8, '#3fb4ff') + C(300, 99, 10, '#fff') + C(360, 106, 8, '#4fc56a') + c(270, 101, 4, '#fff3a8') + c(330, 101, 4, '#fff3a8') },
-  // pink, with hearts
-  hearts: { slot: 'top', view: CROWN_VIEW, art: () => L('M198 122 Q300 94 402 122', 15, '#ff8fc4') + L('M236 104 V84 M364 104 V84 M300 96 V70', 8, '#ff8fc4') + P(heartPath(300, 50, 30), '#ff4f7b') + c(288, 40, 6, '#ffb3c6') +
-    P(heartPath(236, 72, 17), '#ff9ecb') + P(heartPath(364, 72, 17), '#ff9ecb') + C(200, 122, 9, '#fff') + C(400, 122, 9, '#fff') + C(268, 104, 6, '#fff') + C(332, 104, 6, '#fff') },
-  // ice crystals, for a snow queen
-  ice: { slot: 'top', view: CROWN_VIEW, art: () => P('M198 126 L220 60 L246 102 L266 30 L290 94 L300 6 L310 94 L334 30 L354 102 L380 60 L402 126 Q300 100 198 126Z', '#8fd6ff') +
-    p('M300 6 L310 94 L300 108 L290 94Z', '#e3f6ff') + p('M266 30 L290 94 L272 104Z', '#bfe8ff') + p('M334 30 L310 94 L328 104Z', '#bfe8ff') + p('M220 60 L246 102 L228 112Z', '#bfe8ff') + p('M380 60 L354 102 L372 112Z', '#bfe8ff') +
-    sparkle(300, 60, 12, '#fff') + sparkle(236, 96, 7, '#fff') + sparkle(364, 96, 7, '#fff') },
-  // a silver band with stars standing on it
-  stars: { slot: 'top', view: CROWN_VIEW, art: () => L('M198 124 Q300 98 402 124', 13, '#cfd6e6') + L('M232 108 V78 M368 108 V78 M300 100 V64 M266 104 V92 M334 104 V92', 6, '#cfd6e6') + P(starPath(300, 40, 32, 14), '#ffd447') +
-    P(starPath(232, 62, 21, 9.5), '#fff36b') + P(starPath(368, 62, 21, 9.5), '#fff36b') + C(266, 86, 7, '#ff8fc4') + C(334, 86, 7, '#ff8fc4') + c(292, 32, 5, '#fff7c2') },
-  // a small crown worn to one side
-  mini: { slot: 'top', view: '200 20 170 140', art: () => `<g transform="rotate(-16 250 110)">${P('M214 122 L206 62 L234 88 L254 44 L274 88 L302 62 L294 122 Q254 110 214 122Z', '#ffd447')}${R(212, 106, 84, 18, 9, '#ff8fc4')}${C(254, 52, 9, '#ff4f7b')}${C(208, 66, 7, '#fff')}${C(300, 66, 7, '#fff')}${C(254, 115, 6, '#fff')}</g>` },
-  flowers: { slot: 'top', view: '100 40 400 160', art: () => [[136, 160, '#ff9ec0'], [204, 104, '#fff'], [300, 82, '#ff7a8a'], [396, 104, '#b388ff'], [464, 160, '#ffd447']].map(([x, y, col], i) => flowerAt(x, y, col, i === 2 ? 1.6 : 1.3)).join('') +
-    [[166, 128], [248, 88], [352, 88], [434, 128]].map(([x, y]) => p(`M${x - 14} ${y} q14 -18 30 -4 q-14 16 -30 4z`, '#7ed957')).join('') },
-  ears: { slot: 'top', view: '110 -10 380 180', art: () => L('M132 150 Q300 6 468 150', 16, '#ff9ec0') + P('M150 126 L128 6 L240 62Z', '#fff') + p('M160 104 L148 36 L212 68Z', '#ffc2d1') + P('M450 126 L472 6 L360 62Z', '#fff') + p('M440 104 L452 36 L388 68Z', '#ffc2d1') },
-  // a unicorn horn between two little ears
-  unicorn: { slot: 'top', view: '200 -40 200 170', art: () => P('M232 112 L224 52 L268 86Z', '#fff') + p('M238 100 L234 68 L256 86Z', '#ffc2d1') + P('M368 112 L376 52 L332 86Z', '#fff') + p('M362 100 L366 68 L344 86Z', '#ffc2d1') +
-    P('M280 104 L300 -30 L320 104Z', '#fff36b') + L('M286 76 L314 60 M290 46 L310 34 M294 16 L305 9', 6, '#ffb347') + flowerAt(268, 108, '#ff9ec0', 1.1) + flowerAt(332, 108, '#b388ff', 1.1) + flowerAt(300, 114, '#fff', 1.2) },
-  bow: { slot: 'side', view: '340 76 220 130', art: () => bowAt(450, 140, '#ff6fa8', 1.2, '#e64f8b') },
-  clips: { slot: 'side', view: '380 110 150 130', art: () => P(starPath(424, 150, 26, 12), '#ffd447') + P(starPath(466, 190, 20, 9), '#fff36b') + P(heartPath(486, 142, 13), '#ff5c8a') },
-  butterfly: { slot: 'side', view: '380 96 150 120', art: () => E(428, 138, 26, 32, '#b388ff', 'transform="rotate(-24 428 138)"') + E(482, 138, 26, 32, '#b388ff', 'transform="rotate(24 482 138)"') + E(436, 176, 18, 20, '#7fd3ff', 'transform="rotate(20 436 176)"') + E(474, 176, 18, 20, '#7fd3ff', 'transform="rotate(-20 474 176)"') +
-    c(428, 136, 8, '#fff') + c(482, 136, 8, '#fff') + R(450, 120, 10, 70, 5, '#38334d') },
-};
+const RAINBOW = ['#ff5f7e', '#ffa53a', '#ffe14d', '#6fd56a', '#4fb4ff', '#a77cf0'];
+const GLITTER = [['gold', '#ffd84d'], ['silver', '#ffffff'], ['pink', '#ff8fd0'], ['blue', '#8fd8ff']];
+const ACC = ['bow-pink', 'bow-blue', 'bow-yellow', 'clip-star', 'clip-heart', 'clip-butterfly', 'crown-flower', 'tiara', 'catears', 'pearls', 'hibiscus', 'scrunchie'];
+const CURLY = { long: 'wavy', bob: 'curly' }, STRAIGHT = { wavy: 'long', curly: 'bob' };
+const TABS = [
+  ['cut', 'scissors', 'hair-snip'], ['grow', 'tonic', 'hair-grow'], ['curl', 'curler', 'hair-curl'], ['straight', 'straightener', 'hair-straight'],
+  ['dye', 'dye', 'hair-color'], ['styles', 'mirror', 'sl-hair-styles'], ['glitter', 'glitter', 'hair-glitter'], ['acc', 'bow-pink', 'hair-deco'],
+];
 
 export default {
-  id: 'hair', name: '美发沙龙', colors: ['#efe3ff', '#cdb5ee'], intro: 'hair-intro',
-  icon: () => { const hair = '#9a7bf5';
-    return `<svg viewBox="0 0 230 200">${P('M34 112 C28 40 68 22 98 22 C128 22 168 40 162 112 L162 178 L34 178Z', hair)}${R(86, 146, 24, 30, 8, '#e3ae88')}${P('M46 204 C50 172 76 164 98 164 C120 164 146 172 150 204Z', '#7fd3ff')}` +
-      `${E(98, 106, 46, 50, '#f3c6a2')}${P('M52 100 C50 58 74 44 98 44 C122 44 146 58 144 100 C134 82 118 76 98 76 C78 76 62 82 52 100Z', hair)}${R(30, 92, 28, 92, 14, hair)}${R(138, 92, 28, 92, 14, hair)}${C(44, 186, 16, hair)}${C(152, 186, 16, hair)}` +
-      `${c(80, 114, 6, '#3b2a25')}${c(116, 114, 6, '#3b2a25')}${c(68, 130, 8, '#f08f7c', 'opacity=".5"')}${c(128, 130, 8, '#f08f7c', 'opacity=".5"')}${L('M88 134 q10 9 20 0', 3.5, '#b8475a')}` +
-      `${TOOLS.scissors.replace('<svg ', '<svg x="126" y="20" width="104" height="90" ')}${sparkle(196, 150, 15, '#fff')}${sparkle(20, 40, 10, '#fff')}</svg>`; },
+  id: 'hair',
+  name: '美发屋',
+  colors: ['#c4f1f4', '#62cfd6'],
+  intro: 'sl-hair-hi',
+  icon: () => img(PROPS.dryer?.src || ''),
+  async start(ctx) {
+    const room = await bustRoom(ctx, { bg: 'hair' }), { rig, hair } = room;
+    const A = BUST.anchors;
+    let shelf = new Shelf(ctx, { color: '#62cfd6', width: SHELF_W });
+    let step = 0;
+    const next = () => { step++; ctx.progress(step, CLEAN_STEPS); ctx.sfx('star'); };
+    ctx.progress(0, CLEAN_STEPS);
+    const S = () => hair.spec;
+    const onHair = (p, slack = 40) => { const q = rig.local(p), s = S(); return q.x > s.x - slack && q.x < s.x + s.w + slack && q.y > s.y - slack && q.y < Math.max(A.chin[1], hair.bottom(q.x)) + slack; };
+    const headTop = () => rig.stage(A.crown[0], A.crown[1] + 60);
 
-  start(ctx) {
-    const { W } = ctx;
-    const hx = Math.round(W * 0.45), hy = 336, ox = hx - 300 * K, oy = hy - 339 * K;
-    const who = { ...client(), hair: salonLook().hairCol || client().hair };
-    ctx.scene(hairRoom(W, hx));
+    /* ---- the mess ---- */
+    rig.settle('sad');
+    hair.setMessy(1);
+    const leaves = [[-180, 40], [150, 10], [40, -40], [-90, 140], [200, 160]].map(([dx, dy], i) => rig.add('top', el('div', {
+      class: 'sl-stuck sl-leaf', html: prop(i % 2 ? 'leaf' : 'leaf'),
+      style: { left: `${A.crown[0] + dx - 45}px`, top: `${A.crown[1] + 90 + dy - 45}px`, width: '90px', height: '90px', transform: `rotate(${rand(-60, 60)}deg)` },
+    })));
 
-    const clipHead = nextId(), clipCap = nextId(), face = `translate(${ox.toFixed(1)} ${oy.toFixed(1)}) scale(${K})`;
-    const holder = ctx.add(el('div', { class: 'salon-holder', html:
-      `<svg class="salon-svg" viewBox="0 0 ${W} 800" width="${W}" height="800">` +
-      `<g class="salon-face" data-eyes="open" data-mouth="smile" transform="${face}">${bust(who, 'cape', pick(CAPES))}${clientFace(who)}` +
-      `<clipPath id="${clipHead}"><path d="${HEAD}"/></clipPath><clipPath id="${clipCap}"><path d="${CAP}"/></clipPath>` +
-      `<g clip-path="url(#${clipHead})"><g class="cap" clip-path="url(#${clipCap})">${Array.from({ length: 6 }, (_, i) => `<rect x="${80 + i * 73.4}" y="0" width="74.4" height="330" fill="${who.hair}"/>`).join('')}</g></g></g>` +
-      `<g class="strands" data-kind="drape"></g><g class="strands" data-kind="fringe"></g><g class="glits"></g><g class="wear" transform="${face}"></g><g class="cut"></g></svg>` }));
-    const root = holder.firstElementChild, faceG = root.querySelector('.salon-face');
-    const bands = [...root.querySelectorAll('.cap rect')].map((node) => ({ node, base: who.hair })), pupils = [...root.querySelectorAll('.pupil')];
-    const drapeG = root.querySelector('[data-kind="drape"]'), fringeG = root.querySelector('[data-kind="fringe"]'), wearG = root.querySelector('.wear'), cutG = root.querySelector('.cut'), glitG = root.querySelector('.glits');
-    const onHair = ctx.add(el('div', { class: 'layer' }));     // shampoo and foam sit on the hair
-
-    /* ---------- the strands ---------- */
-    const strands = [];
-    const strand = (o) => {
-      const g = svgEl('g', { 'stroke-width': o.width });
-      (o.kind === 'fringe' ? fringeG : drapeG).append(g);
-      const st = { curl: 0, mess: 0, wet: 0, wind: 0, phase: rand(0, 6.28), noise: Array.from({ length: 48 }, () => rand(-1, 1)), cols: Array(48).fill(who.hair), pts: [], paths: [], stars: [], g, shown: o.width, ...o };
-      strands.push(st);
-      return st;
+    const job = (items, use, o = {}) => new Promise((done) => {
+      let fin = false, last = null;
+      const finish = () => { if (!fin) { fin = true; done(); } };
+      shelf.setItems(items.map((k) => ({ key: k, art: prop(k) })), {
+        drag: {
+          size: o.size || 150, tip: o.tip || [0, 0],
+          start: () => { last = null; },
+          move: (k, p, ghost) => { if (!fin && use(k, p, last, ghost, false)) finish(); last = p; },
+          drop: (k, p, ghost) => { if (fin) return false; const r = use(k, p, last, ghost, true); last = null; if (!r) return false; setTimeout(() => ghost.remove(), 260); if (r === true) finish(); return true; },
+        },
+      });
+      if (o.hint) pointer(ctx, o.hint.map(([x, y]) => rig.stage(x, y)));
+    });
+    const water = (p) => {
+      spray(ctx, p.x - 30, p.y + 50, { n: 3, angle: 100, cone: 14, reach: 230, size: 14, color: ['#9fdcff', '#e3f6ff'], shape: 'drop', fall: 40, ms: 420 });
+      if (Math.random() < 0.15) ctx.sfx('water');
     };
-    // The long hair parts in the middle, lies over the head and hangs down on both sides.
-    // Strands by the ears go first, so the ones from the parting lie on top.
-    for (let i = 0; i < 12; i++) for (const side of [-1, 1]) {
-      const f = i / 11, th = -Math.PI / 2 + side * (0.1 + (1 - f) * 1.12), d = 6 + 34 * f;
-      // how far it runs over the head before it hangs free
-      let dome = 0;
-      for (let a = th; side < 0 ? a > END_L : a < END_R; a += side * 0.02) dome += 0.02 * Math.hypot((A + d) * Math.sin(a), (B + d) * Math.cos(a));
-      strand({ kind: 'drape', side, th, d, dome, width: 34, len: dome + 205 + rand(-9, 9), max: dome + 335, min: 26 });
-    }
-    // the fringe hangs straight down from the hairline
-    for (let i = 0; i < 9; i++) {
-      const dx = (i - 4) * 26;
-      strand({ kind: 'fringe', side: 0, x: hx + dx, y: hy - 101 + 20 * (dx / 104) ** 2, width: 30, len: 44 + Math.abs(i - 4) * 3 + rand(0, 7), max: 236, min: 16 });
-    }
 
-    /** Where every point of a strand is right now. */
-    function layout(st, t) {
-      const pts = st.pts; pts.length = 0;
-      const calm = 1 - st.wet * 0.75, amp = 12 * st.curl * (1 - st.wet * 0.6), sn = st.side || 1, gust = Math.abs(st.wind);
-      let s = 0, j = 0, hung = 0, th = st.th, hanging = st.kind === 'fringe', x = st.x, y = st.y, nx = 1, ny = 0;
-      for (;;) {
-        if (!hanging) {
-          const d = 8 + (st.d - 8) * Math.min(1, s / 90);
-          nx = Math.cos(th); ny = Math.sin(th);
-          x = hx + (A + d) * nx; y = hy + (B + d) * ny;
-        }
-        const off = j ? amp * Math.sin(j * 1.9 + st.phase) + st.mess * st.noise[j] * 11 : 0;
-        pts.push(x + nx * off, y + ny * off);
-        if (s >= st.len - 0.5 || j > 46) break;
-        const step = Math.min(SEG, st.len - s); s += step; j++;
-        if (!hanging) {
-          const d = 8 + (st.d - 8) * Math.min(1, s / 90);
-          th += st.side * step / Math.hypot((A + d) * ny, (B + d) * nx);
-          if (st.side < 0 ? th <= END_L : th >= END_R) {
-            hanging = true; th = st.side < 0 ? END_L : END_R;
-            x = hx + (A + st.d) * Math.cos(th); y = hy + (B + st.d) * Math.sin(th);
-          }
-        } else {
-          const k = Math.min(1, ++hung / 3);
-          const phi = st.side * 0.03 + st.wind * k + Math.sin(t * 1.4 + st.phase + hung * 0.35) * 0.05 * calm * k + (gust > 0.05 ? Math.sin(t * 21 + hung * 1.3 + st.phase) * 0.14 * gust : 0);
-          x += step * Math.sin(phi); y += step * Math.cos(phi);
-          nx = sn * Math.cos(phi); ny = -sn * Math.sin(phi);
-        }
+    /* ---- 1. wet ---- */
+    ctx.say('sl-hair-wet');
+    let wet = 0;
+    await job(['shower'], (k, p) => {
+      water(p);
+      if (!onHair({ x: p.x - 30, y: p.y + 120 })) return false;
+      rig.mood('shut', 500);
+      const q = rig.local({ x: p.x - 30, y: p.y + 140 });
+      for (const l of leaves) {
+        if (l.gone || Math.abs(parseFloat(l.style.left) + 45 - q.x) > 150) continue;
+        l.gone = true;
+        l.animate([{ translate: '0 0', opacity: 1 }, { translate: `${rand(-80, 80)}px 600px`, opacity: 0 }], { duration: 1100, easing: 'ease-in', fill: 'forwards' }).finished.then(() => l.remove(), () => l.remove());
       }
-    }
-    /** A smooth line through points a…b of a strand. */
-    function curve(pts, a, b) {
-      const X = (i) => pts[i * 2], Y = (i) => pts[i * 2 + 1];
-      let d = `M${X(a).toFixed(1)} ${Y(a).toFixed(1)}`;
-      for (let i = a + 1; i < b; i++) d += `Q${X(i).toFixed(1)} ${Y(i).toFixed(1)} ${((X(i) + X(i + 1)) / 2).toFixed(1)} ${((Y(i) + Y(i + 1)) / 2).toFixed(1)}`;
-      return d + `L${X(b).toFixed(1)} ${Y(b).toFixed(1)}`;
-    }
-    /** Draw a strand: one path for every stretch of the same colour. */
-    function draw(st) {
-      const n = st.pts.length / 2;
-      const width = st.width - 7 * st.wet;
-      if (Math.abs(width - st.shown) > 0.4) { st.shown = width; st.g.setAttribute('stroke-width', width.toFixed(1)); }
-      let run = 0, from = 0;
-      for (let j = 1; j < n; j++) {
-        if (j < n - 1 && st.cols[j] === st.cols[from]) continue;
-        const path = st.paths[run] || (st.paths[run] = st.g.appendChild(svgEl('path')));
-        path.setAttribute('d', curve(st.pts, from, j));
-        const col = st.wet > 0.02 ? shade(st.cols[from], -0.26 * st.wet) : st.cols[from];
-        if (path.shade !== col) { path.shade = col; path.setAttribute('stroke', col); }
-        run++; from = j;
-      }
-      while (st.paths.length > run) st.paths.pop().remove();
-      // glitter rides on the strand; what is cut off takes its glitter with it
-      st.stars = st.stars.filter((g) => { if (g.j >= n) { g.node.remove(); return false; } g.node.setAttribute('transform', `translate(${st.pts[g.j * 2].toFixed(1)} ${st.pts[g.j * 2 + 1].toFixed(1)})`); return true; });
-    }
-    const touches = (st, pt, r) => { for (let i = 0; i < st.pts.length; i += 2) if (Math.hypot(st.pts[i] - pt.x, st.pts[i + 1] - pt.y) < r) return true; return false; };
-    const tipOf = (st) => ({ x: st.pts[st.pts.length - 2], y: st.pts[st.pts.length - 1] });
-
-    /* ---------- the customer ---------- */
-    let moodTimer = 0;
-    const mood = (eyes, mouth, ms = 0) => {
-      clearTimeout(moodTimer);
-      if (eyes) faceG.dataset.eyes = eyes;
-      if (mouth) faceG.dataset.mouth = mouth;
-      if (ms) moodTimer = ctx.after(ms, () => { faceG.dataset.mouth = 'smile'; if (faceG.dataset.eyes === 'joy') faceG.dataset.eyes = 'open'; });
-    };
-    const look = { x: 0, y: 0 };
-
-    /* ---------- sounds that repeat while a tool is used ---------- */
-    const lastTick = {};
-    const tick = (name, gap) => { const now = performance.now(); if (now - (lastTick[name] || 0) < gap) return false; lastTick[name] = now; return true; };
-
-    let index = -1, dye = DYES[3], dollops = [], foams = [], dyes = null, presets = null, extra = [], capWet = 0, stopHint = null;
-    const step = () => STEPS[index];
-    const dyeAt = (y) => (dye === 'rainbow' ? RAINBOW[Math.floor(Math.max(0, y - (hy - 230)) / 38) % 6] : dye);
-
-    /* ---------- what each tool does, every frame it is held ---------- */
-    const box = toolbox(ctx, (key, pt, dt, tool) => {
-      if (key === 'shampoo') {
-        if (step() !== 'shampoo' || Math.abs(pt.x - hx) > 210 || pt.y > hy + 30 || !tick('squirt', 330)) return;
-        const x = clamp(pt.x + rand(-18, 18), hx - 104, hx + 104);
-        const y = hy - (B + 14) * Math.sqrt(1 - ((x - hx) / (A + 30)) ** 2) + rand(6, 44);
-        const d = ctx.sprite(dollopArt(), pt.x, pt.y, 62, 50, 'pulse');
-        d.el.style.pointerEvents = 'none'; d.hp = 1; onHair.append(d.el); dollops.push(d);
-        ctx.sfx('squirt'); tool.anim('pop', 220);
-        d.glide(x, y, 260, 'ease-in').then(() => { d.anim('pop', 260); ctx.sfx('drop'); });
-        mood('shut', 'smile');
-        if (dollops.length >= 5) ctx.after(450, () => { if (step() === 'shampoo') next(); });
-      } else if (key === 'shower') {
-        if (tick('water', 45)) spray(ctx, pt.x + rand(-40, 40), pt.y + 4, { n: 2, shape: 'streak', color: ['#8fd6ff', '#bfe8ff'], angle: 90, cone: 3, reach: 330, size: 24, ms: 430, grow: 1 });
-        if (tick('water-sound', 200)) ctx.sfx('water');
-        for (const st of strands) for (let i = 0; i < st.pts.length; i += 2) if (Math.abs(st.pts[i] - pt.x) < 76 && st.pts[i + 1] > pt.y) { st.wet = Math.min(1, st.wet + dt * 4); break; }
-        foams = foams.filter((f) => {
-          if (Math.abs(f.cx - pt.x) > 84 || f.cy < pt.y) return true;
-          f.el.animate([{ transform: 'translateY(0) scale(1)', opacity: 1 }, { transform: 'translateY(120px) scale(.6)', opacity: 0 }], { duration: 520, easing: 'ease-in', fill: 'forwards' });
-          ctx.after(520, () => f.remove());
-          return false;
-        });
-        if (step() === 'rinse' && !foams.length) next();
-      } else if (key === 'dryer') {
-        if (tick('air', 60)) spray(ctx, pt.x, pt.y, { n: 2, shape: 'streak', color: '#fff', angle: 180, cone: 14, reach: 170, size: 26, ms: 320, opacity: 0.7, turn: 0 });
-        if (tick('air-sound', 240)) ctx.sfx('whoosh');
-      } else if (key === 'comb') {
-        let combed = false;
-        for (const st of strands) if (st.mess > 0 && touches(st, pt, 54)) { st.mess = Math.max(0, st.mess - dt * 2.6); combed = true; }
-        if (combed && tick('comb', 150)) { ctx.sfx('brush'); spray(ctx, pt.x, pt.y, { n: 1, shape: 'spark', color: ['#fff', '#fff36b'], angle: 270, cone: 80, reach: 60, size: 22, ms: 500 }); }
-        if (step() === 'comb' && strands.every((st) => st.mess < 0.1)) { strands.forEach((st) => { st.mess = 0; }); next(); }
-      } else if (key === 'scissors') {
-        for (const st of strands) {
-          const n = st.pts.length / 2;
-          for (let j = Math.ceil(st.min / SEG); j < n; j++) {
-            if (j * SEG > st.len - 8) break;
-            if (Math.hypot(st.pts[j * 2] - pt.x, st.pts[j * 2 + 1] - pt.y) < 23) { snip(st, j); break; }
-          }
-        }
-      } else if (key === 'potion') {
-        let grew = false;
-        for (const st of strands) if (st.len < st.max && touches(st, pt, 62)) { st.len = Math.min(st.max, st.len + 150 * dt); grew = true; }
-        if (tick('mist', 70)) spray(ctx, pt.x + 34, pt.y + 2, { n: 2, shape: 'dot', color: ['#b9f0a8', '#e6ffd9'], angle: 185, cone: 26, reach: 80, size: 14, ms: 380 });
-        if (tick('mist-sound', 180)) ctx.sfx('spray');
-        if (grew && tick('grow', 260)) { ctx.sfx('sparkle'); spray(ctx, pt.x, pt.y, { n: 2, shape: 'spark', color: ['#fff36b', '#9be27a'], angle: 270, cone: 180, reach: 70, size: 24, ms: 600 }); }
-      } else if (key === 'curler' || key === 'iron') {
-        let done = false;
-        for (const st of strands) {
-          if (!touches(st, pt, 46)) continue;
-          if (key === 'curler' && st.curl < 1) { st.curl = Math.min(1, st.curl + dt * 1.9); done = true; }
-          if (key === 'iron' && (st.curl > 0 || st.mess > 0)) { st.curl = Math.max(0, st.curl - dt * 2.5); st.mess = Math.max(0, st.mess - dt * 2.5); done = true; }
-        }
-        if (done && tick('steam', 170)) { ctx.sfx('steam'); spray(ctx, pt.x, pt.y - 10, { n: 2, shape: 'puff', color: '#fff', angle: 270, cone: 30, reach: 80, size: 30, ms: 700, opacity: 0.75, grow: 1.6 }); }
-      } else if (key === 'glitter') {
-        if (tick('shake', 60)) spray(ctx, pt.x, pt.y, { n: 2, shape: 'star', color: ['#fff36b', '#fff', '#ff8fc4'], angle: 110, cone: 34, reach: 90, size: 15, ms: 480, fall: 50, turn: 180 });
-        if (tick('shake-sound', 190)) ctx.sfx('sparkle');
-        if (!tick('glit', 55)) return;
-        const near = [];
-        for (const st of strands) for (let j = 1; j < st.pts.length / 2; j++) if (Math.hypot(st.pts[j * 2] - pt.x, st.pts[j * 2 + 1] - (pt.y + 46)) < 58 && !st.stars.some((g) => g.j === j)) near.push([st, j]);
-        if (!near.length) return;
-        const [st, j] = pick(near), r = rand(7, 11), node = svgEl('path', { d: starPath(rand(-8, 8), rand(-5, 5), r, r * 0.45), fill: pick(['#fff36b', '#fff', '#ffd23f', '#ffb4d6']) });
-        node.style.animationDelay = `${-rand(0, 1.1)}s`;
-        glitG.append(node); st.stars.push({ j, node });
-        mood('joy', 'happy', 600);
-      } else if (key === 'spray') {
-        let hit = false;
-        for (const st of strands) for (let j = 0; j < st.pts.length / 2; j++) {
-          if (Math.hypot(st.pts[j * 2] - pt.x, st.pts[j * 2 + 1] - pt.y) > 42) continue;
-          const col = dyeAt(st.pts[j * 2 + 1]);
-          if (st.cols[j] !== col) { st.cols[j] = col; hit = true; }
-        }
-        bands.forEach((band, i) => {
-          if (Math.hypot(hx + (i - 2.5) * 73.4 * K - pt.x, hy - 122 - pt.y) > 64) return;
-          const col = dye === 'rainbow' ? RAINBOW[i] : dye;
-          if (band.base !== col) { band.base = col; band.node.setAttribute('fill', shade(col, -0.26 * capWet)); hit = true; }
-        });
-        if (tick('mist', 60)) spray(ctx, pt.x + 36, pt.y, { n: 3, shape: 'dot', color: dye === 'rainbow' ? RAINBOW : [dye, shade(dye, 0.3)], angle: 180, cone: 30, reach: 78, size: 15, ms: 360 });
-        if (tick('mist-sound', 170)) ctx.sfx('spray');
-        if (hit && tick('dyed', 320)) ctx.sfx('sparkle');
-      }
-    });
-    box.onPick = (t) => { if (TOOL_VOICE[t.key] && !t.said) { t.said = true; ctx.say(TOOL_VOICE[t.key]); } };
-
-    /** Cut a strand at point j: the rest of it falls to the floor. */
-    function snip(st, j) {
-      const n = st.pts.length / 2;
-      const piece = svgEl('path', { d: curve(st.pts, j, n - 1), stroke: st.cols[j], 'stroke-width': st.width, fill: 'none', 'stroke-linecap': 'round', 'stroke-linejoin': 'round' });
-      piece.style.transformBox = 'fill-box'; piece.style.transformOrigin = 'center';
-      cutG.append(piece);
-      piece.animate([{ transform: 'translate(0, 0) rotate(0)', opacity: 1 }, { transform: `translate(${rand(-50, 50)}px, 140px) rotate(${rand(-50, 50)}deg)`, opacity: 1, offset: 0.4 }, { transform: `translate(${rand(-80, 80)}px, 520px) rotate(${rand(-120, 120)}deg)`, opacity: 0 }],
-        { duration: 900, easing: 'ease-in' }).finished.then(() => piece.remove(), () => piece.remove());
-      st.len = j * SEG; st.goal = null;
-      for (let i = j; i < st.cols.length; i++) st.cols[i] = st.cols[j - 1];    // what grows back matches the new end
-      if (tick('snip', 60)) ctx.sfx('snip');
-      mood(null, 'o', 500);
-    }
-
-    /* ---------- rubbing the shampoo into a lather with a finger ---------- */
-    ctx.rub((pt) => {
-      if (step() !== 'lather' || box.held) return;
-      const onTop = ((pt.x - hx) / (A + 62)) ** 2 + ((pt.y - hy) / (B + 62)) ** 2 < 1 && pt.y < hy - 36;
-      if (!onTop && !strands.some((st) => touches(st, pt, 46))) return;
-      dollops = dollops.filter((d) => {
-        if (Math.hypot(d.cx - pt.x, d.cy - pt.y) > 86) return true;
-        d.hp -= 0.2; d.el.style.opacity = Math.max(0.15, d.hp);
-        if (d.hp > 0) return true;
-        anim(d.el, 'out', 200, { fill: 'forwards' }).then(() => d.remove());
-        return false;
-      });
-      if (tick('foam', 85) && foams.length < 34) {
-        const s = rand(64, 104), f = ctx.sprite(foamArt(), pt.x + rand(-26, 26), pt.y + rand(-22, 22), s, s * 0.8, 'foam');
-        f.el.style.pointerEvents = 'none'; f.el.style.animationDelay = `${-rand(0, 2)}s`; onHair.append(f.el); f.anim('in', 240); foams.push(f);
-        ctx.sfx('bubble');
-        spray(ctx, pt.x, pt.y, { n: 1, shape: 'bubble', angle: 270, cone: 50, reach: 110, size: 26, ms: 900 });
-      }
-      if (!dollops.length && foams.length >= 15) next();
-    });
-
-    /* ---------- the steps ---------- */
-    const shelf = (keys, cols) => keys.forEach((k, i) => {
-      const col = cols === 1 ? 0 : i % 2, row = cols === 1 ? i : Math.floor(i / 2), rows = Math.ceil(keys.length / cols);
-      const w = cols === 1 ? 126 : 112, h = cols === 1 ? 118 : 104;
-      box.add(k, TOOLS[k], cols === 1 ? W - 110 : W - 244 + col * 144, (cols === 1 ? 400 : 330) + (row - (rows - 1) / 2) * (cols === 1 ? 150 : 132), w, h, { tip: [TIP[k][0] * w, TIP[k][1] * h] });
-    });
-
-    function next() {
-      index += 1;
-      const now = step();
-      ctx.progress(index, STEPS.length);
-      if (index > 0) { ctx.sfx('great'); ctx.burst(hx, hy - 130, { n: 10, spread: 240 }); }
-      ctx.help = () => ctx.say(VOICE[now]);
-      ctx.after(index ? 600 : 2500, () => { if (step() === now) ctx.say(VOICE[now]); });
-      stopHint?.();
-      const show = (key, pts) => { const t = box.tools.get(key); stopHint = pointer(ctx, [{ x: t.cx, y: t.cy }, ...pts.map(([x, y]) => ({ x: hx + x, y: hy + y }))]); };
-      if (now === 'shampoo') { box.enable('shampoo'); show('shampoo', [[40, -230], [-60, -230]]); }
-      else if (now === 'lather') { box.enable(); stopHint = pointer(ctx, [[-90, -150], [80, -170], [-70, -120], [90, -140]].map(([x, y]) => ({ x: hx + x, y: hy + y }))); }
-      else if (now === 'rinse') { box.enable('shower'); show('shower', [[-110, -330], [110, -330]]); }
-      else if (now === 'dry') { show('dryer', [[260, -40], [260, 160]]); box.enable('dryer'); mood('open', 'smile'); strands.forEach((st) => { st.wet = Math.max(st.wet, 0.85); }); }   // the water has run all through the hair
-      else if (now === 'comb') { box.enable('comb'); show('comb', [[-150, -60], [-170, 200], [150, -60], [170, 200]]); }
-      else if (now === 'style') style();
-      else if (now === 'deco') decorate();
-    }
-
-    function style() {
-      box.clear();
-      mood('joy', 'happy', 1400);
-      for (let i = 0; i < 6; i++) ctx.after(i * 130, () => spray(ctx, hx + rand(-190, 190), hy + rand(-170, 160), { n: 1, shape: 'spark', color: '#fff', angle: 270, cone: 180, reach: 20, size: 46, ms: 800 }));
-      ctx.after(350, () => {
-        shelf(['scissors', 'potion', 'curler', 'iron', 'spray', 'glitter', 'dryer', 'comb'], 2);
-        const can = box.tools.get('spray');
-        const setDye = (col) => { dye = col; can.el.style.setProperty('--dye', col === 'rainbow' ? RAINBOW[0] : col); can.el.classList.toggle('rainbow', col === 'rainbow'); };
-        dyes = tray(ctx, 84, 432, DYES.map((col) => ({ key: col, color: col === 'rainbow' ? RAINBOW_CSS : col })), (item) => { ctx.sfx('tap'); setDye(item.key); can.anim('wiggle', 400); }, { width: 96, cls: 'hair-dyes' });
-        dyes.select(dye); setDye(dye);
-        anim(dyes.el, 'fade', 300);
-        extra.push(ctx.button('check', W - 172, 722, 'green', '做好了', () => next()));
-        // ready-made hairstyles: the hair grows, shortens and curls into them
-        presets = tray(ctx, hx, 738, PRESETS.map((p) => ({ key: p.key, html: presetIcon(p) })), (item, chip) => {
-          const p = PRESETS.find((n) => n.key === item.key);
-          for (const st of strands) st.goal = { len: clamp(st.kind === 'fringe' ? p.fringe + rand(-4, 4) : st.dome + p.drop + rand(-8, 8), st.min + 6, st.max), curl: p.curl };
-          ctx.sfx('sparkle'); anim(chip, 'pop', 300); mood('joy', 'happy', 900);
-          for (let i = 0; i < 8; i++) ctx.after(i * 70, () => spray(ctx, hx + rand(-200, 200), hy + rand(-120, 260), { n: 1, shape: 'spark', color: ['#fff', '#fff36b'], angle: 270, cone: 180, reach: 30, size: 40, ms: 700 }));
-        }, { cls: 'hair-presets', select: false });
-        anim(presets.el, 'fade', 300);
-      });
-    }
-
-    function decorate() {
-      box.clear();
-      dyes?.el.remove(); presets?.el.remove();
-      extra.forEach((b) => b.remove()); extra = [];
-      const worn = new Map();
-      const picks = tray(ctx, W - 178, 356, Object.keys(WEAR).map((k) => ({ key: k, html: `<svg viewBox="${WEAR[k].view}">${WEAR[k].art()}</svg>` })), (item) => {
-        const on = !worn.has(item.key);
-        if (on) for (const [k, node] of worn) if (WEAR[k].slot === WEAR[item.key].slot) { node.remove(); worn.delete(k); }
-        if (on) {
-          wearG.insertAdjacentHTML('beforeend', `<g class="acc-in">${WEAR[item.key].art()}</g>`);
-          worn.set(item.key, wearG.lastElementChild);
-          ctx.sfx('sparkle'); ctx.burst(hx, hy - 150, { n: 7, spread: 200 }); mood('joy', 'happy', 900);
-        } else { worn.get(item.key).remove(); worn.delete(item.key); ctx.sfx('drop'); }
-        for (const [k, chip] of picks.chips) chip.classList.toggle('on', worn.has(k));
-      }, { width: 312, select: false });
-      anim(picks.el, 'fade', 300);
-      ctx.button('camera', W - 178, 706, 'pink', '拍照', async () => {
-        picks.el.remove();
-        ctx.sfx('camera');
-        const flash = ctx.add(el('div', { class: 'flash' }));
-        await ctx.sleep(450); flash.remove();
-        ctx.progress(STEPS.length, STEPS.length);
-        mood('joy', 'happy');
-        // the lobby figure takes the colour, the length and what she wears on her head
-        const tally = {}, drapes = strands.filter((st) => st.kind === 'drape');
-        for (const st of drapes) for (let j = 0; j < st.pts.length / 2; j++) tally[st.cols[j]] = (tally[st.cols[j]] || 0) + 1;
-        const drop = drapes.reduce((sum, st) => sum + st.len - st.dome, 0) / drapes.length, curl = drapes.reduce((sum, st) => sum + st.curl, 0) / drapes.length;
-        const top = [...worn.keys()].sort((a, b) => (WEAR[a].slot === 'top' ? -1 : 1) - (WEAR[b].slot === 'top' ? -1 : 1))[0];
-        saveLook('hair', { hairCol: Object.keys(tally).sort((a, b) => tally[b] - tally[a])[0], hair: curl > 0.5 ? 'curly' : drop < 120 ? 'bob' : 'long', head: top ? DOLL_HEAD[top] : null });
-        anim(holder, 'jump', 700);
-        ctx.burst(hx, hy - 40, { n: 24, shapes: ['heart', 'star'], spread: 380, size: 44 });
-        ctx.win({ voice: 'hair-done', delay: 1200 });
-      });
-    }
-
-    /* ---------- every frame ---------- */
-    ctx.loop((dt, t) => {
-      const held = box.held, blower = held && held.key === 'dryer' ? held.point() : null;
-      let wet = 0;
-      for (const st of strands) {
-        let power = 0;
-        if (blower && st.pts.length) {
-          // the dryer blows to the left, in a cone that widens with distance
-          const n = st.pts.length / 2, m = Math.floor(n / 2);
-          for (const i of [n - 1, m]) {
-            const dx = blower.x - st.pts[i * 2], dy = Math.abs(st.pts[i * 2 + 1] - blower.y);
-            if (dx > -30) power = Math.max(power, clamp(1 - dx / 470, 0, 1) * clamp(1 - dy / (95 + Math.max(0, dx) * 0.4), 0, 1));
-            if (Math.hypot(dx, dy) < 150) power = Math.max(power, 0.7);
-          }
-        }
-        if (st.goal) {      // a ready-made hairstyle is taking shape
-          st.len += (st.goal.len - st.len) * Math.min(1, dt * 3.2); st.curl += (st.goal.curl - st.curl) * Math.min(1, dt * 3.2); st.mess *= 1 - Math.min(1, dt * 4);
-          if (Math.abs(st.goal.len - st.len) < 1.5 && Math.abs(st.goal.curl - st.curl) < 0.03) { st.len = st.goal.len; st.curl = st.goal.curl; st.goal = null; }
-        }
-        st.wind += (-1.25 * power - st.wind) * Math.min(1, dt * 7);
-        if (power > 0.12 && st.wet > 0) {
-          st.wet = Math.max(0, st.wet - dt * 1.5 * power);
-          if (step() === 'dry') st.mess = Math.max(st.mess, 0.9 * (1 - st.wet));     // blow-dried hair is frizzy until it is combed
-          if (Math.random() < dt * 5) { const end = tipOf(st); spray(ctx, end.x, end.y, { n: 1, shape: 'drop', color: '#8fd6ff', angle: 190, cone: 30, reach: 90, size: 18, ms: 450, fall: 40 }); }
-        }
-        if (st.wet > 0.05) wet++;
-        layout(st, t);
-        draw(st);
-      }
-      if (wet && step() === 'dry' && Math.random() < dt * 2.5) {     // wet hair drips
-        const st = pick(strands.filter((s) => s.wet > 0.3)); if (st) { const end = tipOf(st); spray(ctx, end.x, end.y + 8, { n: 1, shape: 'drop', color: '#8fd6ff', angle: 90, cone: 4, reach: 90, size: 18, ms: 600 }); }
-      }
-      if (step() === 'dry' && !wet) { strands.forEach((st) => { st.wet = 0; }); next(); }
-      // the hair on top of the head is as wet as the fringe that grows from it
-      const top = strands.reduce((sum, st) => sum + (st.kind === 'fringe' ? st.wet : 0), 0) / 9;
-      if (Math.abs(top - capWet) > 0.03 || (!top && capWet)) { capWet = top; for (const band of bands) band.node.setAttribute('fill', shade(band.base, -0.26 * capWet)); }
-      // her eyes follow the tool in your hand
-      const at = held ? held.point() : null;
-      const tx = at ? clamp((at.x - hx) / 40, -8, 8) : 0, ty = at ? clamp((at.y - (hy + 16)) / 40, -11, 5) : 0;
-      look.x += (tx - look.x) * Math.min(1, dt * 8); look.y += (ty - look.y) * Math.min(1, dt * 8);
-      for (const node of pupils) node.style.transform = `translate(${look.x.toFixed(1)}px, ${look.y.toFixed(1)}px)`;
-    });
-
-    shelf(['shampoo', 'shower', 'dryer', 'comb'], 1);
+      wet++;
+      if (wet > 25) hair.wet(true);
+      return wet > 60 && leaves.every((l) => l.gone);
+    }, { tip: [-30, 50], hint: [[A.crown[0] - 200, A.crown[1] - 60], [A.crown[0] + 200, A.crown[1] - 60]] });
+    hair.wet(true);
+    rig.settle('idle');
     next();
+
+    /* ---- 2. shampoo ---- */
+    ctx.say('hair-shampoo');
+    const ring = guide(ctx, headTop().x, headTop().y, 90);
+    let foamCol = '#fff', gel = null;
+    await job(Object.keys(SHAMPOO), (k, p, last, ghost, up) => {
+      if (!up || !onHair(p)) return false;
+      foamCol = SHAMPOO[k];
+      ghost.animate([{ transform: 'rotate(160deg) scale(1,1)' }, { transform: 'rotate(160deg) scale(1.12,.84)' }, { transform: 'rotate(160deg) scale(1,1)' }], { duration: 320 });
+      ctx.sfx('squirt');
+      const q = rig.local(p);
+      gel = rig.add('fx', el('div', { class: 'sl-blob', style: { left: `${q.x - 50}px`, top: `${q.y - 40}px`, background: `radial-gradient(circle at 35% 30%, #fff 0 25%, ${foamCol})` } }));
+      return true;
+    }, { size: 150 });
+    ring();
+    next();
+
+    /* ---- 3. rub up a foam with a finger ---- */
+    ctx.say('hair-lather');
+    const foam = [];
+    shelf.setItems([]);
+    const stopHint = pointer(ctx, [rig.stage(A.crown[0] - 160, A.crown[1] + 120), rig.stage(A.crown[0] + 160, A.crown[1] + 120), rig.stage(A.crown[0], A.crown[1] + 40)]);
+    await new Promise((done) => {
+      let last = null, travel = 0, fin = false;
+      ctx.rub((p, ev, first) => {
+        if (fin) return;
+        if (first) last = null;
+        if (!onHair(p, 0)) { last = p; return; }
+        if (last) travel += Math.hypot(p.x - last.x, p.y - last.y);
+        last = p;
+        if (gel) gel.style.opacity = Math.max(0, 1 - travel / 800);
+        if (Math.random() < 0.45 && foam.length < 80 && hair.inHair(rig.local(p).x, rig.local(p).y)) {
+          const q = rig.local(p), s = rand(50, 110);
+          foam.push(rig.add('fx', el('div', { class: 'sl-foam', style: { left: `${q.x - s / 2 + rand(-20, 20)}px`, top: `${q.y - s / 2 + rand(-20, 20)}px`, width: `${s}px`, height: `${s}px`, '--foam': foamCol } })));
+          if (Math.random() < 0.3) ctx.sfx('bubble');
+        }
+        if (travel % 900 < 30) { rig.mood('giggle', 800); rig.react('giggle'); }
+        if (foam.length >= 60 && travel > 2200) { fin = true; done(); }
+      });
+    });
+    stopHint();
+    gel?.remove();
+    next();
+
+    /* ---- 4. rinse ---- */
+    ctx.say('hair-rinse');
+    await job(['shower'], (k, p) => {
+      water(p);
+      const q = rig.local({ x: p.x - 30, y: p.y + 120 });
+      rig.mood('shut', 500);
+      for (const f of foam) {
+        if (f.gone) continue;
+        const fx = parseFloat(f.style.left), fy = parseFloat(f.style.top);
+        if (Math.abs(fx - q.x) < 170 && fy > q.y - 300 && fy < q.y + 260) {
+          f.gone = true;
+          f.animate([{ transform: 'translateY(0)', opacity: 1 }, { transform: `translateY(${rand(200, 400)}px)`, opacity: 0 }], { duration: 800, easing: 'ease-in', fill: 'forwards' }).finished.then(() => f.remove(), () => f.remove());
+        }
+      }
+      return foam.every((f) => f.gone);
+    }, { tip: [-30, 50] });
+    rig.settle('idle');
+    next();
+
+    /* ---- 5. blow dry ---- */
+    ctx.say('hair-dry');
+    let dry = 0;
+    await job(['dryer'], (k, p, last, ghost) => {
+      const mouth = { x: p.x - 70, y: p.y - 10 };
+      spray(ctx, mouth.x, mouth.y, { n: 2, angle: 180, cone: 18, reach: 160, size: 30, color: 'rgba(255,255,255,.7)', shape: 'streak', ms: 300, turn: 0 });
+      ghost.classList.add('sl-buzz');
+      if (Math.random() < 0.12) ctx.sfx('puff');
+      if (!onHair({ x: mouth.x - 100, y: mouth.y })) return false;
+      dry++;
+      hair.canvas.classList.toggle('sl-flutter', true);
+      if (dry % 40 === 0) { rig.mood('giggle', 700); spray(ctx, mouth.x - 80, mouth.y, { n: 4, angle: 180, cone: 50, reach: 200, size: 14, color: '#bfe6ff', shape: 'drop', fall: 60 }); }
+      if (dry > 70) hair.wet(false);
+      return dry > 130;
+    }, { tip: [-70, -10], size: 170 });
+    hair.wet(false);
+    hair.canvas.classList.remove('sl-flutter');
+    rig.mood('surprise', 700);
+    next();
+
+    /* ---- 6. comb out the tangles ---- */
+    ctx.say('sl-hair-comb');
+    let messy = 1;
+    await job(['comb'], (k, p, last) => {
+      if (!last || !onHair(p)) return false;
+      const d = p.y - last.y;
+      if (d > 2) { messy -= d / 1600; hair.setMessy(messy); if (Math.random() < 0.1) ctx.sfx('brush'); }
+      if (Math.random() < 0.02) { rig.mood('ew', 500); ctx.sfx('boing'); }
+      return messy <= 0.05;
+    }, { size: 140, hint: [[A.crown[0] - 160, A.crown[1] + 40], [A.crown[0] - 200, A.chin[1]]] });
+    hair.setMessy(0);
+    rig.mood('love', 1200);
+    rig.react('hop');
+    ctx.sfx('great');
+    ctx.burst(headTop().x, headTop().y, { n: 12, spread: 200 });
+    await ctx.sleep(900);
+
+    /* ---- the styling, free ---- */
+    ctx.say('hair-style');
+    ctx.progress(0, 0);
+    const acc = [...rig.slots.top.querySelectorAll('.sl-stuck')].filter((n) => n.save);     // what she came in wearing
+    const minCut = A.browL[1] + 10;
+    const tool = {
+      cut: (p, last, ghost) => {
+        ghost.classList.toggle('sl-snip', Math.floor(performance.now() / 160) % 2 === 0);
+        if (!last) return;
+        const a = rig.local(last), b = rig.local(p);
+        const cut = hair.cut(a, b, minCut);
+        if (cut > 300) { ctx.sfx('snip'); rig.mood('surprise', 600); }
+      },
+      grow: (p) => {
+        spray(ctx, p.x - 40, p.y + 30, { n: 2, angle: 120, cone: 20, reach: 120, size: 12, color: ['#9be27a', '#d6ffb0'], ms: 380 });
+        const q = rig.local({ x: p.x - 60, y: p.y + 60 });
+        if (hair.grow(q.x, 5)) { if (Math.random() < 0.08) ctx.sfx('sparkle'); if (Math.random() < 0.02) rig.mood('giggle', 600); }
+      },
+      curl: (p) => twist(p, CURLY),
+      straight: (p) => twist(p, STRAIGHT),
+    };
+    let dwell = 0;
+    const twist = (p, map) => {
+      if (!onHair(p)) return;
+      spray(ctx, p.x, p.y, { n: 1, angle: 270, cone: 40, reach: 60, size: 22, color: 'rgba(255,255,255,.6)', shape: 'puff', ms: 500 });
+      if (++dwell < 45) return;
+      dwell = 0;
+      const to = map[hair.key];
+      if (!to) { ctx.sfx('boing'); rig.react('shake'); return; }
+      ctx.sfx('steam');
+      restyle(to, false);
+    };
+    const restyle = async (key, voice = true) => {
+      ctx.sfx('whoosh');
+      hair.canvas.animate([{ filter: 'brightness(1.6) blur(3px)', opacity: 0.3 }, { filter: 'none', opacity: 1 }], { duration: 450 });
+      await hair.setStyle(key, hair.color);
+      rig.mood('surprise', 500);
+      ctx.after(500, () => rig.mood('love', 900));
+      const t = headTop();
+      ctx.burst(t.x, t.y + 80, { n: 12, spread: 220 });
+      if (voice) ctx.sfx('sparkle');
+    };
+    const tools = (key, items, use, o = {}) => shelf.setItems(items, {
+      drag: {
+        size: o.size || 150, tip: o.tip || [0, 0],
+        start: () => { dwell = 0; },
+        move: (k, p, ghost) => { use(k, p, ghost.last, ghost); ghost.last = p; },
+        drop: (k, p, ghost) => o.drop?.(k, p, ghost),
+      },
+    });
+    const pics = await products(['pr-dye', 'pr-glitter']);
+    const can = (col, kind) => productArt(pics, 'pr-dye', col, kind, '', 'dye');
+    const dyeCol = (k) => (k === 'rainbow' ? RAINBOW : k.startsWith('ombre-') ? [hair.color || '#8a5233', DYES.find((d) => d[0] === k.slice(6))[1]] : DYES.find((d) => d[0] === k)[1]);
+    const shelfFor = {
+      cut: () => tools('cut', [{ key: 'scissors', art: prop('scissors') }], (k, p, last, g) => tool.cut(p, last, g), { size: 160, tip: [-50, -40] }),
+      grow: () => tools('grow', [{ key: 'tonic', art: prop('tonic') }], (k, p) => tool.grow(p), { size: 150 }),
+      curl: () => tools('curl', [{ key: 'curler', art: prop('curler') }], (k, p) => tool.curl(p), { size: 170 }),
+      straight: () => tools('straight', [{ key: 'straightener', art: prop('straightener') }], (k, p) => tool.straight(p), { size: 170 }),
+      dye: () => tools('dye', [...DYES.map(([k, c]) => ({ key: k, art: can(c), ghost: can(c) })),
+        { key: 'ombre-pink', art: can(['#8a5233', '#ff7fb6']), ghost: can(['#8a5233', '#ff7fb6']) }, { key: 'ombre-blue', art: can(['#8a5233', '#4c9df0']), ghost: can(['#8a5233', '#4c9df0']) },
+        { key: 'rainbow', art: can('rainbow'), ghost: can('rainbow') }], (k, p) => {
+        const col = dyeCol(k), show = Array.isArray(col) ? col[col.length - 1] : col;
+        spray(ctx, p.x - 30, p.y + 40, { n: 3, angle: 120, cone: 22, reach: 140, size: 16, color: Array.isArray(col) ? col : show, ms: 380 });
+        if (Math.random() < 0.1) ctx.sfx('spray');
+        const q = rig.local({ x: p.x - 70, y: p.y + 90 });
+        if (onHair({ x: p.x - 70, y: p.y + 90 })) hair.dye(q.x, q.y, col, 80);
+      }, { size: 140 }),
+      styles: () => shelf.setItems(Object.keys(HAIR).map((k) => ({ key: k, art: img(HAIR[k].src, 'sl-style-icon') })), { on: hair.key, tap: (k) => restyle(k) }),
+      glitter: () => tools('glitter', GLITTER.map(([k, c]) => ({ key: k, art: productArt(pics, 'pr-glitter', c, 'glitter', '', 'glitter'), ghost: productArt(pics, 'pr-glitter', c, 'glitter', '', 'glitter') })), (k, p) => {
+        const c = GLITTER.find((g) => g[0] === k)[1];
+        spray(ctx, p.x, p.y + 30, { n: 2, angle: 90, cone: 30, reach: 110, size: 14, color: c, shape: 'star', ms: 450 });
+        for (let i = 0; i < 2; i++) { const q = rig.local({ x: p.x + rand(-50, 50), y: p.y + rand(40, 140) }); if (hair.glitter(q.x, q.y, c) && Math.random() < 0.1) ctx.sfx('sparkle'); }
+      }, { size: 130 }),
+      acc: () => tools('acc', ACC.map((k) => ({ key: k, art: prop(k) })), () => {}, {
+        size: 140,
+        drop: (k, p) => {
+          if (!onHair(p, 60)) return false;
+          const q = rig.local(p);
+          const node = placeOn(rig, 'top', { key: k, x: q.x, y: q.y, s: ['crown-flower', 'tiara', 'catears', 'pearls'].includes(k) ? 1.9 : 1.2, r: rand(-12, 12) });
+          node.classList.add('sl-removable');
+          node.addEventListener('pointerdown', (ev) => { ev.stopPropagation(); ctx.sfx('pop'); acc.splice(acc.indexOf(node), 1); anim(node, 'out', 200, { fill: 'forwards' }).then(() => node.remove()); });
+          acc.push(node);
+          anim(node, 'squash', 350);
+          ctx.sfx('pop');
+          rig.mood('love', 800);
+          return true;
+        },
+      }),
+    };
+    shelf.remove();
+    const styling = shelf = new Shelf(ctx, {
+      color: '#62cfd6', width: SHELF_W,
+      tabs: TABS.map(([key, icon, voice]) => ({ key, art: prop(key === 'dye' && PROPS['pr-dye'] ? 'pr-dye' : key === 'glitter' && PROPS['pr-glitter'] ? 'pr-glitter' : icon), label: voice })),
+      onTab: (key) => { const t = TABS.find((x) => x[0] === key); ctx.say(t[2]); shelfFor[key](); },
+    });
+    styling.open('cut', true);
+    shelfFor.cut();
+    finishButton(ctx, rig, 'hair', () => ({ hair: hair.save(), hairAcc: acc.map((n) => n.save()) }));
   },
 };

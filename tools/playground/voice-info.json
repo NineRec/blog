@@ -997,5 +997,341 @@
     "language": "English",
     "seconds": 3.6,
     "pitch_hz": 369
+  },
+  "sl-spa-hi": {
+    "text": "Oh no! Her face is all muddy. Let's give her a spa day!",
+    "fingerprint": "2b34b954c86742b102c3e695987b5bea0b564e28ba862a15d84107101c600cf4",
+    "seed": 2677495,
+    "language": "English",
+    "seconds": 4.24,
+    "pitch_hz": 421
+  },
+  "sl-spa-wash": {
+    "text": "Squeeze some face wash on her face, then scrub with the sponge!",
+    "fingerprint": "d6a93803b33930522249fbd4402acb6e07a7b212afac16d22ac952075c59167a",
+    "seed": 13568182,
+    "language": "English",
+    "seconds": 4.0,
+    "pitch_hz": 375
+  },
+  "sl-spa-rinse": {
+    "text": "Rinse the bubbles away with the shower!",
+    "fingerprint": "309c8309eaacc62af56b72a39150987d6e5a82fca35f949fa49ba44f810f2be5",
+    "seed": 3384318,
+    "language": "English",
+    "seconds": 2.24,
+    "pitch_hz": 358
+  },
+  "sl-spa-towel": {
+    "text": "Pat her face dry with the soft towel.",
+    "fingerprint": "1209fa7a27146b73d928690c3863ac9b548340c91853d1b7ff62c5e7be236c5e",
+    "seed": 568411,
+    "language": "English",
+    "seconds": 2.48,
+    "pitch_hz": 393
+  },
+  "sl-spa-patch": {
+    "text": "Put a little patch on every spot.",
+    "fingerprint": "a96240ab8664ad982c5ee3a08e926cf4047bb5cbd02fc823246bbab9c74c4fe7",
+    "seed": 14437029,
+    "language": "English",
+    "seconds": 2.0,
+    "pitch_hz": 414
+  },
+  "sl-spa-mix": {
+    "text": "Let's make a face mask! Drop some fruit in the bowl.",
+    "fingerprint": "ef4baa14c8ad3808c7283c9518aa4c4cef2136b16214a422e051993f5b961bcf",
+    "seed": 7024124,
+    "language": "English",
+    "seconds": 2.88,
+    "pitch_hz": 436
+  },
+  "sl-spa-stir": {
+    "text": "Now stir it round and round with the spoon!",
+    "fingerprint": "9769720855efe8e26207a1e51e75e642958bb3b835126776c5bfede719dafdef",
+    "seed": 707434,
+    "language": "English",
+    "seconds": 2.32,
+    "pitch_hz": 364
+  },
+  "sl-spa-mask": {
+    "text": "Brush the mask all over her face.",
+    "fingerprint": "7ecc02b7b473abddfffcb82440dc54fffb15588bb90805e29f65d00144f2d2d3",
+    "seed": 7176310,
+    "language": "English",
+    "seconds": 1.92,
+    "pitch_hz": 375
+  },
+  "sl-spa-cucumber": {
+    "text": "Put the cucumber slices on her eyes.",
+    "fingerprint": "e29556727447bbb4c85b6aae0ee818964fad3c5b815719c26e7ba4a5d87080a7",
+    "seed": 14959356,
+    "language": "English",
+    "seconds": 2.0,
+    "pitch_hz": 381
+  },
+  "sl-spa-relax": {
+    "text": "Shh... time to relax.",
+    "fingerprint": "b5b9809a1f1b6a3399cdc899d73c7346cb67a9be100cc8606cd2553ed78550e3",
+    "seed": 3054657,
+    "language": "English",
+    "seconds": 1.92,
+    "pitch_hz": 364
+  },
+  "sl-spa-wipe": {
+    "text": "Ding! Wipe the mask away with the cotton pad.",
+    "fingerprint": "d9191201c62d51182db0088c4835625c6c44cad532009d56c9bcd4b4b440c708",
+    "seed": 6137955,
+    "language": "English",
+    "seconds": 2.96,
+    "pitch_hz": 353
+  },
+  "sl-spa-glow": {
+    "text": "Wow! Her skin is glowing!",
+    "fingerprint": "2c221e60db71145d81329b642da66d985675ad01fe8ec3306c392bf1faf9f54c",
+    "seed": 898809,
+    "language": "English",
+    "seconds": 2.4,
+    "pitch_hz": 421
+  },
+  "sl-spa-cream": {
+    "text": "Finish with some soft face cream.",
+    "fingerprint": "99964287973de712dad76cc9d97091cdf52eab8d38b316f488b319c16a44a73a",
+    "seed": 1217368,
+    "language": "English",
+    "seconds": 2.24,
+    "pitch_hz": 407
+  },
+  "sl-spa-done": {
+    "text": "She feels so fresh! Tap the green tick when you are done.",
+    "fingerprint": "cbdb8a82953778032fde58ba629e66f96f7210f41b569276e311cd88ee0e538b",
+    "seed": 11134370,
+    "language": "English",
+    "seconds": 3.6,
+    "pitch_hz": 407
+  },
+  "sl-hair-hi": {
+    "text": "Oh dear, her hair is a messy tangle! Let's wash it.",
+    "fingerprint": "baa5f1cfdefc57f254057a740cc3d9f1238376df0982660a82cdb3eb4a334757",
+    "seed": 10471678,
+    "language": "English",
+    "seconds": 4.08,
+    "pitch_hz": 353
+  },
+  "sl-hair-wet": {
+    "text": "First, make her hair wet with the shower.",
+    "fingerprint": "88b6cac5c1d0f9e6b66d6e31dcf7591aeb987d41e306057af10a53504816eb55",
+    "seed": 12835800,
+    "language": "English",
+    "seconds": 2.24,
+    "pitch_hz": 353
+  },
+  "sl-hair-comb": {
+    "text": "Comb out the tangles, nice and smooth.",
+    "fingerprint": "6d12243f0641b2bc0eb6c6623fd5079034c78b3a2b596893dd2074b466de8be6",
+    "seed": 15039623,
+    "language": "English",
+    "seconds": 2.32,
+    "pitch_hz": 414
+  },
+  "sl-hair-styles": {
+    "text": "Pick a brand new hairstyle!",
+    "fingerprint": "40394ece4e1115e6b3204489c42416e9d979d53d631d8e271b2e339e67a5571a",
+    "seed": 2323953,
+    "language": "English",
+    "seconds": 1.6,
+    "pitch_hz": 375
+  },
+  "sl-mk-hi": {
+    "text": "Let's do her makeup! Pick something from the shelf.",
+    "fingerprint": "42cb645c5e73a6689aa5357ae0a3614660831c69b02d3f307d419f1a1eb9b300",
+    "seed": 9372182,
+    "language": "English",
+    "seconds": 2.8,
+    "pitch_hz": 407
+  },
+  "sl-mk-liner": {
+    "text": "Eyeliner!",
+    "fingerprint": "b19354af1667bbf1553180c03413ccc0e7e43ba7c436567e4677750420ae9d0d",
+    "seed": 9057624,
+    "language": "English",
+    "seconds": 0.88,
+    "pitch_hz": 410
+  },
+  "sl-mk-lens": {
+    "text": "Pretty eye colours!",
+    "fingerprint": "baa1951f5e36b35df1d2397b24c37161caf98398d0d3a94d0fd9225ed74428ac",
+    "seed": 10145726,
+    "language": "English",
+    "seconds": 1.28,
+    "pitch_hz": 418
+  },
+  "sl-mk-sticker": {
+    "text": "Face stickers!",
+    "fingerprint": "7d42a8fbee34c216b6797f7c772d5de37b55de86ce720db346958e5cf2df32a7",
+    "seed": 11003521,
+    "language": "English",
+    "seconds": 0.8,
+    "pitch_hz": 480
+  },
+  "sl-mk-wipe": {
+    "text": "Wipe it off, and try again!",
+    "fingerprint": "2b13173845e14688b55c2e88cc0cee1bd884ffb5340e00c0f26a41cf0f6a1f2d",
+    "seed": 10907901,
+    "language": "English",
+    "seconds": 1.52,
+    "pitch_hz": 471
+  },
+  "sl-nail-hi": {
+    "text": "Oh no, there are germs on her hand! Let's wash them away.",
+    "fingerprint": "441116b62a715c7b516b8017f768f6b471818f81af5e8af8b4f444047b9c32d9",
+    "seed": 13739260,
+    "language": "English",
+    "seconds": 3.52,
+    "pitch_hz": 400
+  },
+  "sl-nail-soap": {
+    "text": "Squeeze some soap on her hand, then scrub with the sponge.",
+    "fingerprint": "68b626ee5c405f425f149d5ed8476ae6649983089886abd60be9262926f562a9",
+    "seed": 11943408,
+    "language": "English",
+    "seconds": 3.52,
+    "pitch_hz": 400
+  },
+  "sl-nail-rinse": {
+    "text": "Rinse the bubbles away!",
+    "fingerprint": "0696c8f1b8a433830114bbbdf398548cd29d53da12289f0aa06ff720fce5d830",
+    "seed": 12641419,
+    "language": "English",
+    "seconds": 1.68,
+    "pitch_hz": 429
+  },
+  "sl-nail-oil": {
+    "text": "Put a drop of oil on every nail.",
+    "fingerprint": "7221a8c4db83c7d5ed79828c4a877faf4383eff24529d62d3e254295da8a794e",
+    "seed": 12856476,
+    "language": "English",
+    "seconds": 1.92,
+    "pitch_hz": 381
+  },
+  "sl-nail-zoom": {
+    "text": "Tap a nail to look closer!",
+    "fingerprint": "32f754cfd2f99ad145f29dff65ef208c4d7a98c2f4df03cde42a5333ce535102",
+    "seed": 6335399,
+    "language": "English",
+    "seconds": 2.08,
+    "pitch_hz": 353
+  },
+  "sl-nail-sticker": {
+    "text": "Nail stickers!",
+    "fingerprint": "2fa96381e74ee5c2cc7c750716afb7d07ec92876e3ac3b4d9bd5e05b4bd8bbee",
+    "seed": 5144516,
+    "language": "English",
+    "seconds": 1.12,
+    "pitch_hz": 353
+  },
+  "sl-nail-gem": {
+    "text": "Shiny gems!",
+    "fingerprint": "337c0fc8a31669d49bed8ac334ac901ba442738144ba17b5bedab5dc65fdfa4b",
+    "seed": 7926466,
+    "language": "English",
+    "seconds": 1.2,
+    "pitch_hz": 444
+  },
+  "sl-nail-ring": {
+    "text": "Rings for her fingers!",
+    "fingerprint": "6dabf98c799b3a6515e18a0de96078fb527b0591705cad661558b9fb6cf1b22f",
+    "seed": 3966689,
+    "language": "English",
+    "seconds": 1.52,
+    "pitch_hz": 457
+  },
+  "sl-nail-bracelet": {
+    "text": "A pretty bracelet!",
+    "fingerprint": "6780d3271ff31dc3c824695f06fbc17b012abe8d68e4ce7e440ca41f13cd784f",
+    "seed": 14594126,
+    "language": "English",
+    "seconds": 1.28,
+    "pitch_hz": 400
+  },
+  "sl-du-hi": {
+    "text": "Welcome to the style studio! Let's pick an outfit.",
+    "fingerprint": "683808bcd21fb25fb3ce9c67157474baad1e9cc2cbaccf0e7a28be8afae57364",
+    "seed": 2737692,
+    "language": "English",
+    "seconds": 2.88,
+    "pitch_hz": 421
+  },
+  "sl-du-top": {
+    "text": "Tops!",
+    "fingerprint": "0f4a93fe449981f0759dd765d7528b9bea058a052c46a1124058818096817b39",
+    "seed": 8065837,
+    "language": "English",
+    "seconds": 0.72,
+    "pitch_hz": 480
+  },
+  "sl-du-bottom": {
+    "text": "Skirts and trousers!",
+    "fingerprint": "c6361cf4d8c3579c72c5903392c36350cb918de0a03c112841f4fc89203bec52",
+    "seed": 12587644,
+    "language": "English",
+    "seconds": 1.44,
+    "pitch_hz": 449
+  },
+  "sl-du-dance": {
+    "text": "Let's dance!",
+    "fingerprint": "f146568ed6e9c695d2a9c6c0dcac395a6de6ac7a58bf5495a6a9c504b1bd3edf",
+    "seed": 5503828,
+    "language": "English",
+    "seconds": 0.88,
+    "pitch_hz": 462
+  },
+  "sl-lobby-hi": {
+    "text": "Welcome to the beauty salon! Pick a room to visit.",
+    "fingerprint": "acda457f9489c33e853eb49360e936d603fffc53e8d45e742790925a70470d45",
+    "seed": 12109744,
+    "language": "English",
+    "seconds": 3.04,
+    "pitch_hz": 414
+  },
+  "sl-lobby-next": {
+    "text": "Hello! I'm next!",
+    "fingerprint": "9559a975379fcc31fd8a57c98996bc77bd7e748a0e799ff7039cddc7ff69b079",
+    "seed": 15071772,
+    "language": "English",
+    "seconds": 1.6,
+    "pitch_hz": 407
+  },
+  "sl-lobby-cheese": {
+    "text": "Say cheese!",
+    "fingerprint": "12c0ece783085e06a95b8e47cbc575c9a4c13c1f80789519014ab901f889b082",
+    "seed": 913682,
+    "language": "English",
+    "seconds": 0.96,
+    "pitch_hz": 444
+  },
+  "sl-lobby-tap-1": {
+    "text": "Hee hee!",
+    "fingerprint": "261d618bdb22b8b02ea2d86b2e97b912d3f1b5040ea1d3d2f7a991faca8bac1a",
+    "seed": 10899895,
+    "language": "English",
+    "seconds": 0.64,
+    "pitch_hz": 495
+  },
+  "sl-lobby-tap-2": {
+    "text": "I love my new look!",
+    "fingerprint": "2dc223fe0eb190e2c7c8041bc7be1a82bcd5b93fb49bc0a8655eb701c590d898",
+    "seed": 7787286,
+    "language": "English",
+    "seconds": 1.28,
+    "pitch_hz": 381
+  },
+  "sl-lobby-tap-3": {
+    "text": "Hello there!",
+    "fingerprint": "47e36933324cae0420fac49ca227be7c37df64015ad8033049cb1c2d64066514",
+    "seed": 10172474,
+    "language": "English",
+    "seconds": 0.96,
+    "pitch_hz": 370
   }
 }

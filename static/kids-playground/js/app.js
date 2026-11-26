@@ -7,8 +7,8 @@ import { sparkle } from './art/base.js';
 import { animal, LAND, SEA } from './art/animals.js';
 import { food, FRUITS, VEGGIES, TREATS } from './art/food.js';
 import { GAMES, GROUPS, SALON } from './games/index.js';
-import { renderSalon, dollLook, saveLook } from './salon.js';
-import { zoeySvg } from './art/girl.js';
+import { renderSalon, dollIn } from './salon/lobby.js';
+import { saveLook, clearZone } from './salon/look.js';
 import { Zoey } from './zoey.js';
 
 const $ = (id) => document.getElementById(id);
@@ -179,6 +179,7 @@ class Game {
     this.sfx('win');
     $('win-sticker').innerHTML = sticker ? `<div class="sticker-new">${sticker.art()}</div><div class="sticker-label">新贴纸！</div>` : '';
     $('win').hidden = false;
+    $('win').classList.toggle('salon-win', !!this.def.salon);   // a salon room keeps the customer in view
     winZoey.setPose('cheer');
     this.after(700, () => this.say(voice));
   }
@@ -219,10 +220,13 @@ function renderHub() {
     $('hub-grid').append(el('h2', { class: 'hub-title', html: `<svg viewBox="-20 -20 40 40">${sparkle(0, 0, 18, '#fff36b')}</svg>${group.name}` }));
     if (group.collection) {
       // a collection is one wide door on the home screen; its rooms are inside
-      $('hub-grid').append(el('a', {
+      const door = $('hub-grid').appendChild(el('a', {
         class: 'card card-door', href: `#/${group.id}`, style: { '--c1': '#ffe0ee', '--c2': '#d9c2f5' }, 'data-door': group.id,
-        html: `<div class="card-art"><div class="door-doll zoey" data-pose="idle">${zoeySvg(dollLook())}</div>${group.games.slice(0, 4).map((g) => `<div class="door-mini" style="--c1:${g.colors[0]};--c2:${g.colors[1]}">${g.icon()}</div>`).join('')}</div><div class="card-name">${group.name} · ${group.games.length} 个房间</div>`,
+        html: `<div class="card-art"><div class="door-doll"></div>${group.games.slice(0, 4).map((g) => `<div class="door-mini" style="--c1:${g.colors[0]};--c2:${g.colors[1]}">${g.icon()}</div>`).join('')}</div><div class="card-name">${group.name} · ${group.games.length} 个房间</div>`,
       }));
+      // the customer of the moment, head to toe, waits behind the door
+      const dd = door.querySelector('.door-doll');
+      requestAnimationFrame(() => { if (dd.isConnected) dollIn(dd, dd.clientWidth, dd.clientHeight, { fill: 0.98, foot: 2 }).catch(() => {}); });
       continue;
     }
     for (const g of group.games) {
@@ -279,7 +283,7 @@ function init() {
   $('play-home').append(roundButton('home', 'ink', '回到首页', () => { sfx('tap'); location.hash = homeOf(); }));
   $('play-help').append(roundButton('sound', 'ink', '再听一遍', () => { if (current) { sfx('tap'); current.help ? current.help() : current.say(current.def.intro); } }));
   $('win-actions').append(
-    roundButton('again', 'orange big', '再玩一次', () => { sfx('tap'); startGame(current.def); }),
+    roundButton('again', 'orange big', '再玩一次', () => { sfx('tap'); if (current.def.salon) clearZone(current.def.id); startGame(current.def); }),
     roundButton('home', 'blue big', '回到首页', () => { sfx('tap'); location.hash = homeOf(); }),
   );
   $('open-album').addEventListener('click', () => { sfx('tap'); location.hash = '#/album'; });

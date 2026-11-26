@@ -1,296 +1,441 @@
-// 美甲沙龙 — a hand rests on the cushion. Scrub the mud and the germs off and rinse it, clip the long nails, file them round, paint each one with the
-// brush (the polish really goes on stroke by stroke), then put stickers on the nails, rings on the fingers
-// and a bracelet on the wrist. Every finger is its own little frame, so things land exactly where they are dropped.
-import { pick, el, rand, anim } from '../core.js';
-import { shade, R, L, sparkle, nextId } from '../art/base.js';
-import { TOOLS, TIP, nailTable, bottleArt, brushArt, DECALS, decalArt, RINGS, ringArt, BRACELETS, braceletArt, germArt, mudArt, foamArt } from '../art/salon.js';
-import { client } from '../salon.js';
-import { tray } from './kit.js';
-import { toolbox, spray, Paint, svgEl, pointer } from './salonkit.js';
+// 美甲店 — a muddy hand with germs on it. Soap and scrub (the germs squeal and run), rinse, clip the long
+// nails, file them, a drop of oil; then decorate: tap a nail to zoom in and paint it stroke by stroke,
+// add stickers and gems, and slide rings onto the fingers and a bracelet onto the wrist.
+import { el, rand, pick, anim } from '../core.js';
+import { spray, pointer } from './salonkit.js';
+import { PROPS, HAND, BG } from '../salon/manifest.js';
+import { Rig } from '../salon/rig.js';
+import { PaintLayer, image } from '../salon/paint.js';
+import { Shelf, ART, img, backdrop } from '../salon/ui.js';
+import { prop, finishButton, placeOn, stageMid, SHELF_W, products, productArt } from '../salon/room.js';
+import { customer, look } from '../salon/look.js';
 
-// where each finger starts on the hand (from the middle of the palm), how it leans, how long and wide it is
-const FINGERS = [
-  { bx: -112, by: 70, ang: -40, len: 168, w: 72 },     // thumb, out to the side
-  { bx: -94, by: -96, ang: -7, len: 228, w: 62 },
-  { bx: -30, by: -104, ang: -2, len: 256, w: 64 },
-  { bx: 34, by: -100, ang: 4, len: 236, w: 62 },
-  { bx: 94, by: -84, ang: 11, len: 186, w: 56 },
-];
-const TAPER = 0.84;     // a fingertip is a little narrower than the base of the finger
-/** A long slim finger: a soft swell at the middle joint, then narrowing to a round tip. */
-const fingerShape = (w, l) => { const t = w * TAPER / 2;
-  return `M${-w / 2} 46 C${-w / 2} ${-l * 0.2} ${-w * 0.45} ${-l * 0.3} ${-w * 0.47} ${-l * 0.47} C${-w * 0.49} ${-l * 0.6} ${-t} ${-l * 0.72} ${-t} ${-l + t} A${t} ${t} 0 0 1 ${t} ${-l + t} C${t} ${-l * 0.72} ${w * 0.49} ${-l * 0.6} ${w * 0.47} ${-l * 0.47} C${w * 0.45} ${-l * 0.3} ${w / 2} ${-l * 0.2} ${w / 2} 46Z`; };
-const POLISH = ['#ff4f7b', '#ff8fc4', '#ff9d2e', '#ffd23f', '#4fc56a', '#3fb4ff', '#9a7bf5', 'glitter', 'rainbow'];
-const RAINBOW = ['#ff5a6e', '#ff9d2e', '#ffd23f', '#4fc56a', '#3fb4ff', '#9a7bf5'];
-const STEPS = ['wash', 'rinse', 'clip', 'file', 'polish', 'deco'];
-// mud and germs on the hand, from the middle of the palm: [x, y, size]
-const MUD = [[-30, 60, 1.5], [52, 150, 1.2], [-98, -210, 0.8], [-34, -250, 0.8], [40, -230, 0.8], [106, -160, 0.7], [-150, 20, 0.8]];
-const GERMS = [[30, -10, '#7ed957'], [-66, 130, '#c4adff'], [70, 70, '#ffd447']];
-const ZOOM = 2.1;
-const VOICE = { wash: 'nails-wash', rinse: 'spa-shower', clip: 'nails-clip', file: 'nails-file', polish: 'nails-polish', deco: 'nails-deco' };
+const STEPS = 6;
+const POLISH = [['red', '#e8344e'], ['pink', '#ff7fb6'], ['coral', '#ff7c5c'], ['orange', '#ff9a2e'], ['yellow', '#ffd93d'], ['mint', '#62d9b0'], ['green', '#4cbf5a'], ['sky', '#5fc0ff'],
+  ['blue', '#3c6fe0'], ['purple', '#9a5ce8'], ['lilac', '#c9a7ff'], ['white', '#f6f4fb'], ['glitter-gold', '#f2c23c', 'glitter'], ['glitter-pink', '#ff6fc0', 'glitter'], ['rainbow', 'rainbow'], ['pearl', ['#fff6fb', '#ffd3ea', '#e6dcff'], 'pearl']];
+const RAINBOW = ['#ff5f7e', '#ffa53a', '#ffe14d', '#6fd56a', '#4fb4ff', '#a77cf0'];
+const STICKERS = ['st-heart', 'st-star', 'st-strawberry', 'st-butterfly', 'st-rainbow', 'st-flower', 'st-moon', 'st-ladybug', 'st-bow', 'st-sparkle', 'st-sun', 'st-gem'];
+const GEMS = ['gem-pink', 'gem-heart', 'gem-star', 'gem-drop', 'pearl', 'charm-flower', 'gem-mint', 'charm-heart'];
+const RINGS = ['ring-heart', 'ring-blue', 'ring-flower', 'ring-crystal', 'ring-rainbow', 'ring-pearl', 'ring-star', 'ring-butterfly'];
+const BRACELETS = ['bracelet-beads', 'bracelet-hearts', 'bracelet-rainbow', 'bracelet-pearl'];
+const TABS = [['polish', 'polish', 'nails-polish'], ['stickers', 'st-heart', 'sl-nail-sticker'], ['gems', 'gem-pink', 'sl-nail-gem'], ['rings', 'ring-heart', 'sl-nail-ring'], ['bracelets', 'bracelet-beads', 'sl-nail-bracelet']];
 
 export default {
-  id: 'nails', name: '美甲沙龙', colors: ['#ffe9f2', '#ffc4dc'], intro: 'nails-intro',
-  icon: () => `<svg viewBox="0 0 230 200">${R(40, 112, 112, 120, 44, '#f3c6a2')}${R(42, 46, 24, 100, 12, '#f3c6a2')}${R(70, 26, 24, 120, 12, '#f3c6a2')}${R(98, 32, 24, 120, 12, '#f3c6a2')}${R(126, 54, 22, 100, 11, '#f3c6a2')}` +
-    `<g transform="rotate(-50 40 150)">${R(14, 110, 26, 70, 13, '#f3c6a2')}${R(18, 114, 18, 22, 8, '#4fc56a')}</g>` +
-    `${R(45, 50, 18, 24, 8, '#ff4f7b')}${R(73, 30, 18, 24, 8, '#ffd23f')}${R(101, 36, 18, 24, 8, '#3fb4ff')}${R(128, 58, 17, 22, 8, '#9a7bf5')}` +
-    `${bottleArt('#ff4f7b').replace('<svg ', '<svg x="150" y="92" width="76" height="95" ')}${sparkle(190, 50, 17, '#fff')}${sparkle(24, 60, 10, '#fff')}</svg>`,
-
-  start(ctx) {
-    const { W } = ctx;
-    const root0 = (h) => h.firstElementChild;
-    const px = Math.round(W * 0.48), py = 536;
-    const skin = client().skin, dark = shade(skin, -0.13), glitter = nextId(), rainbow = nextId();
-    ctx.scene(nailTable(W, px));
-
-    const fingers = FINGERS.map((f, i) => {
-      const a = f.ang * Math.PI / 180, nw = f.w * 0.74, nh = f.w, y0 = -f.len + f.w * 0.1;       // big nails: easy to paint
-      return { ...f, i, X: px + f.bx, Y: py + f.by, cos: Math.cos(a), sin: Math.sin(a), nw, nh, y0, state: 'long', filed: 0, clip: nextId() };
-    });
-    const toLocal = (f, pt) => { const dx = pt.x - f.X, dy = pt.y - f.Y; return { x: dx * f.cos + dy * f.sin, y: -dx * f.sin + dy * f.cos }; };
-    const toStage = (f, x, y) => ({ x: f.X + x * f.cos - y * f.sin, y: f.Y + x * f.sin + y * f.cos });
-    const plate = (f) => { const { nw: w, nh: h, y0 } = f; return `M${-w / 2} ${y0 + h} V${y0 + w * 0.45} Q${-w / 2} ${y0} 0 ${y0} Q${w / 2} ${y0} ${w / 2} ${y0 + w * 0.45} V${y0 + h} Q0 ${y0 + h + w * 0.28} ${-w / 2} ${y0 + h}Z`; };
-    const fingerMarkup = (f) => {
-      const { nw: w, nh: h, y0, len } = f;
-      return `<g transform="translate(${f.X} ${f.Y}) rotate(${f.ang})"><g class="finger" data-finger="${f.i}" style="animation-delay:${-f.i * 0.7}s">` +
-        `<path d="${fingerShape(f.w, len)}" fill="${skin}"/>` + L(`M${-f.w * 0.24} ${-len * 0.44} q${f.w * 0.24} 9 ${f.w * 0.48} 0 M${-f.w * 0.2} ${-len * 0.44 + 12} q${f.w * 0.2} 7 ${f.w * 0.4} 0`, 3.5, dark) +
-        `<g class="ring-slot"></g>` +
-        // grown far too long, with a ragged end
-        `<path class="over" d="M${-w / 2} ${y0 + w * 0.5} L${-w / 2} ${y0 - 14} L${-w * 0.22} ${y0 - 34} L0 ${y0 - 20} L${w * 0.24} ${y0 - 38} L${w / 2} ${y0 - 12} L${w / 2} ${y0 + w * 0.5}Z" fill="#fff3ea"/>` +
-        // after clipping: a short rough edge that the file takes off
-        `<path class="rough" style="display:none" d="M${-w * 0.42} ${y0 + 14} L${-w * 0.42} ${y0 + 2} L${-w * 0.28} ${y0 - 9} L${-w * 0.14} ${y0 - 1} L0 ${y0 - 11} L${w * 0.14} ${y0 - 2} L${w * 0.28} ${y0 - 10} L${w * 0.42} ${y0 + 2} L${w * 0.42} ${y0 + 14}Z" fill="#fff3ea"/>` +
-        `<path class="plate" d="${plate(f)}" fill="#ffd9d2"/><ellipse cx="0" cy="${y0 + h - 2}" rx="${w * 0.3}" ry="${w * 0.16}" fill="#ffece8"/>` + L(`M${-w * 0.34} ${y0 + w * 0.24} Q0 ${y0 + 1} ${w * 0.34} ${y0 + w * 0.24}`, 5, '#fff') +
-        `<clipPath id="${f.clip}"><path d="${plate(f)}"/></clipPath><g clip-path="url(#${f.clip})"><g class="paint"></g></g>` +
-        `<path class="shine" style="display:none" d="M${-w * 0.24} ${y0 + h * 0.24} v${h * 0.42}" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" opacity=".6"/>` +
-        `<g class="decal"></g></g></g>`;
+  id: 'nails',
+  name: '美甲店',
+  colors: ['#eadcff', '#b48cf5'],
+  intro: 'sl-nail-hi',
+  icon: () => img((PROPS['polish-pink'] || PROPS.polish)?.src || ''),
+  async start(ctx) {
+    backdrop(ctx, BG.nails);
+    const who = customer(), l = look();
+    const rig = new Rig(ctx, { ...HAND, anchors: {} }, { cx: stageMid(ctx), bottom: 830, height: 800 }, { skin: who.skin });
+    rig.node.classList.add('sl-enter', 'sl-hand');
+    await rig.ready;
+    window.__salon = { rig, nail: (i) => rig.stage(...HAND.nails[i].c), at: (x, y) => rig.stage(x, y) };
+    const nails = HAND.nails.map((n, i) => ({ ...n, i }));
+    // the long nails, each piece belonging to the nail it grows from
+    const longs = await Promise.all((HAND.long || []).map((spec) => rig.layer('fx', spec)));
+    longs.forEach((node, k) => { const s = HAND.long[k], cx = s.x + s.w / 2; node.nail = nails.reduce((a, b) => (Math.abs(b.c[0] - cx) < Math.abs(a.c[0] - cx) ? b : a)).i; });
+    const polish = await Promise.all(nails.map(async (n) => { const p = new PaintLayer(rig.slots.skin, n, { res: 1, cls: 'pl-nail' }); p.setMask(await image(ART + n.src)); return p; }));
+    const deco = [];                       // the room always starts with a fresh, muddy hand
+    void l;
+    /** A canvas the size of nail i's box, cut to the nail's shape by draw(g, w, h, tip) (tip: the free edge's middle, in the box). */
+    const nailMasks = await Promise.all(nails.map((n) => image(ART + n.src)));
+    const onNail = (n, cls, draw) => {
+      const c = el('canvas', { class: `sl-layer ${cls}`, width: n.w, height: n.h, style: { left: `${n.x}px`, top: `${n.y}px`, width: `${n.w}px`, height: `${n.h}px` } });
+      const g = c.getContext('2d'), u = n.u || [0, 1], tip = { x: n.c[0] - n.x - u[0] * (n.len || n.h) * 0.5, y: n.c[1] - n.y - u[1] * (n.len || n.h) * 0.5 };
+      draw(g, n.w, n.h, tip, u);
+      g.globalCompositeOperation = 'destination-in';
+      g.drawImage(nailMasks[n.i], 0, 0, n.w, n.h);
+      return rig.add('fx', c);
     };
-    const holder = ctx.add(el('div', { class: 'salon-holder', html:
-      `<svg class="salon-svg" viewBox="0 0 ${W} 800" width="${W}" height="800"><defs><pattern id="${glitter}" width="18" height="18" patternUnits="userSpaceOnUse"><rect width="18" height="18" fill="#ff9ecb"/><circle cx="4" cy="5" r="2.200" fill="#fff"/><circle cx="13" cy="12" r="2.600" fill="#fff36b"/><circle cx="13" cy="3" r="1.300" fill="#fff"/><circle cx="5" cy="14" r="1.500" fill="#fff36b"/></pattern>` +
-      `<linearGradient id="${rainbow}" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="78" spreadMethod="repeat">${RAINBOW.map((col, i) => `<stop offset="${(i / 6).toFixed(3)}" stop-color="${col}"/><stop offset="${((i + 1) / 6).toFixed(3)}" stop-color="${col}"/>`).join('')}</linearGradient></defs>` +
-      `<g class="zoomer"><g class="hand" style="transform-origin:${px}px ${py + 250}px"><g transform="translate(${px} ${py})">${R(-84, 226, 172, 460, 20, skin)}` +
-      // the back of the hand: widest at the knuckles, a soft bulge under the thumb, narrowing to the wrist
-      `<path d="M-118 -80 L-30 -92 L114 -70 C126 -28 128 60 100 140 C92 164 88 190 88 240 L-84 240 C-84 196 -92 170 -110 150 C-140 116 -134 40 -122 -10Z" fill="${skin}"/>` +
-      `<path d="M-121 -58 Q-127 -9 -152 -27 L-162 -17 L-124 26 L-96 30 L-96 -60Z" fill="${skin}"/>` +     // the web between thumb and first finger
-      [-94, -30, 34, 94].map((bx, i) => L(`M${bx - 15} ${[-78, -86, -82, -68][i]} q15 -9 30 0`, 3.5, dark)).join('') + `</g>` +
-      `<g class="wrist-slot"></g>${fingers.map(fingerMarkup).join('')}` +
-      `<g class="grime">${MUD.map(([x, y, k], i) => `<g class="mud" data-i="${i}" transform="translate(${px + x} ${py + y})">${mudArt(k)}</g>`).join('')}${GERMS.map(([x, y, col], i) => `<g transform="translate(${px + x} ${py + y})"><g class="germ" data-i="${i}" style="animation-delay:${-i * 0.4}s">${germArt(col)}</g></g>`).join('')}</g>` +
-      `</g></g><g class="fly"></g></svg>` }));
-    const zoomer = root0(holder).querySelector('.zoomer');
-    const onHand = ctx.add(el('div', { class: 'layer' }));       // soap foam sits on the hand
-    const root = holder.firstElementChild, hand = root.querySelector('.hand'), flyG = root.querySelector('.fly'), wristG = root.querySelector('.wrist-slot');
-    for (const f of fingers) {
-      f.g = root.querySelector(`[data-finger="${f.i}"]`);
-      for (const k of ['over', 'rough', 'paint', 'shine', 'decal', 'ring-slot']) f[k] = f.g.querySelector(`.${k}`);
-      const pts = [];
-      for (const fx of [-0.32, -0.11, 0.11, 0.32]) for (const fy of [0.14, 0.32, 0.5, 0.68, 0.86]) pts.push([fx * f.nw, f.y0 + fy * f.nh]);
-      f.coatOf = new Paint(f.paint, pts, 14);
-      f.edge = toStage(f, 0, f.y0 - 6);
-      f.mid = toStage(f, 0, f.y0 + f.nh / 2);
-    }
-    const wiggle = (f) => f.g.animate([0, -6, 6, -4, 3, 0].map((r) => ({ transform: `rotate(${r}deg)` })), { duration: 520, easing: 'ease-in-out' });
-    /* ---------- zooming in on one nail ---------- */
-    const zoom = { s: 1, tx: 0, ty: 0, f: null };
-    let ring = null, zoomOut = null, skip = false;
-    const unzoom = (pt) => ({ x: (pt.x - zoom.tx) / zoom.s, y: (pt.y - zoom.ty) / zoom.s });
-    const zoomed = (pt) => ({ x: pt.x * zoom.s + zoom.tx, y: pt.y * zoom.s + zoom.ty });
-    function zoomTo(f) {
-      if (zoom.f === f) return;
-      zoom.f = f; zoom.s = f ? ZOOM : 1;
-      zoom.tx = f ? px - f.mid.x * ZOOM : 0; zoom.ty = f ? 390 - f.mid.y * ZOOM : 0;
-      zoomer.style.transform = `translate(${zoom.tx.toFixed(1)}px, ${zoom.ty.toFixed(1)}px) scale(${zoom.s})`;
-      ring?.remove(); ring = null; zoomOut?.remove(); zoomOut = null;
-      ctx.sfx(f ? 'slide' : 'whoosh');
-      if (!f) return;
-      ring = el('div', { class: 'zoom-ring', style: { left: `${px - 170}px`, top: '220px', width: '340px', height: '340px' } });
-      holder.after(ring);
-      zoomOut = ctx.button('back', 96, 706, 'blue', '看整只手', () => zoomTo(null));
-    }
-    const glint = (f) => { const at = zoomed(f.mid); ctx.burst(at.x, at.y, { n: 6, shapes: ['star'], colors: ['#fff', '#fff36b', '#ff9ecb'], spread: 80, size: 26, ms: 600 }); };
-
-    const lastTick = {};
-    const tick = (name, gap) => { const now = performance.now(); if (now - (lastTick[name] || 0) < gap) return false; lastTick[name] = now; return true; };
-    let index = -1, was = null, foams = [], washed = false, rinsed = false;
-    const step = () => STEPS[index];
-    const grime = [...MUD.map(([x, y], i) => ({ x: px + x, y: py + y, hp: 1, germ: false, node: root.querySelector(`.mud[data-i="${i}"]`) })),
-      ...GERMS.map(([x, y], i) => ({ x: px + x, y: py + y, hp: 1, germ: true, node: root.querySelector(`.germ[data-i="${i}"]`) }))];
-
-    /* ---------- clipper and file ---------- */
-    const box = toolbox(ctx, (key, pt, dt, tool) => {
-      const moved = was ? Math.hypot(pt.x - was.x, pt.y - was.y) : 0;
-      was = { x: pt.x, y: pt.y };
-      if (key === 'sponge' && step() === 'wash') {
-        if (Math.abs(pt.x - px) > 230 || pt.y < py - 330 || pt.y > py + 300) return;
-        for (const g of grime) {
-          if (g.hp <= 0 || Math.hypot(g.x - pt.x, g.y - pt.y) > (g.germ ? 78 : 70)) continue;
-          g.hp -= moved / (g.germ ? 300 : 240);
-          if (!g.germ) g.node.style.opacity = Math.max(0, g.hp).toFixed(2);
-          else if (g.hp > 0 && tick('eek', 260)) { ctx.sfx('squeak'); g.node.animate([0, -14, 14, -9, 9, 0].map((x) => ({ transform: `translateX(${x}px)` })), { duration: 300 }); }
-          if (g.hp > 0) continue;
-          if (g.germ) {       // off it runs
-            const dir = g.x < px ? -1 : 1;
-            g.node.style.animation = 'none';
-            g.node.animate([{ transform: 'translate(0, 0) scale(1)', opacity: 1 }, { transform: 'translate(0, -40px) scale(1.25)', opacity: 1, offset: 0.25 }, { transform: `translate(${dir * 520}px, -160px) scale(.5) rotate(${dir * 300}deg)`, opacity: 0 }], { duration: 800, easing: 'ease-in', fill: 'forwards' });
-            ctx.sfx('pop'); ctx.note(grime.filter((n) => n.germ && n.hp <= 0).length * 2 + 2);
-            spray(ctx, g.x, g.y, { n: 6, shape: 'bubble', angle: 270, cone: 180, reach: 90, size: 26, ms: 700 });
-          } else g.node.remove();
-        }
-        if (moved > 1 && tick('foam', 90) && foams.length < 26) {
-          const k = rand(56, 92), f = ctx.sprite(foamArt(), pt.x + rand(-24, 24), pt.y + rand(-20, 20), k, k * 0.8, 'foam');
-          f.el.style.pointerEvents = 'none'; f.el.style.animationDelay = `${-rand(0, 2)}s`; onHand.append(f.el); f.anim('in', 240); foams.push(f);
-          ctx.sfx('bubble');
-        }
-        if (grime.every((g) => g.hp <= 0) && !washed) { washed = true; ctx.after(350, next); }
-      } else if (key === 'shower' && step() === 'rinse') {
-        if (tick('water', 45)) spray(ctx, pt.x + rand(-40, 40), pt.y + 4, { n: 2, shape: 'streak', color: ['#8fd6ff', '#bfe8ff'], angle: 90, cone: 3, reach: 330, size: 24, ms: 430, grow: 1 });
-        if (tick('water-sound', 200)) ctx.sfx('water');
-        foams = foams.filter((f) => {
-          if (Math.abs(f.cx - pt.x) > 90 || f.cy < pt.y) return true;
-          f.el.animate([{ transform: 'translateY(0) scale(1)', opacity: 1 }, { transform: 'translateY(130px) scale(.6)', opacity: 0 }], { duration: 520, easing: 'ease-in', fill: 'forwards' });
-          ctx.after(520, () => f.remove());
-          return false;
-        });
-        if (!foams.length && !rinsed) { rinsed = true; hand.animate([0, -5, 5, -4, 4, 0].map((r) => ({ transform: `rotate(${r}deg)` })), { duration: 700, easing: 'ease-in-out' }); ctx.after(450, next); }    // the clean hand shakes the drops off
-      } else if (key === 'clipper' && step() === 'clip') {
-        const f = fingers.find((n) => n.state === 'long' && Math.hypot(n.edge.x - pt.x, n.edge.y - pt.y) < 46);
-        if (!f || !tick('clip', 320)) return;
-        f.state = 'rough';
-        // the long end flies off and drops
-        const piece = svgEl('g');
-        piece.innerHTML = `<g transform="translate(${f.X} ${f.Y}) rotate(${f.ang})"></g>`;
-        piece.firstChild.append(f.over); flyG.append(piece);
-        piece.style.transformBox = 'fill-box'; piece.style.transformOrigin = 'center';
-        const dir = rand(-1, 1);
-        piece.animate([{ transform: 'translate(0, 0) rotate(0)', opacity: 1 }, { transform: `translate(${dir * 60}px, -90px) rotate(${dir * 200}deg)`, opacity: 1, offset: 0.35, easing: 'ease-in' }, { transform: `translate(${dir * 150}px, 420px) rotate(${dir * 620}deg)`, opacity: 0 }],
-          { duration: 950, easing: 'ease-out' }).finished.then(() => piece.remove(), () => piece.remove());
-        f.rough.style.display = '';
-        ctx.sfx('snip'); tool.anim('pop', 200); wiggle(f);
-        ctx.note(fingers.filter((n) => n.state !== 'long').length);
-        if (fingers.every((n) => n.state !== 'long')) ctx.after(500, next);
-      } else if (key === 'file' && step() === 'file') {
-        const f = fingers.find((n) => n.state === 'rough' && Math.hypot(n.edge.x - pt.x, n.edge.y - pt.y) < 54);
-        if (!f || moved < 0.5) return;
-        f.filed = Math.min(1, f.filed + moved / 340);
-        f.rough.style.transform = `translateY(${(f.filed * 17).toFixed(1)}px)`;      // the ragged edge is worn down
-        if (tick('file', 80)) { ctx.sfx('file'); spray(ctx, f.edge.x, f.edge.y, { n: 2, shape: 'dot', color: ['#fff3ea', '#ffe0d0'], angle: 90, cone: 70, reach: 50, size: 9, ms: 500, fall: 40 }); }
-        if (f.filed < 1) return;
-        f.state = 'smooth'; f.rough.style.display = 'none';
-        ctx.sfx('star'); glint(f); wiggle(f);
-        if (fingers.every((n) => n.state === 'smooth')) ctx.after(500, next);
-      }
-    });
-    box.onDrop = () => { was = null; };
-
-    /* ---------- polish: pick a bottle, paint with the brush ---------- */
-    let polish = POLISH[0], bottles = null, okay = null, coated = 0;
-    const fillOf = (key) => (key === 'glitter' ? `url(#${glitter})` : key === 'rainbow' ? `url(#${rainbow})` : key);
-    const brush = ctx.sprite(brushArt(), 0, 0, 112, 112, 'paint-cursor');
-    brush.el.style.display = 'none';
-    const nailAt = (q, slack) => fingers.find((f) => { const l = toLocal(f, q); return Math.abs(l.x) < f.nw / 2 + slack && l.y > f.y0 - slack && l.y < f.y0 + f.nh + slack; });
-    ctx.rub((pt, ev, first) => {
-      if (step() !== 'polish') return;
-      if (first) {       // a tap on a nail brings it up close; a tap beside it goes back to the whole hand
-        skip = false;
-        const hit = nailAt(unzoom(pt), 16);
-        if (zoom.f ? !hit : !!hit) { zoomTo(zoom.f ? null : hit); skip = true; }
-      }
-      if (skip) return;
-      brush.el.style.display = ''; brush.set(pt.x + 43, pt.y - 43);
-      const q = unzoom(pt);
-      for (const f of fingers) {
-        const l = toLocal(f, q);
-        if (Math.abs(l.x) > f.nw / 2 + 13 || l.y < f.y0 - 13 || l.y > f.y0 + f.nh + 16 || f.coat === polish) continue;
-        if (f.coat) { f.coat = null; f.coatOf.recoat(); }        // a new colour goes over the old one
-        const cover = f.coatOf.dab(l.x, l.y, fillOf(polish));
-        if (tick('brush', 120)) ctx.sfx('brush');
-        if (cover < 0.8) continue;
-        f.coatOf.fill(fillOf(polish)); f.coat = polish; f.shine.style.display = '';
-        anim(f.shine, 'fade', 400); glint(f); wiggle(f); ctx.sfx('sparkle');
-        if (zoom.f === f) ctx.after(900, () => { if (zoom.f === f) zoomTo(null); });
-        if (f.done) continue;
-        f.done = true; ctx.note(++coated);
-        if (coated === fingers.length) {
-          ctx.say('good-2');
-          okay = ctx.button('check', W - 132, 706, 'green pulse', '涂好了', () => next());
-        }
-      }
-    }, () => { brush.el.style.display = 'none'; });
-
-    /* ---------- stickers, rings and bracelets: drag them where they go ---------- */
-    function decorate() {
-      bottles?.el.remove(); okay?.remove(); brush.el.style.display = 'none'; zoomTo(null);
-      const panelL = ctx.add(el('div', { class: 'tray nl-panel', style: { left: '26px', top: '176px', width: '208px', height: '318px' } }));
-      const panelR = ctx.add(el('div', { class: 'tray nl-panel', style: { left: `${W - 236}px`, top: '150px', width: '208px', height: '478px' } }));
-      anim(panelL, 'fade', 300); anim(panelR, 'fade', 300);
-      const piece = (kind, key, html, cx, cy, w, h) => {
-        const s = ctx.sprite(html, cx, cy, w, h, 'shadowed');
-        s.anim('in', 350);
-        ctx.drag(s, { end: () => {
-          if (drop(kind, key, s.cx, s.cy)) { s.set(s.home.cx, s.home.cy); s.anim('in', 300); }   // a new one appears on the tray
-          else { ctx.sfx('drop'); s.goHome(); }
-        } });
-      };
-      Object.keys(DECALS).forEach((k, i) => piece('decal', k, decalArt(k), 84 + (i % 2) * 92, 236 + Math.floor(i / 2) * 98, 74, 74));
-      Object.keys(RINGS).forEach((k, i) => piece('ring', k, ringArt(k), W - 132, 212 + i * 92, 108, 76));
-      Object.keys(BRACELETS).forEach((k, i) => piece('bracelet', k, braceletArt(k), W - 132, 482 + i * 88, 150, 75));
-      ctx.button('camera', W - 132, 706, 'pink', '拍照', async () => {
-        ctx.sfx('camera');
-        const flash = ctx.add(el('div', { class: 'flash' }));
-        await ctx.sleep(450); flash.remove();
-        ctx.progress(STEPS.length, STEPS.length);
-        hand.animate([0, -7, 7, -6, 6, -3, 0].map((r) => ({ transform: `rotate(${r}deg)` })), { duration: 1300, easing: 'ease-in-out' });    // the hand waves
-        fingers.forEach((f, i) => ctx.after(i * 130, () => { glint(f); ctx.note(i + 3); }));
-        ctx.win({ voice: 'nails-done', delay: 1500 });
+    let shelf = new Shelf(ctx, { color: '#b48cf5', width: SHELF_W });
+    const handBox = { x: 0, y: 0, w: HAND.size[0], h: HAND.size[1] };
+    const onHand = (p) => { const q = rig.local(p); return q.x > 60 && q.x < handBox.w - 60 && q.y > 20 && q.y < handBox.h - 120; };
+    /** The nail whose box (plus `slack`) holds the point. */
+    const nailIn = (p, slack = 12) => { const q = rig.local(p); return nails.find((n) => q.x > n.x - slack && q.x < n.x + n.w + slack && q.y > n.y - slack && q.y < n.y + n.h + slack); };
+    const nailAt = (p, r = 90) => { const q = rig.local(p); return nails.find((n) => Math.hypot(n.c[0] - q.x, n.c[1] - q.y) < r); };
+    let step = 0;
+    const next = () => { step++; ctx.progress(step, STEPS); ctx.sfx('star'); };
+    ctx.progress(0, STEPS);
+    const job = (items, use, o = {}) => new Promise((done) => {
+      let fin = false;
+      const finish = () => { if (!fin) { fin = true; done(); } };
+      shelf.setItems(items.map((k) => ({ key: k, art: prop(k) })), {
+        drag: {
+          size: o.size || 150, tip: o.tip || [0, 0],
+          move: (k, p, ghost) => { if (!fin && use(k, p, ghost.last, ghost, false)) finish(); ghost.last = p; },
+          drop: (k, p, ghost) => { if (fin) return false; const r = use(k, p, null, ghost, true); if (!r) return false; setTimeout(() => ghost.remove(), 260); if (r === true) finish(); return true; },
+        },
       });
+      if (o.hint) pointer(ctx, o.hint.map(([x, y]) => rig.stage(x, y)));
+    });
+
+    /* ---- the mess ---- */
+    const dirtMask = document.createElement('canvas');
+    dirtMask.width = HAND.base.w / 2; dirtMask.height = HAND.base.h / 2;
+    dirtMask.getContext('2d').drawImage(await image(ART + HAND.base.src), 0, 0, dirtMask.width, dirtMask.height);
+    const dirt = new PaintLayer(rig.slots.skin, HAND.base, { res: 0.5, cls: 'pl-dirt' });
+    dirt.setMask(dirtMask);
+    const muds = await Promise.all(['mud1', 'mud2', 'smudge'].map((k) => image(ART + PROPS[k].src)));
+    for (const [x, y] of [[420, 760], [700, 840], [560, 600], [300, 520], [820, 640], [600, 980]]) { const m = pick(muds), s = rand(130, 190); dirt.stamp(m, x, y, s, s * m.naturalHeight / m.naturalWidth, rand(-0.6, 0.6)); }
+    const dirt0 = dirt.measure();
+    const germs = nails.slice(0, 4).map((n, i) => {
+      const g = rig.add('top', el('div', { class: 'sl-germ', 'data-i': i, html: `${prop(`germ${i + 1}`)}${prop(`germ${i + 1}-scared`, 'scared')}`, style: { left: `${n.c[0] - 60 + (i % 2 ? 40 : -30)}px`, top: `${n.c[1] + 90 + i * 20}px`, animationDelay: `${-i * 0.3}s` } }));
+      return g;
+    });
+
+    /* ---- 1. soap ---- */
+    ctx.say('sl-nail-soap');
+    let blob = null;
+    await job(['soap'], (k, p, last, ghost, up) => {
+      if (!up || !onHand(p)) return false;
+      ghost.animate([{ transform: 'scale(1,1)' }, { transform: 'scale(1.12,.84)' }, { transform: 'scale(1,1)' }], { duration: 300 });
+      ctx.sfx('squirt');
+      const q = rig.local(p);
+      blob = rig.add('fx', el('div', { class: 'sl-blob', style: { left: `${q.x - 50}px`, top: `${q.y - 40}px`, background: 'radial-gradient(circle at 35% 30%, #fff 0 25%, #bfe2ff)' } }));
+      return true;
+    }, { hint: [[560, 760]] });
+    next();
+
+    /* ---- 2. scrub: the germs run ---- */
+    ctx.say('nails-wash');
+    const foam = [];
+    await job(['nail-sponge'], (k, p, last) => {
+      if (!last || !onHand(p)) return false;
+      const q = rig.local(p);
+      dirt.erase(q.x, q.y, 70, { strength: 0.35 });
+      if (blob) blob.style.opacity = Math.max(0, (+blob.style.opacity || 1) - 0.02);
+      if (Math.random() < 0.3 && foam.length < 60) { const s = rand(40, 80); foam.push(rig.add('fx', el('div', { class: 'sl-foam', style: { left: `${q.x - s / 2 + rand(-30, 30)}px`, top: `${q.y - s / 2 + rand(-30, 30)}px`, width: `${s}px`, height: `${s}px`, '--foam': '#cfe8ff' } }))); }
+      for (const g of germs) {
+        if (g.gone) continue;
+        const gx = parseFloat(g.style.left) + 60, gy = parseFloat(g.style.top) + 60;
+        if (Math.hypot(gx - q.x, gy - q.y) > 110) continue;
+        g.gone = true;
+        g.classList.add('run');
+        ctx.sfx('squeak');
+        const dir = gx < handBox.w / 2 ? -1 : 1;
+        g.animate([{ translate: '0 0', rotate: '0deg' }, { translate: '0 -40px', rotate: `${dir * 10}deg`, offset: 0.2 }, { translate: `${dir * 900}px ${rand(-200, 200)}px`, rotate: `${dir * 30}deg` }], { duration: 1100, delay: 250, easing: 'ease-in', fill: 'forwards' }).finished.then(() => g.remove(), () => g.remove());
+      }
+      if (Math.random() < 0.08) ctx.sfx('brush');
+      if (Math.random() < 0.03) rig.react('wiggle');
+      return germs.every((g) => g.gone) && dirt.measure() < dirt0 * 0.15;
+    }, { size: 150, hint: [[400, 700], [700, 700], [560, 500]] });
+    blob?.remove();
+    dirt.clear();
+    next();
+
+    /* ---- 3. rinse ---- */
+    ctx.say('sl-nail-rinse');
+    await job(['shower'], (k, p) => {
+      spray(ctx, p.x - 30, p.y + 50, { n: 3, angle: 100, cone: 14, reach: 230, size: 14, color: ['#9fdcff', '#e3f6ff'], shape: 'drop', fall: 40, ms: 420 });
+      if (Math.random() < 0.15) ctx.sfx('water');
+      const q = rig.local({ x: p.x - 30, y: p.y + 120 });
+      for (const f of foam) {
+        if (f.gone) continue;
+        const fx = parseFloat(f.style.left), fy = parseFloat(f.style.top);
+        if (Math.abs(fx - q.x) < 160 && fy > q.y - 280 && fy < q.y + 220) { f.gone = true; f.animate([{ transform: 'translateY(0)', opacity: 1 }, { transform: `translateY(${rand(200, 400)}px)`, opacity: 0 }], { duration: 700, easing: 'ease-in', fill: 'forwards' }).finished.then(() => f.remove(), () => f.remove()); }
+      }
+      return foam.every((f) => f.gone);
+    }, { tip: [-30, 50] });
+    rig.react('shake');
+    spray(ctx, rig.stage(handBox.w / 2, 500).x, rig.stage(0, 500).y, { n: 14, angle: 270, cone: 80, reach: 260, size: 14, color: '#bfe6ff', shape: 'drop', fall: 120 });
+    next();
+
+    /* ---- 4. clip ---- */
+    ctx.say('nails-clip');
+    const tips = (i) => longs.filter((n) => n.nail === i && !n.cut);
+    /** A freshly clipped nail has a jagged, chipped white edge until it is filed. */
+    const rough = [];
+    const roughEdge = (n) => {
+      const node = onNail(n, 'sl-rough', (g, w, h, tip, u) => {
+        const px = -u[1], py = u[0], L = n.len || h, d = L * 0.3, a = L * 0.07;
+        g.translate(tip.x, tip.y); g.transform(px, py, u[0], u[1], 0, 0);     // x along the edge, y into the nail
+        // the chipped white end of the nail, with a jagged broken line where the clipper bit
+        g.fillStyle = '#fffafb'; g.strokeStyle = '#c4607c'; g.lineWidth = 5; g.lineJoin = 'round';
+        g.beginPath(); g.moveTo(-w, -40);
+        for (let x = -w, j = 0; x <= w; x += a * 0.9, j++) g.lineTo(x, d + (j % 2 ? a : -a * 0.4) + rand(-a * 0.3, a * 0.3));
+        g.lineTo(w, -40); g.closePath(); g.fill(); g.stroke();
+        // little cracks and chips
+        g.strokeStyle = '#d88aa0'; g.lineWidth = 3;
+        for (let j = 0; j < 4; j++) { const x = rand(-w * 0.35, w * 0.35), y = rand(d * 0.3, d * 0.8); g.beginPath(); g.moveTo(x, y); g.lineTo(x + rand(-8, 8), y - rand(10, 18)); g.lineTo(x + rand(-10, 10), y - rand(20, 28)); g.stroke(); }
+      });
+      anim(node, 'in', 250);
+      return node;
+    };
+    /** A white glint sweeps across a nail. */
+    const shine = (n) => {
+      const node = onNail(n, 'sl-glint', (g, w, h) => {
+        const gr = g.createLinearGradient(0, 0, w, h); gr.addColorStop(0.35, 'rgba(255,255,255,0)'); gr.addColorStop(0.5, 'rgba(255,255,255,.95)'); gr.addColorStop(0.65, 'rgba(255,255,255,0)');
+        g.fillStyle = gr; g.fillRect(0, 0, w, h);
+      });
+      node.animate([{ opacity: 0, transform: 'translateX(-40%)' }, { opacity: 1, offset: 0.4 }, { opacity: 0, transform: 'translateX(40%)' }], { duration: 650 }).finished.then(() => node.remove(), () => node.remove());
+    };
+    const clipRings = nails.map((n) => (tips(n.i).length ? ring(ctx, rig, n.c[0], n.c[1] - 60, 70) : null));
+    await job(['clipper'], (k, p, last, ghost, up) => {
+      if (!up) return false;
+      const n = nailAt({ x: p.x, y: p.y }, 140);
+      if (!n || !tips(n.i).length) return false;
+      ghost.animate([{ transform: 'rotate(0)' }, { transform: 'rotate(-14deg)' }, { transform: 'rotate(0)' }], { duration: 220 });
+      ctx.sfx('snip');
+      for (const t of tips(n.i)) {
+        t.cut = true;
+        t.animate([{ translate: '0 0', rotate: '0deg', opacity: 1 }, { translate: `${rand(-120, 120)}px 700px`, rotate: `${rand(-200, 200)}deg`, opacity: 0 }], { duration: 900, easing: 'ease-in', fill: 'forwards' }).finished.then(() => t.remove(), () => t.remove());
+      }
+      clipRings[n.i]?.();
+      rough[n.i] = roughEdge(n);
+      rig.react('flinch');
+      return longs.every((t) => t.cut) ? true : 'used';
+    }, { size: 130 });
+    next();
+
+    /* ---- 5. file: the rough edges wear smooth ---- */
+    ctx.say('nails-file');
+    const filed = nails.map(() => 0), FILE = 170;
+    const fileRings = nails.map((n) => ring(ctx, rig, n.c[0], n.c[1] - 50, 75));
+    await job(['file'], (k, p, last) => {
+      if (!last) return false;
+      const n = nailAt(p, 110);
+      if (!n || filed[n.i] >= FILE) return false;
+      filed[n.i] += Math.hypot(p.x - last.x, p.y - last.y);
+      const left = Math.max(0, 1 - filed[n.i] / FILE);
+      if (rough[n.i]) rough[n.i].style.opacity = left;
+      if (Math.random() < 0.45) spray(ctx, p.x, p.y + 10, { n: 3, angle: 90, cone: 70, reach: 70, size: 9, color: ['#fde7ee', '#fff'], fall: 60, ms: 600 });
+      if (Math.random() < 0.1) ctx.sfx('file');
+      if (!left) {
+        rough[n.i]?.remove();
+        fileRings[n.i]?.();
+        const c = rig.stage(n.c[0], n.c[1] - 40);
+        ctx.burst(c.x, c.y, { n: 6, spread: 50 });
+        ctx.sfx('sparkle');
+        shine(n);
+      }
+      return filed.every((f) => f >= FILE);
+    }, { size: 150 });
+    next();
+
+    /* ---- 6. oil: a golden drop on each nail spreads into a shiny glow ---- */
+    ctx.say('sl-nail-oil');
+    const oil = [];
+    const oilRings = nails.map((n) => ring(ctx, rig, n.c[0], n.c[1], 75));
+    await job(['oil'], (k, p, last, ghost, up) => {
+      if (!up) return false;
+      const n = nailAt(p, 140);
+      if (!n || oil[n.i]) return false;
+      const c = rig.stage(n.c[0], n.c[1]);
+      const drop = ctx.add(el('div', { class: 'sl-oil-drop', style: { left: `${c.x - 14}px`, top: `${c.y - 140}px` } }));
+      drop.animate([{ transform: 'translateY(0) scale(.6)' }, { transform: 'translateY(126px) scale(1)' }], { duration: 380, easing: 'ease-in', fill: 'forwards' }).finished.then(() => drop.remove(), () => drop.remove());
+      oil[n.i] = onNail(n, 'sl-oil', (g, w, h, tip, u) => {
+        const cx = n.c[0] - n.x, cy = n.c[1] - n.y;
+        const gr = g.createRadialGradient(cx, cy, 4, cx, cy, Math.max(w, h) * 0.7);
+        gr.addColorStop(0, 'rgba(255,196,60,.85)'); gr.addColorStop(0.6, 'rgba(255,214,110,.55)'); gr.addColorStop(1, 'rgba(255,226,150,.35)');
+        g.fillStyle = gr; g.fillRect(0, 0, w, h);
+        g.save(); g.translate(cx, cy); g.rotate(Math.atan2(u[1], u[0]) - Math.PI / 2);
+        g.fillStyle = 'rgba(255,255,255,.75)'; g.beginPath(); g.ellipse(-w * 0.2, -h * 0.05, w * 0.07, h * 0.3, 0, 0, 7); g.fill();
+        g.fillStyle = 'rgba(255,255,255,.5)'; g.beginPath(); g.arc(w * 0.12, -h * 0.25, w * 0.05, 0, 7); g.fill();
+        g.restore();
+      });
+      oil[n.i].style.transformOrigin = `${n.c[0] - n.x}px ${n.c[1] - n.y}px`;
+      oil[n.i].animate([{ transform: 'scale(.15)', opacity: 0 }, { transform: 'scale(.15)', opacity: 0, offset: 0.4 }, { transform: 'scale(1.05)', opacity: 1, offset: 0.8 }, { transform: 'scale(1)', opacity: 1 }], { duration: 950, easing: 'ease-out' });
+      ctx.after(380, () => { ctx.sfx('drop'); oilRings[n.i]?.(); });
+      ctx.after(800, () => { ctx.sfx('sparkle'); ctx.burst(c.x, c.y, { n: 5, spread: 50 }); });
+      return oil.filter(Boolean).length === nails.length ? true : 'used';
+    }, { size: 130, tip: [10, 55] });
+    await ctx.sleep(900);
+    next();
+    ctx.sfx('great');
+    rig.react('wiggle');
+    await ctx.sleep(700);
+
+    /* ---- decorate ---- */
+    ctx.say('sl-nail-zoom');
+    ctx.progress(0, 0);
+    const home = { k: rig.k, left: rig.left, top: rig.top };
+    let zoomed = null;
+    const place = (k, left, top) => { rig.k = k; rig.left = left; rig.top = top; rig.node.style.transform = `translate(${left}px, ${top}px) scale(${k})`; };
+    const zoomTo = (n) => {
+      zoomed = n;
+      rig.node.classList.add('sl-zooming');
+      const k = home.k * 2.3, cx = stageMid(ctx), cy = 400;
+      if (n) place(k, cx - n.c[0] * k, cy - n.c[1] * k);
+      else place(home.k, home.left, home.top);
+      ctx.sfx('whoosh');
+      back.hidden = !n;
+      setTimeout(() => rig.node.classList.remove('sl-zooming'), 450);
+    };
+    const back = ctx.button('back', 70, 160, 'blue', '返回', () => zoomTo(null));
+    back.hidden = true;
+    ctx.stage.addEventListener('pointerup', (ev) => {
+      if (!ctx.alive || ev.target.closest('.sl-shelf, .round, .sl-ghost')) return;
+      if (dragging) return;
+      const n = nailAt(ctx.point(ev), zoomed ? 70 : 100);
+      if (n && n !== zoomed && tab !== 'rings' && tab !== 'bracelets') zoomTo(n);
+      else if (!n && zoomed) zoomTo(null);
+    });
+    let dragging = false, tab = 'polish';
+    const coat = (i, key) => {
+      const [, col, kind] = POLISH.find((x) => x[0] === key), layer = polish[i];
+      layer.fill((g, w, h) => {
+        if (col === 'rainbow' || kind === 'pearl') {
+          const gr = g.createLinearGradient(0, 0, 0, h); const list = col === 'rainbow' ? RAINBOW : col;
+          list.forEach((c, j) => gr.addColorStop(j / (list.length - 1), c)); g.fillStyle = gr;
+        } else g.fillStyle = col;
+        g.fillRect(0, 0, w, h);
+        if (kind === 'glitter') for (let j = 0; j < 40; j++) { g.fillStyle = pick(['#fff', '#fff6c4', '#ffe0f4']); g.beginPath(); g.arc(rand(0, w), rand(0, h), rand(1, 3), 0, 7); g.fill(); }
+        const sh = g.createLinearGradient(0, 0, w, 0);       // the shine of fresh polish
+        sh.addColorStop(0.15, 'rgba(255,255,255,0)'); sh.addColorStop(0.3, 'rgba(255,255,255,.55)'); sh.addColorStop(0.42, 'rgba(255,255,255,0)');
+        g.fillStyle = sh; g.fillRect(0, 0, w, h);
+      });
+      layer.key = key;
+    };
+    const pics = await products(['pr-polish', 'pr-polish-brush', 'polish-pink']);
+    const tools = (items, o) => shelf.setItems(items, {
+      drag: {
+        size: o.size || 130, tip: o.tip || [0, 0],
+        start: () => { dragging = true; },
+        move: (k, p, ghost) => { o.move?.(k, p, ghost); ghost.last = p; },
+        drop: (k, p, ghost, moved) => { setTimeout(() => { dragging = false; }, 0); return o.drop?.(k, p, ghost, moved); },
+      },
+    });
+    const stick = (k, p, scale) => {
+      const n = nailAt(p, zoomed ? 60 : 80);
+      if (!n) return false;
+      const q = rig.local(p);
+      const node = placeOn(rig, 'top', { key: k, x: q.x, y: q.y, s: scale, r: rand(-15, 15) });
+      node.classList.add('sl-nail-deco', 'sl-removable');
+      node.addEventListener('pointerdown', (ev) => { ev.stopPropagation(); ctx.sfx('pop'); deco.splice(deco.indexOf(node), 1); anim(node, 'out', 200, { fill: 'forwards' }).then(() => node.remove()); });
+      deco.push(node);
+      anim(node, 'squash', 300);
+      ctx.sfx('pop');
+      return true;
+    };
+    /* rings slide down a finger and stay on it; a bracelet slips over the hand onto the wrist */
+    const worn = { rings: {}, bracelet: null };
+    const fingerAt = (p) => {
+      const q = rig.local(p), F = HAND.fingers || [];
+      let best = null, bd = 1e9;
+      F.forEach((f, i) => {
+        const a = f.c, b = [f.ring[0] + f.u[0] * 70, f.ring[1] + f.u[1] * 70];
+        const t = Math.max(0, Math.min(1, ((q.x - a[0]) * (b[0] - a[0]) + (q.y - a[1]) * (b[1] - a[1])) / ((b[0] - a[0]) ** 2 + (b[1] - a[1]) ** 2)));
+        const d = Math.hypot(q.x - a[0] - t * (b[0] - a[0]), q.y - a[1] - t * (b[1] - a[1]));
+        if (d < f.w * 0.9 + 30 && d < bd) { bd = d; best = i; }
+      });
+      return best;
+    };
+    /** A ring without its worn picture: a gold band round the finger with the ring's jewel on top. */
+    function drawnRing(k, f) {
+      const w = f.w + 12, th = Math.round(f.w * 0.2), gem = f.w * 0.8;
+      const node = el('div', { class: 'sl-worn-ring sl-drawn-ring sl-removable', style: { left: `${f.ring[0] - w / 2}px`, top: `${f.ring[1] - th / 2}px`, width: `${w}px`, height: `${th}px` } });
+      node.innerHTML = `<i class="sl-band"></i>${PROPS[k] ? `<img src="${ART + PROPS[k].src}" alt="" draggable="false" style="width:${gem}px;left:${(w - gem) / 2}px;bottom:${th * 0.45 - gem * 0.58}px">` : ''}`;
+      rig.slots.top.append(node);
+      return node;
     }
-    function drop(kind, key, x, y) {
-      if (kind === 'decal') {
-        const f = fingers.map((n) => ({ n, d: Math.hypot(n.mid.x - x, n.mid.y - y) })).sort((a, b) => a.d - b.d)[0];
-        if (f.d > 62) return false;
-        f.n.decal.innerHTML = `<g transform="translate(0 ${(f.n.y0 + f.n.nh * 0.52).toFixed(1)}) scale(${(f.n.nw / 42).toFixed(2)})"><g class="acc-in">${DECALS[key]}</g></g>`;
-        ctx.sfx('sparkle'); glint(f.n); wiggle(f.n);
-        return true;
+    async function putRing(i, k, quiet = false) {
+      const spec = HAND.rings?.[k], f = HAND.fingers?.[i];
+      if (!f) return null;
+      worn.rings[i]?.remove();
+      let node, at;
+      if (spec) {
+        node = await rig.layer('top', spec, 'sl-worn-ring sl-removable');
+        const [ax, ay] = spec.at, dx = f.ring[0] - ax, dy = f.ring[1] - ay, sc = f.w / f.w0;
+        node.style.transformOrigin = `${ax - spec.x}px ${ay - spec.y}px`;
+        at = (back) => `translate(${dx - f.u[0] * back}px, ${dy - f.u[1] * back}px) rotate(${f.ang}deg) scale(${sc})`;
+      } else {
+        node = drawnRing(k, f);
+        const ang = Math.atan2(f.u[1], f.u[0]) * 180 / Math.PI - 90;
+        at = (back) => `translate(${-f.u[0] * back}px, ${-f.u[1] * back}px) rotate(${ang}deg)`;
       }
-      if (kind === 'ring') {
-        const f = fingers.map((n) => ({ n, l: toLocal(n, { x, y }) })).filter(({ n, l }) => Math.abs(l.x) < n.w / 2 + 30 && l.y > -n.len && l.y < 24).sort((a, b) => Math.abs(a.l.x) - Math.abs(b.l.x))[0];
-        if (!f) return false;
-        f.n['ring-slot'].innerHTML = `<g transform="translate(0 ${(-f.n.len * 0.29).toFixed(1)})"><g class="ring-on">${RINGS[key](f.n.w)}</g></g>`;    // it slides down the finger
-        ctx.sfx('slide'); ctx.after(380, () => { ctx.sfx('sparkle'); const at = toStage(f.n, 0, -f.n.len * 0.29); ctx.burst(at.x, at.y, { n: 6, shapes: ['star'], colors: ['#fff', '#fff36b'], spread: 70, size: 24, ms: 600 }); });
-        return true;
-      }
-      if (y < py + 90 || Math.abs(x - px) > 190) return false;
-      wristG.innerHTML = `<g transform="translate(${px + 2} ${py + 206})"><g class="acc-in">${BRACELETS[key](186)}</g></g>`;
-      ctx.sfx('sparkle'); ctx.burst(px, py + 206, { n: 8, shapes: ['star', 'heart'], spread: 150, size: 28 });
+      node.style.transform = at(0);
+      node.dataset.finger = i; node.dataset.key = k;
+      node.addEventListener('pointerdown', (ev) => { ev.stopPropagation(); ctx.sfx('pop'); delete worn.rings[i]; node.animate([{ transform: at(0), opacity: 1 }, { transform: at(180), opacity: 0 }], { duration: 300, fill: 'forwards' }).finished.then(() => node.remove(), () => node.remove()); });
+      worn.rings[i] = node;
+      if (!quiet) node.animate([{ transform: at(200), opacity: 0 }, { transform: at(140), opacity: 1, offset: 0.25 }, { transform: at(-6), offset: 0.85 }, { transform: at(0) }], { duration: 650, easing: 'ease-out' });
+      return node;
+    }
+    function wearRing(k, p) {
+      const i = fingerAt(p);
+      if (i === null) return false;
+      if (zoomed) zoomTo(null);
+      putRing(i, k).then(() => { ctx.sfx('sparkle'); const f = HAND.fingers[i], s = rig.stage(...f.ring); ctx.burst(s.x, s.y, { n: 7, spread: 60 }); rig.react('wiggle'); });
+      ctx.sfx('slide');
       return true;
     }
-
-    function next() {
-      index += 1;
-      const now = step();
-      ctx.progress(index, STEPS.length);
-      if (index > 0) { ctx.sfx('great'); ctx.burst(px, py - 160, { n: 10, spread: 260 }); }
-      ctx.help = () => ctx.say(VOICE[now]);
-      ctx.after(index ? 600 : 2500, () => { if (step() === now) ctx.say(VOICE[now]); });
-      if (now === 'wash') { box.enable('sponge'); hint('sponge', [[-20, 40], [60, 150], [-90, -160], [40, -200], [-40, 80]]); }
-      else if (now === 'rinse') { box.enable('shower'); hint('shower', [[-90, -330], [90, -330]]); }
-      else if (now === 'clip') { box.remove('sponge'); box.remove('shower'); box.enable('clipper'); hint('clipper', [[fingers[2].edge.x - px, fingers[2].edge.y - py]]); }
-      else if (now === 'file') box.enable('file');
-      else if (now === 'polish') {
-        box.clear();
-        bottles = tray(ctx, 124, 400, POLISH.map((k) => ({ key: k, html: bottleArt(k === 'glitter' ? '#ff9ecb' : fillOf(k), k === 'glitter') })), (item, chip) => {
-          polish = item.key; ctx.sfx('bubble'); anim(chip, 'pop', 300);
-          brush.el.style.setProperty('--dye', item.key === 'glitter' ? '#ff9ecb' : item.key === 'rainbow' ? '#ff9d2e' : item.key);
-        }, { width: 214, cls: 'nl-polish' });
-        ctx.after(700, () => { if (step() === 'polish' && !zoom.f) stopHint = pointer(ctx, [fingers[2].mid, fingers[2].mid], { ms: 900 }); });      // tap a nail to see it up close
-        bottles.select(polish); brush.el.style.setProperty('--dye', polish);
-        anim(bottles.el, 'fade', 300);
-      } else if (now === 'deco') decorate();
+    async function putBracelet(k, quiet = false) {
+      const spec = HAND.bracelets?.[k], wr = HAND.wrist;
+      if (!spec && !(wr && PROPS[k])) return null;
+      worn.bracelet?.remove();
+      let node;
+      if (spec) node = await rig.layer('top', spec, 'sl-worn-bracelet sl-removable');
+      else {
+        // without its worn picture: the bracelet seen from the side, its far half hidden behind the wrist
+        const w = wr.w * 1.12;
+        node = el('div', { class: 'sl-worn-bracelet sl-drawn-bracelet sl-removable', style: { left: `${wr.at[0] - w / 2}px`, top: `${wr.at[1] - w / 2}px`, width: `${w}px`, height: `${w}px` } });
+        node.innerHTML = `<img src="${ART + PROPS[k].src}" alt="" draggable="false">`;
+        rig.slots.top.append(node);
+      }
+      node.dataset.key = k;
+      node.addEventListener('pointerdown', (ev) => { ev.stopPropagation(); ctx.sfx('pop'); worn.bracelet = null; node.animate([{ transform: 'none', opacity: 1 }, { transform: 'translateY(-200px)', opacity: 0 }], { duration: 300, fill: 'forwards' }).finished.then(() => node.remove(), () => node.remove()); });
+      worn.bracelet = node;
+      if (!quiet) node.animate([{ transform: 'translateY(-520px) scale(1.15)', opacity: 0 }, { transform: 'translateY(-380px) scale(1.12)', opacity: 1, offset: 0.3 }, { transform: 'translateY(8px) scale(1)', offset: 0.85 }, { transform: 'none' }], { duration: 750, easing: 'ease-in' });
+      return node;
     }
-
-    let stopHint = null;
-    /** Show how the tool that is next moves over the hand (points are from the middle of the palm). */
-    function hint(key, pts) { stopHint?.(); const t = box.tools.get(key); stopHint = pointer(ctx, [{ x: t.cx, y: t.cy }, ...pts.map(([x, y]) => ({ x: px + x, y: py + y }))]); }
-    ['sponge', 'shower', 'clipper', 'file'].forEach((k, i) => { const h = k === 'clipper' ? 110 : k === 'file' ? 90 : 116, w = k === 'sponge' || k === 'shower' ? 116 : 136;
-      box.add(k, TOOLS[k], W - 114, 150 + i * 142, w, h, { tip: [TIP[k][0] * w, TIP[k][1] * h] }); });
-    next();
+    function wearBracelet(k, p, moved) {
+      const q = rig.local(p), at = HAND.bracelets?.[k]?.at || HAND.wrist?.at || [handBox.w / 2, handBox.h - 200];
+      if (moved && !(q.y > at[1] - 420 && q.x > at[0] - 380 && q.x < at[0] + 380)) return false;
+      if (zoomed) zoomTo(null);
+      putBracelet(k).then(() => { ctx.sfx('sparkle'); const s = rig.stage(...at); ctx.burst(s.x, s.y, { n: 9, spread: 90 }); rig.react('shake'); });
+      ctx.sfx('whoosh');
+      return true;
+    }
+    const open = {
+      polish: () => tools(POLISH.map(([k, c, kind]) => ({
+        key: k,
+        art: productArt(pics, 'pr-polish', c, kind, '', 'polish-pink'),
+        ghost: pics['pr-polish-brush'] ? productArt(pics, 'pr-polish-brush', c, kind, 'sl-applicator') : productArt(pics, 'pr-polish', c, kind, '', 'polish-pink'),
+      })), {
+        size: 150, tip: [0, 66],
+        move: (k, p, ghost) => {
+          const n = nailIn(p, zoomed ? 8 : 14);
+          if (!n) return;
+          const [, col] = POLISH.find((x) => x[0] === k), layer = polish[n.i];
+          if (layer.key !== k) { layer.recoat(); layer.key = k; layer.wet = true; }
+          if (oil[n.i] && !oil[n.i].fading) { oil[n.i].fading = true; anim(oil[n.i], 'out', 400, { fill: 'forwards' }); }
+          if (!layer.wet) return;
+          const q = rig.local(p), c = col === 'rainbow' ? RAINBOW[Math.floor(Math.max(0, Math.min(0.99, (q.y - n.y) / n.h)) * 6)] : Array.isArray(col) ? col[1] : col;
+          const cover = layer.dab(q.x, q.y, zoomed ? 16 : 24, c, { soft: 0.2, from: ghost.last && nailIn(ghost.last) === n ? rig.local(ghost.last) : null });
+          if (Math.random() < 0.1) ctx.sfx('brush');
+          if (cover > 0.85) { layer.wet = false; coat(n.i, k); ctx.sfx('sparkle'); const s = rig.stage(n.c[0], n.c[1]); ctx.burst(s.x, s.y, { n: 6, spread: 60 }); if (zoomed) ctx.after(500, () => zoomTo(null)); }
+        },
+      }),
+      stickers: () => tools(STICKERS.map((k) => ({ key: k, art: prop(k) })), { size: 70, drop: (k, p) => stick(k, p, zoomed ? 0.32 : 0.45) }),
+      gems: () => tools(GEMS.map((k) => ({ key: k, art: prop(k) })), { size: 60, drop: (k, p) => stick(k, p, zoomed ? 0.22 : 0.3) }),
+      rings: () => tools(RINGS.map((k) => ({ key: k, art: prop(k) })), { size: 110, drop: (k, p) => wearRing(k, p) }),
+      bracelets: () => tools(BRACELETS.map((k) => ({ key: k, art: prop(k) })), { size: 160, drop: (k, p, ghost, moved) => wearBracelet(k, p, moved) }),
+    };
+    shelf.remove();
+    const deck = shelf = new Shelf(ctx, {
+      color: '#b48cf5', width: SHELF_W,
+      tabs: TABS.map(([key, icon, voice]) => ({ key, art: prop(key === 'polish' && PROPS['pr-polish'] ? 'pr-polish' : icon), label: voice })),
+      onTab: (key) => { tab = key; ctx.say(TABS.find((t) => t[0] === key)[2]); if ((key === 'rings' || key === 'bracelets') && zoomed) zoomTo(null); open[key](); },
+    });
+    window.__salon.deck = deck;
+    window.__salon.zoomed = () => zoomed?.i ?? null;
+    window.__salon.polish = polish;
+    deck.open('polish', true);
+    open.polish();
+    window.__salon.worn = () => ({ rings: Object.fromEntries(Object.entries(worn.rings).map(([i, n]) => [i, n.dataset.key])), bracelet: worn.bracelet?.dataset.key || null });
+    window.__salon.fingerPoint = (i, t = 1) => { const f = HAND.fingers[i]; return rig.stage(f.c[0] + (f.ring[0] - f.c[0]) * t, f.c[1] + (f.ring[1] - f.c[1]) * t); };
+    window.__salon.wrist = HAND.wrist?.at || [handBox.w / 2, handBox.h - 200];
+    finishButton(ctx, rig, 'nails', () => ({ nails: { polish: polish.map((p) => (p.key ? p.snapshot('image/png') : null)), deco: deco.map((n) => n.save()), rings: window.__salon.worn().rings, bracelet: worn.bracelet?.dataset.key || null } }), {
+      before: async () => { if (zoomed) zoomTo(null); back.hidden = true; shelf.hide(); await ctx.sleep(450); },
+      photo: { all: true },
+    });
   },
 };
+
+/** A dashed ring on the hand (in the hand's own units). */
+function ring(ctx, rig, x, y, r) {
+  const node = rig.add('fx', el('div', { class: 'sl-guide sl-guide-in', style: { left: `${x - r}px`, top: `${y - r}px`, width: `${r * 2}px`, height: `${r * 2}px` } }));
+  return () => node.remove();
+}

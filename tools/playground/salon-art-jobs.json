@@ -1,0 +1,639 @@
+{
+ "style": "Style: polished flat 2D vector-style cartoon illustration for a preschool mobile game (ages 3-6): smooth clean rounded shapes, outlines drawn in a darker shade of each fill colour (never black), soft cel shading, glossy highlights, bright cheerful candy-pastel palette. Original design, not based on any existing franchise. No text, no letters, no numbers, no watermark, no logo.",
+ "edit": "Use case: precise-object-edit. Input image 1 is the edit target, a layered game sprite on a transparent background. Keep the exact canvas size, framing, position, scale, pose, line style and colours of everything not mentioned: the result will be pixel-diffed against the input, so do not move, redraw, crop or restyle anything else. Background stays fully transparent.",
+ "sheet": "Use case: illustration-story. Asset type: a sprite sheet for a kids' web game that will be cut into separate pictures automatically. Lay the items out in a tidy grid, each item centred in its own cell with wide empty transparent gaps between items (items must never touch or overlap), all items at a consistent scale, no shadows on the ground, fully transparent background.",
+ "jobs": [
+  {
+   "out": "props/spa-tools.png",
+   "kind": "sheet",
+   "prompt": "Items (3 rows x 3 columns, in this order): a pink pump bottle of face wash, a soft yellow bath sponge, a chrome hand shower head with a short white handle, a folded fluffy mint-green towel, a wide flat face-mask brush with a wooden handle, a round white cotton pad, a white ceramic spoon, a small open jar of white face cream, an empty round white ceramic mixing bowl seen from slightly above."
+  },
+  {
+   "out": "props/spa-food.png",
+   "kind": "sheet",
+   "prompt": "Items (3 rows x 3 columns, in this order): a whole red strawberry with green leaves, a round slice of cucumber (seen from the front, pale green centre, dark green rim), a round slice of lemon, half an avocado with its pit, a small cluster of three blueberries, a pink rose flower head, a little honey jar with a wooden honey dipper, a small heap of oat flakes, a round slice of kiwi."
+  },
+  {
+   "out": "props/spa-patches.png",
+   "kind": "sheet",
+   "prompt": "Items (3 rows x 3 columns, in this order): a small pale-pink star-shaped skin patch sticker with a white sticker border, a small heart-shaped patch sticker (light pink), a small flower-shaped patch sticker (light yellow), a small cloud-shaped patch sticker (light blue), a brown mud splat (irregular blob with a few drops), a second smaller brown mud splat of a different shape, a smear of dark grey dirt (soft smudge), a tiny red round pimple bump, a small green leaf."
+  },
+  {
+   "out": "props/hair-tools.png",
+   "kind": "sheet",
+   "prompt": "Items (3 rows x 4 columns, in this order): a pair of pink-handled hairdressing scissors (open), a lilac wide-tooth comb, a pink hair dryer (side view, nozzle pointing left), a curling iron with a pink handle (horizontal, barrel pointing left), a flat-iron hair straightener with a mint handle (closed, pointing left), a green spray bottle of hair growth tonic with a leaf on the label, a white aerosol hair-dye spray can with a coloured cap, a pink shampoo bottle with a strawberry on the label, a mint shampoo bottle with a leaf on the label, a blue shampoo bottle with blueberries on the label, a glitter shaker bottle full of sparkles, a round hand mirror with a pink frame."
+  },
+  {
+   "out": "props/hair-acc.png",
+   "kind": "sheet",
+   "prompt": "Hair accessories (3 rows x 4 columns, in this order), each seen from the front: a big pink satin bow, a sky-blue polka-dot bow, a yellow bow, a star-shaped hair clip, a heart-shaped hair clip, a butterfly hair clip, a flower crown of small pink and white flowers (front view arc), a small golden princess tiara with pink gems, a headband with cat ears (lilac), a pearl headband (white pearls), a large pink hibiscus flower, a mint scrunchie hair tie."
+  },
+  {
+   "out": "props/makeup-tools.png",
+   "kind": "sheet",
+   "prompt": "Makeup items (3 rows x 3 columns, in this order): a brown eyebrow pencil (diagonal), a small eyeshadow brush with a pink handle (diagonal), a liquid eyeliner pen (diagonal), an open mascara wand with its tube (diagonal), a big fluffy blush brush (diagonal), an open lipstick with a gold case (upright), a lip gloss wand (diagonal), a round compact of pink blush (open), an eyeshadow palette with six round pans of colour (open)."
+  },
+  {
+   "out": "props/stickers.png",
+   "kind": "sheet",
+   "prompt": "Cute stickers (3 rows x 4 columns, in this order), each with a thin white sticker border: a yellow star, a red heart, a small rainbow, a pink butterfly, a five-petal flower, a sparkling blue diamond gem, a crescent moon, a strawberry, a ladybug, a pink bow, a cluster of three sparkles, a small smiling sun."
+  },
+  {
+   "out": "props/nail-tools.png",
+   "kind": "sheet",
+   "prompt": "Items (2 rows x 3 columns, in this order): a blue pump bottle of hand soap, a small pink sponge, a silver nail clipper (side view), a pink emery nail file (diagonal), a small dropper bottle of golden cuticle oil with the dropper above it, a glass nail polish bottle with clear liquid and a white cap."
+  },
+  {
+   "out": "props/germs.png",
+   "kind": "sheet",
+   "prompt": "Cute cartoon germ characters (2 rows x 4 columns). Top row, smiling cheekily: a round green germ with little nubs, a purple germ with spiky nubs, a blue blobby germ, an orange oval germ. Bottom row: the same four germs in the same order looking scared (wide eyes, open mouth, sweat drop)."
+  },
+  {
+   "out": "props/gems.png",
+   "kind": "sheet",
+   "prompt": "Nail art gems and decorations (2 rows x 4 columns, in this order): a pink round rhinestone, a blue heart-shaped rhinestone, a clear star-shaped crystal, a purple teardrop gem, a white pearl, a gold flower charm, a mint square gem, a red heart charm."
+  },
+  {
+   "out": "props/jewelry.png",
+   "kind": "sheet",
+   "prompt": "Jewelry (3 rows x 4 columns, in this order): a gold ring with a pink heart gem, a silver ring with a blue round gem, a gold ring with a flower, a ring with a big purple crystal, a rainbow enamel ring, a pearl ring, a gold ring with a star, a mint ring with a butterfly, a pink beaded bracelet, a gold charm bracelet with hearts, a rainbow friendship bracelet, a pearl bracelet. Rings seen from the front at a slight angle, bracelets as flat rounded loops."
+  },
+  {
+   "out": "props/lobby.png",
+   "kind": "sheet",
+   "prompt": "Items (2 rows x 3 columns, in this order): a round display pedestal for a doll (pink top, white side with gold trim, seen slightly from above), a pink camera with a big lens, a white instant-photo frame (empty square inside), a small potted plant, a golden star, a pink round stool."
+  },
+  {
+   "out": "bg/lobby.png",
+   "kind": "bg",
+   "prompt": "A cosy children's beauty salon reception in pink and lilac: a big round mirror with light bulbs on the left wall, shelves with colourful bottles and a plant on the far left, fairy lights and a hanging heart garland near the top, polished light floor. Keep the right half of the picture open (a doll will stand there on a pedestal)."
+  },
+  {
+   "out": "bg/spa.png",
+   "kind": "bg",
+   "prompt": "A calm spa room in mint green: tiled wall, white towels rolled on a shelf at the left edge, a plant and candles at the right edge, soft round lamp at the top. The middle is plain mint wall."
+  },
+  {
+   "out": "bg/hair.png",
+   "kind": "bg",
+   "prompt": "A hair salon wall in soft teal: a large oval mirror frame outline in the middle of the wall, shelves with hair products at the left edge, a hair dryer hanging at the right edge, chequered light floor strip at the bottom."
+  },
+  {
+   "out": "bg/makeup.png",
+   "kind": "bg",
+   "prompt": "A makeup room in warm butter-yellow: a long row of round vanity light bulbs along the top, a dressing table edge at the bottom with a few small bottles at the far left and right, pastel wallpaper with tiny dots."
+  },
+  {
+   "out": "bg/nails.png",
+   "kind": "bg",
+   "prompt": "A nail salon in lilac: a big white manicure table across the whole bottom third of the picture (seen from slightly above, empty in the middle), shelves of colourful polish bottles at the top left and top right, soft wall."
+  },
+  {
+   "out": "bg/studio.png",
+   "kind": "bg",
+   "prompt": "A fashion dressing studio in lavender purple: a round low stage in the bottom middle with soft spotlights from above, a clothes rail with colourful garments at the far left edge, a tall mirror at the far right edge, star decorations on the wall."
+  },
+  {
+   "out": "master/m1.png",
+   "kind": "edit",
+   "input": "master/m0.png",
+   "prompt": "Change: only the mouth — make it a small, cute closed-mouth smile with clearly visible soft pink lips (a full little upper and lower lip with a tiny highlight), the same size and position as the current smile. Nothing else changes."
+  },
+  {
+   "out": "master/hand.png",
+   "kind": "gen",
+   "prompt": "Use case: illustration-story. Asset type: a game sprite of a child's hand for a nail-salon game (nails will be painted on later, so they must be clearly separate shapes). Subject: one cute cartoon child's left hand, back of the hand facing the viewer, fingers relaxed and spread apart a little, all five fingernails clearly visible, long and plain pale pink with slightly uneven tips, light warm skin (#f6c9a5 family). The wrist comes in from the bottom edge with a short pink sleeve cuff. Composition: hand centred, upright, filling about 85% of the canvas height, square canvas. Background: fully transparent."
+  },
+  {
+   "out": "master/body.png",
+   "kind": "gen",
+   "input": "master/m0.png",
+   "prompt": "Use case: illustration-story. Input image 1 is a reference for the character's head and style. Asset type: a full-body paper-doll base for a dress-up game (clothes will be layered on top later). Subject: the same little girl as image 1 (same bald round head, same face, same skin colour and style), now shown full body, standing straight and facing the viewer, chibi proportions (head about one third of the total height), arms held slightly away from the body with open hands, feet slightly apart, wearing a plain white sleeveless vest and plain white shorts, barefoot. Composition: centred, the whole figure from the top of the head to the soles of the feet fills about 92% of the canvas height, portrait canvas 2:3. Background: fully transparent."
+  },
+  {
+   "out": "hair/bob.png",
+   "kind": "edit",
+   "input": "master/m0.png",
+   "prompt": "Change: only add hair to the bald head (the hair is drawn on top of the head as it would be seen from the front). Hair colour: medium chestnut brown (#8a5233 family) with soft glossy highlights and darker brown outlines, matching the drawing style. Do not change the face, eyebrows, eyes, ears, neck or cape at all, and do not add any accessories, bows, hair ties in colour or headbands. The hairstyle: a chin-length smooth bob with a straight full fringe just above the eyebrows; the ears stay visible."
+  },
+  {
+   "out": "hair/long.png",
+   "kind": "edit",
+   "input": "master/m0.png",
+   "prompt": "Change: only add hair to the bald head (the hair is drawn on top of the head as it would be seen from the front). Hair colour: medium chestnut brown (#8a5233 family) with soft glossy highlights and darker brown outlines, matching the drawing style. Do not change the face, eyebrows, eyes, ears, neck or cape at all, and do not add any accessories, bows, hair ties in colour or headbands. The hairstyle: long straight hair parted at the side with a soft side-swept fringe, falling over both shoulders in front of the cape down to the bottom edge of the picture."
+  },
+  {
+   "out": "hair/wavy.png",
+   "kind": "edit",
+   "input": "master/m0.png",
+   "prompt": "Change: only add hair to the bald head (the hair is drawn on top of the head as it would be seen from the front). Hair colour: medium chestnut brown (#8a5233 family) with soft glossy highlights and darker brown outlines, matching the drawing style. Do not change the face, eyebrows, eyes, ears, neck or cape at all, and do not add any accessories, bows, hair ties in colour or headbands. The hairstyle: long hair in big soft waves and loose curls, with a soft side-swept fringe, falling over both shoulders in front of the cape down to the bottom edge of the picture."
+  },
+  {
+   "out": "hair/curly.png",
+   "kind": "edit",
+   "input": "master/m0.png",
+   "prompt": "Change: only add hair to the bald head (the hair is drawn on top of the head as it would be seen from the front). Hair colour: medium chestnut brown (#8a5233 family) with soft glossy highlights and darker brown outlines, matching the drawing style. Do not change the face, eyebrows, eyes, ears, neck or cape at all, and do not add any accessories, bows, hair ties in colour or headbands. The hairstyle: a big round fluffy cloud of tight springy curls around the head (afro puff), with a few curls on the forehead; the ears stay visible."
+  },
+  {
+   "out": "hair/pigtails.png",
+   "kind": "edit",
+   "input": "master/m0.png",
+   "prompt": "Change: only add hair to the bald head (the hair is drawn on top of the head as it would be seen from the front). Hair colour: medium chestnut brown (#8a5233 family) with soft glossy highlights and darker brown outlines, matching the drawing style. Do not change the face, eyebrows, eyes, ears, neck or cape at all, and do not add any accessories, bows, hair ties in colour or headbands. The hairstyle: two pigtails, one on each side of the head just above the ears, tied with thin hair ties in the same brown as the hair, hanging down to the shoulders, with a short straight fringe."
+  },
+  {
+   "out": "hair/buns.png",
+   "kind": "edit",
+   "input": "master/m0.png",
+   "prompt": "Change: only add hair to the bald head (the hair is drawn on top of the head as it would be seen from the front). Hair colour: medium chestnut brown (#8a5233 family) with soft glossy highlights and darker brown outlines, matching the drawing style. Do not change the face, eyebrows, eyes, ears, neck or cape at all, and do not add any accessories, bows, hair ties in colour or headbands. The hairstyle: two round space buns on top of the head (left and right), the rest pulled back smoothly, with a few wispy strands and a short fringe."
+  },
+  {
+   "out": "hair/ponytail.png",
+   "kind": "edit",
+   "input": "master/m0.png",
+   "prompt": "Change: only add hair to the bald head (the hair is drawn on top of the head as it would be seen from the front). Hair colour: medium chestnut brown (#8a5233 family) with soft glossy highlights and darker brown outlines, matching the drawing style. Do not change the face, eyebrows, eyes, ears, neck or cape at all, and do not add any accessories, bows, hair ties in colour or headbands. The hairstyle: a high ponytail tied at the top-back of the head, the ponytail swinging out to the right side of the head and down to the shoulder, with a short side fringe."
+  },
+  {
+   "out": "hair/braid.png",
+   "kind": "edit",
+   "input": "master/m0.png",
+   "prompt": "Change: only add hair to the bald head (the hair is drawn on top of the head as it would be seen from the front). Hair colour: medium chestnut brown (#8a5233 family) with soft glossy highlights and darker brown outlines, matching the drawing style. Do not change the face, eyebrows, eyes, ears, neck or cape at all, and do not add any accessories, bows, hair ties in colour or headbands. The hairstyle: one thick side braid starting at the left side of the head and lying over the left shoulder in front of the cape, with a soft side-swept fringe."
+  },
+  {
+   "out": "master/m2.png",
+   "kind": "edit",
+   "input": "master/m1.png",
+   "prompt": "Change: only remove both eyebrows, leaving smooth plain skin of the same colour where they were. Nothing else changes."
+  },
+  {
+   "out": "face/shut.png",
+   "kind": "edit",
+   "input": "master/m1.png",
+   "prompt": "Change: only the eyes — both eyes gently closed and relaxed, drawn as soft downward-curved eyelid lines with a few eyelashes, like a calm sleeping smile. The mouth and everything else stay exactly the same."
+  },
+  {
+   "out": "face/happy.png",
+   "kind": "edit",
+   "input": "master/m1.png",
+   "prompt": "Change: only the eyes and the mouth — the eyes become happy closed upward arcs (laughing eyes, like upside-down U shapes with lashes), and the mouth becomes a big open laughing smile showing a little pink tongue. Everything else stays exactly the same."
+  },
+  {
+   "out": "face/wide.png",
+   "kind": "edit",
+   "input": "master/m1.png",
+   "prompt": "Change: only the eyes and the mouth — the eyes open wide in surprise (bigger whites, the same brown irises a bit smaller, extra shine), and the mouth becomes a small round open 'oh' shape. Everything else stays exactly the same."
+  },
+  {
+   "out": "face/sad.png",
+   "kind": "edit",
+   "input": "master/m1.png",
+   "prompt": "Change: only the eyes and the mouth — sad, teary eyes looking up a little, glossy with big tear drops welling at the lower lids, and a small wobbly downturned frown. Everything else stays exactly the same."
+  },
+  {
+   "out": "face/squint.png",
+   "kind": "edit",
+   "input": "master/m1.png",
+   "prompt": "Change: only the eyes and the mouth — eyes squeezed shut tightly in disgust (like > < shapes), and the mouth pulled into a wavy 'yuck' grimace to one side. Everything else stays exactly the same."
+  },
+  {
+   "out": "face/kiss.png",
+   "kind": "edit",
+   "input": "master/m1.png",
+   "prompt": "Change: only the mouth — the lips puckered into a small cute kiss shape (pink, rounded, pushed forward). Everything else stays exactly the same."
+  },
+  {
+   "out": "face/lips-mask.png",
+   "kind": "edit",
+   "input": "master/m1.png",
+   "prompt": "Change: fill only the lips (upper and lower lip) with flat solid pure green #00FF00, no shading, no outline, exact lip shape. Everything else stays exactly the same."
+  },
+  {
+   "out": "face/lid-mask.png",
+   "kind": "edit",
+   "input": "master/m1.png",
+   "prompt": "Change: fill only the upper eyelid skin of both eyes — the band of skin between the top edge of each eye and where the eyebrow is — with flat solid pure green #00FF00, no shading. Do not cover the eyes themselves or the eyebrows. Everything else stays exactly the same."
+  },
+  {
+   "out": "face/lashes.png",
+   "kind": "edit",
+   "input": "master/m1.png",
+   "prompt": "Change: only the eyelashes — make the upper eyelashes of both eyes longer, thicker and curled up, like mascara, dark brown. Nothing else changes."
+  },
+  {
+   "out": "face/headband.png",
+   "kind": "edit",
+   "input": "master/m1.png",
+   "prompt": "Change: only add a soft fluffy spa headband around the head at the hairline (white terry cloth with pink polka dots and a small pink bow on top). Nothing else changes."
+  },
+  {
+   "out": "master/hand-long.png",
+   "kind": "edit",
+   "input": "master/hand.png",
+   "prompt": "Change: only the fingernails — all five nails grow out long past the fingertips (about half as long again), with slightly uneven, ragged, chipped tips, same pale pink. Nothing else changes."
+  },
+  {
+   "out": "master/hand-mask.png",
+   "kind": "edit",
+   "input": "master/hand.png",
+   "prompt": "Change: fill only the five fingernails with flat solid pure green #00FF00, no shading, no outline, exact nail shapes. Everything else stays exactly the same."
+  },
+  {
+   "out": "wear/dress-princess.png",
+   "kind": "edit",
+   "input": "master/body.png",
+   "prompt": "Change: dress her in a knee-length pink tulle princess dress with puffy short sleeves and tiny sparkles, plus pink ballet flats. The dress replaces both the white vest and the white shorts completely. The body, arms, hands, legs, feet, pose, head and face stay exactly the same; draw the clothes fitted to this exact body, matching the drawing style (soft shading, outlines a darker shade of each colour)."
+  },
+  {
+   "out": "wear/dress-sundress.png",
+   "kind": "edit",
+   "input": "master/body.png",
+   "prompt": "Change: dress her in a yellow sundress with little white daisies and thin straps, plus white strappy sandals. The dress replaces both the white vest and the white shorts completely. The body, arms, hands, legs, feet, pose, head and face stay exactly the same; draw the clothes fitted to this exact body, matching the drawing style (soft shading, outlines a darker shade of each colour)."
+  },
+  {
+   "out": "wear/dress-party.png",
+   "kind": "edit",
+   "input": "master/body.png",
+   "prompt": "Change: dress her in a purple sparkly party dress with a big bow at the waist, plus shiny silver shoes. The dress replaces both the white vest and the white shorts completely. The body, arms, hands, legs, feet, pose, head and face stay exactly the same; draw the clothes fitted to this exact body, matching the drawing style (soft shading, outlines a darker shade of each colour)."
+  },
+  {
+   "out": "wear/dress-sailor.png",
+   "kind": "edit",
+   "input": "master/body.png",
+   "prompt": "Change: dress her in a navy and white sailor dress with a big collar and a red bow, plus red mary-jane shoes. The dress replaces both the white vest and the white shorts completely. The body, arms, hands, legs, feet, pose, head and face stay exactly the same; draw the clothes fitted to this exact body, matching the drawing style (soft shading, outlines a darker shade of each colour)."
+  },
+  {
+   "out": "wear/dress-rainbow.png",
+   "kind": "edit",
+   "input": "master/body.png",
+   "prompt": "Change: dress her in a rainbow striped tutu dress, plus colourful rainbow sneakers. The dress replaces both the white vest and the white shorts completely. The body, arms, hands, legs, feet, pose, head and face stay exactly the same; draw the clothes fitted to this exact body, matching the drawing style (soft shading, outlines a darker shade of each colour)."
+  },
+  {
+   "out": "wear/dress-mermaid.png",
+   "kind": "edit",
+   "input": "master/body.png",
+   "prompt": "Change: dress her in a teal mermaid-style dress with a shimmering scale pattern and a frilly hem at the knees, plus teal sandals with little shells. The dress replaces both the white vest and the white shorts completely. The body, arms, hands, legs, feet, pose, head and face stay exactly the same; draw the clothes fitted to this exact body, matching the drawing style (soft shading, outlines a darker shade of each colour)."
+  },
+  {
+   "out": "wear/dress-strawberry.png",
+   "kind": "edit",
+   "input": "master/body.png",
+   "prompt": "Change: dress her in a red dress with a strawberry print and a round white collar, plus red shoes. The dress replaces both the white vest and the white shorts completely. The body, arms, hands, legs, feet, pose, head and face stay exactly the same; draw the clothes fitted to this exact body, matching the drawing style (soft shading, outlines a darker shade of each colour)."
+  },
+  {
+   "out": "wear/dress-sweater.png",
+   "kind": "edit",
+   "input": "master/body.png",
+   "prompt": "Change: dress her in a cosy lilac knitted sweater dress with long sleeves, plus fluffy white winter boots. The dress replaces both the white vest and the white shorts completely. The body, arms, hands, legs, feet, pose, head and face stay exactly the same; draw the clothes fitted to this exact body, matching the drawing style (soft shading, outlines a darker shade of each colour)."
+  },
+  {
+   "out": "wear/dress-ballerina.png",
+   "kind": "edit",
+   "input": "master/body.png",
+   "prompt": "Change: dress her in a pink ballerina leotard with a white tutu, plus pink ballet slippers with ribbons. The dress replaces both the white vest and the white shorts completely. The body, arms, hands, legs, feet, pose, head and face stay exactly the same; draw the clothes fitted to this exact body, matching the drawing style (soft shading, outlines a darker shade of each colour)."
+  },
+  {
+   "out": "wear/dress-fairy.png",
+   "kind": "edit",
+   "input": "master/body.png",
+   "prompt": "Change: dress her in a green fairy dress made of leaves with a petal hem, plus little brown boots. The dress replaces both the white vest and the white shorts completely. The body, arms, hands, legs, feet, pose, head and face stay exactly the same; draw the clothes fitted to this exact body, matching the drawing style (soft shading, outlines a darker shade of each colour)."
+  },
+  {
+   "out": "wear/top-stripes.png",
+   "kind": "edit",
+   "input": "master/body.png",
+   "prompt": "Change: only replace the white vest with a red and white striped t-shirt (covering the vest completely). Keep the white shorts exactly as they are. The body, arms, hands, legs, feet, pose, head and face stay exactly the same; draw the clothes fitted to this exact body, matching the drawing style (soft shading, outlines a darker shade of each colour)."
+  },
+  {
+   "out": "wear/top-hoodie.png",
+   "kind": "edit",
+   "input": "master/body.png",
+   "prompt": "Change: only replace the white vest with a pink hoodie with a kangaroo pocket (covering the vest completely). Keep the white shorts exactly as they are. The body, arms, hands, legs, feet, pose, head and face stay exactly the same; draw the clothes fitted to this exact body, matching the drawing style (soft shading, outlines a darker shade of each colour)."
+  },
+  {
+   "out": "wear/top-star.png",
+   "kind": "edit",
+   "input": "master/body.png",
+   "prompt": "Change: only replace the white vest with a yellow t-shirt with a big white star (covering the vest completely). Keep the white shorts exactly as they are. The body, arms, hands, legs, feet, pose, head and face stay exactly the same; draw the clothes fitted to this exact body, matching the drawing style (soft shading, outlines a darker shade of each colour)."
+  },
+  {
+   "out": "wear/top-denim.png",
+   "kind": "edit",
+   "input": "master/body.png",
+   "prompt": "Change: only replace the white vest with a blue denim jacket over a white t-shirt (covering the vest completely). Keep the white shorts exactly as they are. The body, arms, hands, legs, feet, pose, head and face stay exactly the same; draw the clothes fitted to this exact body, matching the drawing style (soft shading, outlines a darker shade of each colour)."
+  },
+  {
+   "out": "wear/top-ruffle.png",
+   "kind": "edit",
+   "input": "master/body.png",
+   "prompt": "Change: only replace the white vest with a lilac blouse with ruffles at the shoulders (covering the vest completely). Keep the white shorts exactly as they are. The body, arms, hands, legs, feet, pose, head and face stay exactly the same; draw the clothes fitted to this exact body, matching the drawing style (soft shading, outlines a darker shade of each colour)."
+  },
+  {
+   "out": "wear/top-jersey.png",
+   "kind": "edit",
+   "input": "master/body.png",
+   "prompt": "Change: only replace the white vest with a green sports jersey (covering the vest completely). Keep the white shorts exactly as they are. The body, arms, hands, legs, feet, pose, head and face stay exactly the same; draw the clothes fitted to this exact body, matching the drawing style (soft shading, outlines a darker shade of each colour)."
+  },
+  {
+   "out": "wear/top-knit.png",
+   "kind": "edit",
+   "input": "master/body.png",
+   "prompt": "Change: only replace the white vest with a rainbow-striped knitted jumper (covering the vest completely). Keep the white shorts exactly as they are. The body, arms, hands, legs, feet, pose, head and face stay exactly the same; draw the clothes fitted to this exact body, matching the drawing style (soft shading, outlines a darker shade of each colour)."
+  },
+  {
+   "out": "wear/top-sequin.png",
+   "kind": "edit",
+   "input": "master/body.png",
+   "prompt": "Change: only replace the white vest with a pink sequin tank top that sparkles (covering the vest completely). Keep the white shorts exactly as they are. The body, arms, hands, legs, feet, pose, head and face stay exactly the same; draw the clothes fitted to this exact body, matching the drawing style (soft shading, outlines a darker shade of each colour)."
+  },
+  {
+   "out": "wear/bottom-tutu.png",
+   "kind": "edit",
+   "input": "master/body.png",
+   "prompt": "Change: only replace the white shorts with a fluffy pink tutu skirt (covering the shorts completely). Keep the white vest exactly as it is. The body, arms, hands, legs, feet, pose, head and face stay exactly the same; draw the clothes fitted to this exact body, matching the drawing style (soft shading, outlines a darker shade of each colour)."
+  },
+  {
+   "out": "wear/bottom-jeans.png",
+   "kind": "edit",
+   "input": "master/body.png",
+   "prompt": "Change: only replace the white shorts with long blue jeans down to the ankles (covering the shorts completely). Keep the white vest exactly as it is. The body, arms, hands, legs, feet, pose, head and face stay exactly the same; draw the clothes fitted to this exact body, matching the drawing style (soft shading, outlines a darker shade of each colour)."
+  },
+  {
+   "out": "wear/bottom-pleats.png",
+   "kind": "edit",
+   "input": "master/body.png",
+   "prompt": "Change: only replace the white shorts with a yellow pleated skirt (covering the shorts completely). Keep the white vest exactly as it is. The body, arms, hands, legs, feet, pose, head and face stay exactly the same; draw the clothes fitted to this exact body, matching the drawing style (soft shading, outlines a darker shade of each colour)."
+  },
+  {
+   "out": "wear/bottom-shorts.png",
+   "kind": "edit",
+   "input": "master/body.png",
+   "prompt": "Change: only replace the white shorts with blue denim shorts with rolled hems (covering the shorts completely). Keep the white vest exactly as it is. The body, arms, hands, legs, feet, pose, head and face stay exactly the same; draw the clothes fitted to this exact body, matching the drawing style (soft shading, outlines a darker shade of each colour)."
+  },
+  {
+   "out": "wear/bottom-leggings.png",
+   "kind": "edit",
+   "input": "master/body.png",
+   "prompt": "Change: only replace the white shorts with purple leggings with little stars, down to the ankles (covering the shorts completely). Keep the white vest exactly as it is. The body, arms, hands, legs, feet, pose, head and face stay exactly the same; draw the clothes fitted to this exact body, matching the drawing style (soft shading, outlines a darker shade of each colour)."
+  },
+  {
+   "out": "wear/bottom-plaid.png",
+   "kind": "edit",
+   "input": "master/body.png",
+   "prompt": "Change: only replace the white shorts with a red plaid skirt (covering the shorts completely). Keep the white vest exactly as it is. The body, arms, hands, legs, feet, pose, head and face stay exactly the same; draw the clothes fitted to this exact body, matching the drawing style (soft shading, outlines a darker shade of each colour)."
+  },
+  {
+   "out": "wear/bottom-flares.png",
+   "kind": "edit",
+   "input": "master/body.png",
+   "prompt": "Change: only replace the white shorts with mint green flared trousers down to the ankles (covering the shorts completely). Keep the white vest exactly as it is. The body, arms, hands, legs, feet, pose, head and face stay exactly the same; draw the clothes fitted to this exact body, matching the drawing style (soft shading, outlines a darker shade of each colour)."
+  },
+  {
+   "out": "wear/bottom-ruffles.png",
+   "kind": "edit",
+   "input": "master/body.png",
+   "prompt": "Change: only replace the white shorts with a rainbow ruffle skirt (covering the shorts completely). Keep the white vest exactly as it is. The body, arms, hands, legs, feet, pose, head and face stay exactly the same; draw the clothes fitted to this exact body, matching the drawing style (soft shading, outlines a darker shade of each colour)."
+  },
+  {
+   "out": "wear/back-butterfly.png",
+   "kind": "edit",
+   "input": "master/body.png",
+   "prompt": "Change: only add a pair of pink translucent butterfly wings behind her back, spreading out on both sides. Do not change her clothes. The body, arms, hands, legs, feet, pose, head and face stay exactly the same; draw the clothes fitted to this exact body, matching the drawing style (soft shading, outlines a darker shade of each colour)."
+  },
+  {
+   "out": "wear/back-cape.png",
+   "kind": "edit",
+   "input": "master/body.png",
+   "prompt": "Change: only add a red superhero cape tied at her neck and flowing behind her, visible on both sides of her body. Do not change her clothes. The body, arms, hands, legs, feet, pose, head and face stay exactly the same; draw the clothes fitted to this exact body, matching the drawing style (soft shading, outlines a darker shade of each colour)."
+  },
+  {
+   "out": "wear/back-angel.png",
+   "kind": "edit",
+   "input": "master/body.png",
+   "prompt": "Change: only add a pair of fluffy white angel wings behind her back, spreading out on both sides. Do not change her clothes. The body, arms, hands, legs, feet, pose, head and face stay exactly the same; draw the clothes fitted to this exact body, matching the drawing style (soft shading, outlines a darker shade of each colour)."
+  },
+  {
+   "out": "wear/back-dragon.png",
+   "kind": "edit",
+   "input": "master/body.png",
+   "prompt": "Change: only add a pair of small purple dragon wings behind her back, spreading out on both sides. Do not change her clothes. The body, arms, hands, legs, feet, pose, head and face stay exactly the same; draw the clothes fitted to this exact body, matching the drawing style (soft shading, outlines a darker shade of each colour)."
+  },
+  {
+   "out": "props/hats.png",
+   "kind": "sheet",
+   "prompt": "Items (3 rows x 4 columns, in this order), front view as worn: a straw sun hat with a pink ribbon, a red beret, a striped party cone hat, a pink baseball cap, a white winter beanie with a pompom, a unicorn horn headband with flowers, heart-shaped pink sunglasses, star-shaped glasses, round tortoiseshell glasses, white cat-eye sunglasses, swimming goggles, rainbow-framed sunglasses."
+  },
+  {
+   "out": "props/handheld.png",
+   "kind": "sheet",
+   "prompt": "Items (2 rows x 4 columns, in this order), each upright as if held in a hand: a magic wand with a star, a bouquet of flowers, a red heart balloon on a string, an open pink umbrella, a pink handbag with a bow, a small brown teddy bear, an ice cream cone with two scoops, a swirly rainbow lollipop."
+  },
+  {
+   "out": "brows/arch.png",
+   "kind": "edit",
+   "input": "master/m2.png",
+   "prompt": "Change: only add thin, elegant, high-arched eyebrows above both eyes, in medium brown, in the same place eyebrows would normally be. Nothing else changes."
+  },
+  {
+   "out": "brows/straight.png",
+   "kind": "edit",
+   "input": "master/m2.png",
+   "prompt": "Change: only add soft straight eyebrows, medium thickness above both eyes, in medium brown, in the same place eyebrows would normally be. Nothing else changes."
+  },
+  {
+   "out": "brows/bold.png",
+   "kind": "edit",
+   "input": "master/m2.png",
+   "prompt": "Change: only add thick bold eyebrows above both eyes, in medium brown, in the same place eyebrows would normally be. Nothing else changes."
+  },
+  {
+   "out": "brows/round.png",
+   "kind": "edit",
+   "input": "master/m2.png",
+   "prompt": "Change: only add short rounded fluffy eyebrows above both eyes, in medium brown, in the same place eyebrows would normally be. Nothing else changes."
+  },
+  {
+   "out": "brows/curve.png",
+   "kind": "edit",
+   "input": "master/m2.png",
+   "prompt": "Change: only add long gently curved eyebrows that taper to a fine tip above both eyes, in medium brown, in the same place eyebrows would normally be. Nothing else changes."
+  },
+  {
+   "out": "worn/ring-heart.png",
+   "kind": "edit",
+   "input": "master/hand.png",
+   "prompt": "Change: the child is now wearing a gold ring with a pink heart gem on the MIDDLE finger (the longest finger), sitting snugly around the finger about one third of the way up from where the finger joins the hand. Seen from above like the rest of the hand: the band wraps around the finger, so only the front of the band crosses the finger from one side edge to the other and its ends curve away out of sight at the finger's sides; the decoration sits on top of the finger. The ring is small and sized to fit this finger exactly, with a soft shadow on the skin next to it. Nothing else changes: the hand, fingers, nails, skin, outlines, framing and background stay exactly the same."
+  },
+  {
+   "out": "worn/ring-blue.png",
+   "kind": "edit",
+   "input": "master/hand.png",
+   "prompt": "Change: the child is now wearing a silver ring with a blue round gem on the MIDDLE finger (the longest finger), sitting snugly around the finger about one third of the way up from where the finger joins the hand. Seen from above like the rest of the hand: the band wraps around the finger, so only the front of the band crosses the finger from one side edge to the other and its ends curve away out of sight at the finger's sides; the decoration sits on top of the finger. The ring is small and sized to fit this finger exactly, with a soft shadow on the skin next to it. Nothing else changes: the hand, fingers, nails, skin, outlines, framing and background stay exactly the same."
+  },
+  {
+   "out": "worn/ring-flower.png",
+   "kind": "edit",
+   "input": "master/hand.png",
+   "prompt": "Change: the child is now wearing a gold ring with a pink flower on the MIDDLE finger (the longest finger), sitting snugly around the finger about one third of the way up from where the finger joins the hand. Seen from above like the rest of the hand: the band wraps around the finger, so only the front of the band crosses the finger from one side edge to the other and its ends curve away out of sight at the finger's sides; the decoration sits on top of the finger. The ring is small and sized to fit this finger exactly, with a soft shadow on the skin next to it. Nothing else changes: the hand, fingers, nails, skin, outlines, framing and background stay exactly the same."
+  },
+  {
+   "out": "worn/ring-crystal.png",
+   "kind": "edit",
+   "input": "master/hand.png",
+   "prompt": "Change: the child is now wearing a ring with a big purple crystal on the MIDDLE finger (the longest finger), sitting snugly around the finger about one third of the way up from where the finger joins the hand. Seen from above like the rest of the hand: the band wraps around the finger, so only the front of the band crosses the finger from one side edge to the other and its ends curve away out of sight at the finger's sides; the decoration sits on top of the finger. The ring is small and sized to fit this finger exactly, with a soft shadow on the skin next to it. Nothing else changes: the hand, fingers, nails, skin, outlines, framing and background stay exactly the same."
+  },
+  {
+   "out": "worn/ring-rainbow.png",
+   "kind": "edit",
+   "input": "master/hand.png",
+   "prompt": "Change: the child is now wearing a rainbow enamel ring on the MIDDLE finger (the longest finger), sitting snugly around the finger about one third of the way up from where the finger joins the hand. Seen from above like the rest of the hand: the band wraps around the finger, so only the front of the band crosses the finger from one side edge to the other and its ends curve away out of sight at the finger's sides; the decoration sits on top of the finger. The ring is small and sized to fit this finger exactly, with a soft shadow on the skin next to it. Nothing else changes: the hand, fingers, nails, skin, outlines, framing and background stay exactly the same."
+  },
+  {
+   "out": "worn/ring-pearl.png",
+   "kind": "edit",
+   "input": "master/hand.png",
+   "prompt": "Change: the child is now wearing a silver ring with a white pearl on the MIDDLE finger (the longest finger), sitting snugly around the finger about one third of the way up from where the finger joins the hand. Seen from above like the rest of the hand: the band wraps around the finger, so only the front of the band crosses the finger from one side edge to the other and its ends curve away out of sight at the finger's sides; the decoration sits on top of the finger. The ring is small and sized to fit this finger exactly, with a soft shadow on the skin next to it. Nothing else changes: the hand, fingers, nails, skin, outlines, framing and background stay exactly the same."
+  },
+  {
+   "out": "worn/ring-star.png",
+   "kind": "edit",
+   "input": "master/hand.png",
+   "prompt": "Change: the child is now wearing a gold ring with a yellow star on the MIDDLE finger (the longest finger), sitting snugly around the finger about one third of the way up from where the finger joins the hand. Seen from above like the rest of the hand: the band wraps around the finger, so only the front of the band crosses the finger from one side edge to the other and its ends curve away out of sight at the finger's sides; the decoration sits on top of the finger. The ring is small and sized to fit this finger exactly, with a soft shadow on the skin next to it. Nothing else changes: the hand, fingers, nails, skin, outlines, framing and background stay exactly the same."
+  },
+  {
+   "out": "worn/ring-butterfly.png",
+   "kind": "edit",
+   "input": "master/hand.png",
+   "prompt": "Change: the child is now wearing a mint ring with a little butterfly on the MIDDLE finger (the longest finger), sitting snugly around the finger about one third of the way up from where the finger joins the hand. Seen from above like the rest of the hand: the band wraps around the finger, so only the front of the band crosses the finger from one side edge to the other and its ends curve away out of sight at the finger's sides; the decoration sits on top of the finger. The ring is small and sized to fit this finger exactly, with a soft shadow on the skin next to it. Nothing else changes: the hand, fingers, nails, skin, outlines, framing and background stay exactly the same."
+  },
+  {
+   "out": "worn/bracelet-beads.png",
+   "kind": "edit",
+   "input": "master/hand.png",
+   "prompt": "Change: the child is now wearing a pink beaded bracelet around the wrist, just below the hand where the wrist is narrowest. It wraps snugly around the wrist: only its front half is visible across the wrist from one side edge to the other, the back half is hidden behind the wrist; a soft shadow on the skin under it. Nothing else changes: the hand, fingers, nails, skin, outlines, framing and background stay exactly the same."
+  },
+  {
+   "out": "worn/bracelet-hearts.png",
+   "kind": "edit",
+   "input": "master/hand.png",
+   "prompt": "Change: the child is now wearing a gold chain bracelet with little pink heart charms around the wrist, just below the hand where the wrist is narrowest. It wraps snugly around the wrist: only its front half is visible across the wrist from one side edge to the other, the back half is hidden behind the wrist; a soft shadow on the skin under it. Nothing else changes: the hand, fingers, nails, skin, outlines, framing and background stay exactly the same."
+  },
+  {
+   "out": "worn/bracelet-rainbow.png",
+   "kind": "edit",
+   "input": "master/hand.png",
+   "prompt": "Change: the child is now wearing a braided rainbow friendship bracelet around the wrist, just below the hand where the wrist is narrowest. It wraps snugly around the wrist: only its front half is visible across the wrist from one side edge to the other, the back half is hidden behind the wrist; a soft shadow on the skin under it. Nothing else changes: the hand, fingers, nails, skin, outlines, framing and background stay exactly the same."
+  },
+  {
+   "out": "worn/bracelet-pearl.png",
+   "kind": "edit",
+   "input": "master/hand.png",
+   "prompt": "Change: the child is now wearing a pearl bracelet around the wrist, just below the hand where the wrist is narrowest. It wraps snugly around the wrist: only its front half is visible across the wrist from one side edge to the other, the back half is hidden behind the wrist; a soft shadow on the skin under it. Nothing else changes: the hand, fingers, nails, skin, outlines, framing and background stay exactly the same."
+  },
+  {
+   "out": "worn/hold-wand.png",
+   "kind": "edit",
+   "input": "master/body.png",
+   "prompt": "Change: only the hand on the RIGHT side of the picture (the girl's left hand) now holds a magic wand with a yellow star on top, gripped by its stick. The fingers close naturally around it like a real child's hand holding it (thumb in front, fingers wrapped around), the item is sized naturally for a small child. The arm stays where it is; her other hand, clothes, body, head and face stay exactly the same."
+  },
+  {
+   "out": "worn/hold-flowers.png",
+   "kind": "edit",
+   "input": "master/body.png",
+   "prompt": "Change: only the hand on the RIGHT side of the picture (the girl's left hand) now holds a small bouquet of flowers wrapped in pink paper, gripped by the wrapped stems. The fingers close naturally around it like a real child's hand holding it (thumb in front, fingers wrapped around), the item is sized naturally for a small child. The arm stays where it is; her other hand, clothes, body, head and face stay exactly the same."
+  },
+  {
+   "out": "worn/hold-balloon.png",
+   "kind": "edit",
+   "input": "master/body.png",
+   "prompt": "Change: only the hand on the RIGHT side of the picture (the girl's left hand) now holds the string of a red heart balloon; the balloon floats up above her hand on its string. The fingers close naturally around it like a real child's hand holding it (thumb in front, fingers wrapped around), the item is sized naturally for a small child. The arm stays where it is; her other hand, clothes, body, head and face stay exactly the same."
+  },
+  {
+   "out": "worn/hold-umbrella.png",
+   "kind": "edit",
+   "input": "master/body.png",
+   "prompt": "Change: only the hand on the RIGHT side of the picture (the girl's left hand) now holds an open pink umbrella over her shoulder, gripped by its curved handle. The fingers close naturally around it like a real child's hand holding it (thumb in front, fingers wrapped around), the item is sized naturally for a small child. The arm stays where it is; her other hand, clothes, body, head and face stay exactly the same."
+  },
+  {
+   "out": "worn/hold-bag.png",
+   "kind": "edit",
+   "input": "master/body.png",
+   "prompt": "Change: only the hand on the RIGHT side of the picture (the girl's left hand) now holds a small pink handbag with a bow, held by its strap so the bag hangs below her hand. The fingers close naturally around it like a real child's hand holding it (thumb in front, fingers wrapped around), the item is sized naturally for a small child. The arm stays where it is; her other hand, clothes, body, head and face stay exactly the same."
+  },
+  {
+   "out": "worn/hold-teddy.png",
+   "kind": "edit",
+   "input": "master/body.png",
+   "prompt": "Change: only the hand on the RIGHT side of the picture (the girl's left hand) now holds a small brown teddy bear, held by its paw so the bear hangs beside her hand. The fingers close naturally around it like a real child's hand holding it (thumb in front, fingers wrapped around), the item is sized naturally for a small child. The arm stays where it is; her other hand, clothes, body, head and face stay exactly the same."
+  },
+  {
+   "out": "worn/hold-icecream.png",
+   "kind": "edit",
+   "input": "master/body.png",
+   "prompt": "Change: only the hand on the RIGHT side of the picture (the girl's left hand) now holds an ice cream cone with two scoops, held upright by the cone. The fingers close naturally around it like a real child's hand holding it (thumb in front, fingers wrapped around), the item is sized naturally for a small child. The arm stays where it is; her other hand, clothes, body, head and face stay exactly the same."
+  },
+  {
+   "out": "worn/hold-lollipop.png",
+   "kind": "edit",
+   "input": "master/body.png",
+   "prompt": "Change: only the hand on the RIGHT side of the picture (the girl's left hand) now holds a big swirly rainbow lollipop, gripped by its stick. The fingers close naturally around it like a real child's hand holding it (thumb in front, fingers wrapped around), the item is sized naturally for a small child. The arm stays where it is; her other hand, clothes, body, head and face stay exactly the same."
+  },
+  {
+   "out": "worn/hat-sun.png",
+   "kind": "edit",
+   "input": "master/m0.png",
+   "prompt": "Change: she is now wearing a straw sun hat with a pink ribbon on her head, sitting naturally on top of her round head, sized exactly for her head, covering the top of the head down to just above the eyebrows (the forehead and eyebrows stay visible). Nothing else changes: the face, eyes, ears, neck, cape, framing and background stay exactly the same."
+  },
+  {
+   "out": "worn/hat-beret.png",
+   "kind": "edit",
+   "input": "master/m0.png",
+   "prompt": "Change: she is now wearing a red beret, tilted a little to one side on her head, sitting naturally on top of her round head, sized exactly for her head, covering the top of the head down to just above the eyebrows (the forehead and eyebrows stay visible). Nothing else changes: the face, eyes, ears, neck, cape, framing and background stay exactly the same."
+  },
+  {
+   "out": "worn/hat-party.png",
+   "kind": "edit",
+   "input": "master/m0.png",
+   "prompt": "Change: she is now wearing a striped party cone hat on an elastic on her head, sitting naturally on top of her round head, sized exactly for her head, covering the top of the head down to just above the eyebrows (the forehead and eyebrows stay visible). Nothing else changes: the face, eyes, ears, neck, cape, framing and background stay exactly the same."
+  },
+  {
+   "out": "worn/hat-cap.png",
+   "kind": "edit",
+   "input": "master/m0.png",
+   "prompt": "Change: she is now wearing a pink baseball cap, peak facing forward on her head, sitting naturally on top of her round head, sized exactly for her head, covering the top of the head down to just above the eyebrows (the forehead and eyebrows stay visible). Nothing else changes: the face, eyes, ears, neck, cape, framing and background stay exactly the same."
+  },
+  {
+   "out": "worn/hat-beanie.png",
+   "kind": "edit",
+   "input": "master/m0.png",
+   "prompt": "Change: she is now wearing a white knitted winter beanie with a pompom on her head, sitting naturally on top of her round head, sized exactly for her head, covering the top of the head down to just above the eyebrows (the forehead and eyebrows stay visible). Nothing else changes: the face, eyes, ears, neck, cape, framing and background stay exactly the same."
+  },
+  {
+   "out": "worn/hat-unicorn.png",
+   "kind": "edit",
+   "input": "master/m0.png",
+   "prompt": "Change: she is now wearing a unicorn headband with a golden horn and little flowers on her head, sitting naturally on top of her round head, sized exactly for her head, covering the top of the head down to just above the eyebrows (the forehead and eyebrows stay visible). Nothing else changes: the face, eyes, ears, neck, cape, framing and background stay exactly the same."
+  },
+  {
+   "out": "props/backs.png",
+   "kind": "sheet",
+   "input": [
+    "wear/back-angel.png",
+    "wear/back-butterfly.png",
+    "wear/back-dragon.png",
+    "wear/back-cape.png"
+   ],
+   "prompt": "Items (1 row x 4 columns, in this order): exactly the accessory worn on the girl's back in input images 1-4, each drawn ALONE and WHOLE, without the girl, including the middle part that her body hides in the input: 1. the fluffy white angel wings (both wings joined in the middle), 2. the pink translucent butterfly wings (both pairs joined in the middle), 3. the small purple dragon wings (both joined in the middle), 4. the red superhero cape laid out flat from the front, with its collar tie at the top. Same design, colours, size relation and drawing style as in the inputs."
+  },
+  {
+   "out": "props/products.png",
+   "kind": "sheet",
+   "prompt": "Items (2 rows x 5 columns, in this order), each upright. In every item the COLOURED part is one clear bright pink (#ff4fa3) and everything else is white, clear glass, silver or gold, never pink: 1. a nail polish bottle of clear glass filled with bright pink polish, white cap; 2. the white nail polish cap lifted out of the bottle, with its little brush, the brush tip wet with bright pink polish; 3. a round eyeshadow pot, silver rim, filled with bright pink shimmer powder, lid off; 4. an eyeshadow applicator wand, white handle, pink sponge tip; 5. a fluffy blush brush, white handle, silver ferrule, pink bristles; 6. a lipstick, gold case, uncapped, bright pink bullet; 7. a lip gloss tube of clear plastic filled with pink gloss, white cap; 8. a mascara tube in white with a pink band, and its wand with pink bristles lying beside it; 9. a hair colour spray can, white can with a pink cap and a pink stripe; 10. a glitter shaker jar of clear glass filled with pink glitter, white lid with holes."
+  },
+  {
+   "out": "wear/dress-mermaid.png",
+   "kind": "edit",
+   "input": "wearfix/dress-mermaid-old.png",
+   "prompt": "Change: fix the white undershirt that still shows beside the teal mermaid dress at both sides of her waist and hips: no white vest or white shorts may be visible anywhere. Where the white showed beside the dress, draw the girl's own body side in her skin colour with the same outline as her arms, or let the dress fill it. Nothing else changes."
+  }
+ ],
+ "bg": "Use case: illustration-story. Asset type: a wide background for a kids' web game screen (characters and a tool shelf will be drawn on top). Landscape canvas. A simple, calm, low-contrast interior seen straight on, with soft gradients; furniture and decorations kept to the sides and the edges; the middle of the picture is open wall and floor with nothing important there. No people, no animals, no characters, no text."
+}

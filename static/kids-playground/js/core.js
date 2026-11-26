@@ -77,6 +77,8 @@ const KEYFRAMES = {
   wiggle: [0, -9, 9, -6, 6, 0].map((r) => ({ transform: `rotate(${r}deg)` })),
   spin: [{ transform: 'rotate(0) scale(1)' }, { transform: 'rotate(360deg) scale(1.2)' }, { transform: 'rotate(720deg) scale(1)' }],
   fade: [{ opacity: 0 }, { opacity: 1 }],
+  'slide-in': [{ transform: 'translateX(115%)' }, { transform: 'translateX(-3%)', offset: 0.75 }, { transform: 'translateX(0)' }],
+  squash: [{ transform: 'scale(1,1)' }, { transform: 'scale(1.18,.8)' }, { transform: 'scale(.92,1.1)' }, { transform: 'scale(1,1)' }],
 };
 export function anim(node, name, ms = 500, opts = {}) {
   const a = node.animate(KEYFRAMES[name], { duration: ms, easing: 'ease-in-out', ...opts });
@@ -110,8 +112,10 @@ const ICON = {
   book: '<path d="M4 5.5c3-1.2 5.500-1 8 .8 2.500-1.800 5-2 8-.8v13c-3-1.200-5.500-1-8 .8-2.500-1.800-5-2-8-.8z"/><path d="M12 6.300v13"/>',
   star: '<path d="m12 3.500 2.600 5.400 5.900.8-4.300 4.100 1 5.900L12 16.900l-5.200 2.800 1-5.900L3.500 9.700l5.900-.8z" fill="currentColor"/>',
   eraser: '<path d="M8.500 19.500 3.800 14.800a1.500 1.500 0 0 1 0-2.100l8.400-8.400a1.500 1.500 0 0 1 2.100 0l5.900 5.900a1.500 1.500 0 0 1 0 2.100l-7.200 7.200z"/><path d="m8 9 7 7M8.500 19.500H20"/>',
+  zoom: '<circle cx="10.5" cy="10.5" r="6"/><path d="m15 15 5 5M8 10.5h5M10.5 8v5"/>',
   eye: '<path d="M2.5 12s3.5-6.5 9.5-6.5 9.5 6.5 9.5 6.5-3.5 6.5-9.5 6.5S2.5 12 2.5 12z"/><circle cx="12" cy="12" r="2.8"/>',
   swap: '<circle cx="12" cy="8.500" r="3.600"/><path d="M5 20c.6-4 3.400-6 7-6s6.400 2 7 6"/><path d="M19.500 4.500v3.500H16"/>',
+  close: '<path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/>',
   help: '<path d="M9 9.200a3.100 3.100 0 1 1 4.700 2.600c-1 .7-1.700 1.300-1.700 2.700"/><circle cx="12" cy="18" r=".8" fill="currentColor"/>',
 };
 export const icon = (name) => `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">${ICON[name]}</svg>`;

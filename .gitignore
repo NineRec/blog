@@ -25,3 +25,6 @@ __pycache__/
 # Local voice design experiments (models, virtualenv, generated audio)
 /.voice-lab/
 /.claude/
+
+# Raw generated salon art (Codex outputs before cut-out and packing)
+/.salon-art/
