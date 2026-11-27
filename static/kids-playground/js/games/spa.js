@@ -190,7 +190,12 @@ export default {
           const f = passive(ctx.sprite(foam(), x + rand(-30, 30), Math.min(y + rand(-20, 30), cy + 90), rand(70, 110), 80));
           onPet.append(f.el); f.anim('in', 250); foams.push(f);
         }
-        if (dirt.every((m) => m.hp <= 0) && foams.length >= 14) next();
+        // Clean enough: the foam hides what mud is left, so a faint patch must not keep the bath from going on
+        // (it melts away by itself). A spot never touched still needs the sponge.
+        if (dirt.every((m) => m.hp <= 0.35) && foams.length >= 10) {
+          for (const m of dirt) if (m.hp > 0) { m.hp = 0; m.el.animate([{ opacity: m.el.style.opacity }, { opacity: 0 }], { duration: 400, fill: 'forwards' }); }
+          next();
+        }
       } else if (kind === 'shower' && Math.abs(x - cx) < 260) {
         if (now - lastSpawn > 90) { lastSpawn = now; ctx.sfx('water'); ctx.burst(x - 20 + rand(-30, 30), y + 60, { n: 3, shapes: ['drop'], spread: 30, up: -160, size: 26, ms: 600 }); }
         foams = foams.filter((f) => {

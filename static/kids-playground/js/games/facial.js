@@ -101,12 +101,12 @@ export default {
       if (!washed || !last || !onFace(p)) return false;
       const q = rig.local(p), from = rig.local(last);
       if (Math.hypot(q.x - from.x, q.y - from.y) < 3) return false;
-      dirt.erase(q.x, q.y, 70, { strength: 0.35 });
+      dirt.erase(q.x, q.y, 80, { strength: 0.5 });
       if (Math.random() < 0.35) addFoam(q);
       blobs.forEach((b) => { b.style.opacity = Math.max(0, (+b.style.opacity || 1) - 0.02); });
       if ((tickle += Math.hypot(q.x - from.x, q.y - from.y)) > 900) { tickle = 0; rig.mood('giggle', 900); rig.react('giggle'); ctx.sfx('bubble'); }
       if (Math.random() < 0.08) { ctx.sfx('brush'); }
-      return dirt.measure() < dirt0 * 0.12;
+      return dirt.measure() < dirt0 * 0.25;       // clean enough: what is left goes with the rinse
     }, { size: 170, hint: [[A.cheekL[0], A.cheekL[1]], [A.cheekR[0], A.cheekR[1]], [A.forehead[0], A.forehead[1] + 40]] });
     blobs.forEach((b) => b.remove());
     dirt.clear();
@@ -183,9 +183,9 @@ export default {
     /* ---- 5. mix a mask in the bowl ---- */
     ctx.say('sl-spa-mix');
     const bx = 150, by = 640;
-    const bowl = ctx.add(el('div', { class: 'sl-bowl', html: `${prop('bowl')}<div class="sl-bowl-mix"></div>`, style: { left: `${bx - 120}px`, top: `${by - 100}px` } }));
+    const bowl = ctx.add(el('div', { class: 'sl-bowl', html: `${prop('bowl')}<div class="sl-bowl-mix"><b class="sl-bowl-swirl"></b></div>`, style: { left: `${bx - 120}px`, top: `${by - 100}px` } }));
     anim(bowl, 'in', 400);
-    const mixNode = bowl.querySelector('.sl-bowl-mix');
+    const mixNode = bowl.querySelector('.sl-bowl-mix'), swirl = mixNode.firstElementChild;
     const picked = [];
     let spoon = null;
     const inBowl = (p) => Math.hypot(p.x - bx, p.y - (by - 10)) < 130;
@@ -202,30 +202,35 @@ export default {
             ctx.after(300, () => {
               ctx.sfx('splash');
               spray(ctx, bx, by - 20, { n: 8, angle: 270, cone: 60, reach: 90, size: 16, color: col, shape: 'drop', fall: 70 });
-              mixNode.insertAdjacentHTML('beforeend', `<i style="--c:${col};left:${rand(20, 60)}%;top:${rand(25, 60)}%"></i>`);
+              swirl.insertAdjacentHTML('beforeend', `<i style="--c:${col};left:${rand(22, 58)}%;top:${rand(22, 58)}%"></i>`);
               mixNode.classList.add('on');
             });
             if (picked.length === 2) {
               ctx.say('sl-spa-stir');
               spoon = ctx.sprite(prop('spoon'), bx + 150, by - 120, 140, 120, 'sl-spoon');
               anim(spoon.el, 'in', 400);
-              let turn = 0, lastA = null;
+              let turn = 0, lastA = null, lastQ = null;
+              // the hand shows it: pick up the spoon, round and round in the bowl
+              const ring = Array.from({ length: 9 }, (_, i) => ({ x: bx + Math.cos(i * 0.8) * 70, y: by - 20 + Math.sin(i * 0.8) * 30 }));
+              const hint = pointer(ctx, [{ x: spoon.cx, y: spoon.cy }, ...ring], { ms: 2400 });
               ctx.drag(spoon, {
                 move: (s, q) => {
+                  hint();
                   const a = Math.atan2(q.y - by, q.x - bx);
                   if (lastA !== null && Math.hypot(q.x - bx, q.y - by) < 170) {
                     let d = a - lastA; if (d > Math.PI) d -= 2 * Math.PI; if (d < -Math.PI) d += 2 * Math.PI;
-                    turn += Math.abs(d);
-                    mixNode.style.transform = `rotate(${turn * 57}deg)`;
+                    // round and round, or back and forth: a child stirs either way
+                    turn += Math.max(Math.abs(d), Math.hypot(q.x - lastQ.x, q.y - lastQ.y) / 80);
+                    swirl.style.setProperty('--turn', `${turn * 57}deg`);
                     if (Math.random() < 0.1) ctx.sfx('brush');
                     const t = Math.min(1, turn / (Math.PI * 4));
                     mixNode.style.setProperty('--blend', t);
                     mixNode.style.background = mixCol(picked.map((k2) => FOOD.find((f) => f[0] === k2)[1]));
                     if (t >= 1 && !mixNode.done) { mixNode.done = true; mixNode.classList.add('done'); ctx.sfx('sparkle'); ctx.burst(bx, by - 30, { n: 10, spread: 120 }); done(); }
                   }
-                  lastA = a;
+                  lastA = a; lastQ = q;
                 },
-                end: () => { lastA = null; spoon.goHome(); },
+                end: () => { lastA = null; lastQ = null; spoon.goHome(); },
               });
             }
             refresh();

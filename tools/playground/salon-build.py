@@ -367,6 +367,14 @@ def bust():
     for p in sorted((RAW / 'hair').glob('*.png')):
         e = clean(load(f'hair/{p.name}'))
         hm = diff_mask(m0, e, thresh=30, keep=2000, grow=2, box=(0, 0, m0.shape[1], m0.shape[0]))
+        # a gap between curls that closes into a ring (wavy, beside her arm) is filled in as hair by the mask, but
+        # there the picture is still the master's pale backdrop: white, unchanged, it showed as a grey heart once tinted
+        rgb = e[..., :3]
+        pale = (rgb.min(-1) > 200) & (np.ptp(rgb, -1) < 40) & (np.abs(rgb - m0[..., :3]).max(-1) < 30) & (m0[..., 3] > 200)
+        lab, n = ndimage.label(ndimage.binary_opening(pale))
+        if n:
+            sizes = ndimage.sum(pale, lab, range(1, n + 1))
+            hm &= ~ndimage.binary_dilation(np.isin(lab, [i + 1 for i, s in enumerate(sizes) if s >= 40]), iterations=1)
         H[p.stem] = save(layer_from(e, hm, 1.2), f'hair-{p.stem}.webp')
     M['HAIR'] = H
 

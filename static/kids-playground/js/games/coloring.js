@@ -137,16 +137,21 @@ export default {
       const paper = ctx.add(el('div', { class: 'cl-paper', style: { left: `${cx - size / 2}px`, top: `${400 - size / 2 - 14}px`, width: `${size}px`, height: `${size}px` } }, svg));
       measureSmall(svg, pg.key);
       anim(paper, 'in', 350);
-      let color = COLORS[0], painted = new Set(), wand = false, won = false;
+      let color = COLORS[0], painted = new Set(), wand = false, rub = false, won = false;
       const total = +svg.dataset.total;
       const items = [...COLORS.map((col) => ({ key: col, color: col })),
         ...Object.keys(PATTERNS).map((k) => ({ key: `url(#pt-${k})`, html: `<svg viewBox="0 0 60 60"><defs>${PATTERNS[k]}</defs><circle cx="30" cy="30" r="30" fill="url(#pt-${k})"/></svg>`, cls: 'cl-pattern' }))];
-      const pal = tray(ctx, W - 162, 350, items, (item) => { color = item.key; wand = false; wandB.classList.remove('on'); ctx.sfx('tap'); }, { width: 296, cls: 'cl-palette' });
+      // a crayon colour, the magic wand (each shape its own colour) or the eraser: one is in the hand at a time
+      const hold = (what) => {
+        wand = what === 'wand'; rub = what === 'eraser';
+        wandB.classList.toggle('on', wand); rubB.classList.toggle('on', rub);
+        if (wand || rub) pal.clear(); else pal.select(color);
+      };
+      const pal = tray(ctx, W - 162, 350, items, (item) => { color = item.key; hold('crayon'); ctx.sfx('tap'); }, { width: 296, cls: 'cl-palette' });
       pal.select(color);
-      const wandB = ctx.button('star', W - 220, 712, 'yellow', '魔法棒', () => { wand = !wand; wandB.classList.toggle('on', wand); pal.clear(); if (!wand) pal.select(color); ctx.sfx('sparkle'); });
-      ctx.button('eraser', W - 110, 712, 'blue', '全部擦掉', () => {
-        svg.querySelectorAll('.zone, .zone-line').forEach((n) => n.setAttribute(n.dataset.kind, '#ffffff')); painted.clear(); ctx.sfx('water');
-      });
+      const wandB = ctx.button('star', W - 220, 712, 'yellow', '魔法棒', () => { hold(wand ? 'crayon' : 'wand'); ctx.sfx('sparkle'); });
+      // a real eraser: it rubs out the shape it touches, not the whole picture (one tap must not lose her work)
+      const rubB = ctx.button('eraser', W - 110, 712, 'blue', '橡皮擦', () => { hold(rub ? 'crayon' : 'eraser'); ctx.sfx('tap'); });
       ctx.button('back', 70, 716, '', '换一张', () => { paper.remove(); pal.el.remove(); ctx.stage.querySelectorAll('.stage-button').forEach((b) => b.remove()); choose(); });
       ctx.button('check', 180, 716, 'green', '画好了', () => finish());
 
@@ -162,6 +167,13 @@ export default {
       svg.addEventListener('click', (ev) => {
         const node = ev.target.closest('.zone, .zone-line');
         if (!node || won) return;
+        if (rub) {
+          if (!painted.has(node)) return;
+          node.setAttribute(node.dataset.kind, '#ffffff');
+          node.animate([{ opacity: 0.3 }, { opacity: 1 }], 250);
+          painted.delete(node); ctx.sfx('brush');
+          return;
+        }
         node.setAttribute(node.dataset.kind, wand ? node.dataset.real : color);
         node.animate([{ opacity: 0.3 }, { opacity: 1 }], 250);
         painted.add(node);

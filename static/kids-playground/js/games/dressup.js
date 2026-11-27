@@ -5,7 +5,7 @@ import { el, rand, pick } from '../core.js';
 import { BODY, PROPS, BG } from '../salon/manifest.js';
 import { Shelf, img, backdrop, doneButton } from '../salon/ui.js';
 import { prop, photo, SHELF_W } from '../salon/room.js';
-import { customer, look, saveLook } from '../salon/look.js';
+import { customer, look, saveLook, keepLook } from '../salon/look.js';
 import { Doll, WEAR } from '../salon/doll.js';
 import { ART } from '../salon/ui.js';
 
@@ -34,6 +34,9 @@ export default {
     await doll.ready;
     doll.head.blinking = true;
     let shelf = null, busy = false;
+    // what she has on is kept at once: tapping home by mistake must not undress her
+    const outfit = () => Object.fromEntries(Object.keys(WEAR).map((slot) => [slot, doll.worn[slot] || null]));
+    const remember = () => keepLook({ wear: outfit() });
 
     /** Fly a copy of the shelf item onto her, then put the thing on. */
     async function put(slot, key, from) {
@@ -54,6 +57,7 @@ export default {
         }
         ctx.sfx('whoosh');
         await doll.wear(slot, key);
+        remember();
         ctx.burst(target.x, target.y, { n: 9, spread: 190 });
         ctx.sfx('sparkle');
         doll.mood('surprise', 500);
@@ -75,6 +79,7 @@ export default {
     }
     function takeOff(slot) {
       doll.off(slot);
+      remember();
       ctx.sfx('drop');
       doll.mood('surprise', 400);
       if (shelf.tab === slot) shelf.select(null);
@@ -109,6 +114,7 @@ export default {
       Object.assign(next, { shoes: pick(WEAR.shoes), hat: pickOr('hat', 0.5), glasses: pickOr('glasses', 0.3), hand: pickOr('hand', 0.5), back: pickOr('back', 0.3) });
       for (const s of Object.keys(doll.worn)) doll.off(s, true);
       for (const [s, k] of Object.entries(next)) if (k) await doll.wear(s, k, true);
+      remember();
       busy = false;
       ctx.sfx('sparkle');
       doll.spin();
@@ -123,7 +129,7 @@ export default {
       done = true;
       tickBtn.remove();
       dice.remove();
-      saveLook('dressup', { wear: Object.fromEntries(Object.keys(WEAR).map((slot) => [slot, doll.worn[slot] || null])) });
+      saveLook('dressup', { wear: outfit() });
       shelf.hide();
       ctx.say('sl-du-dance');
       // a little dance: hop, twirl, hop, with hearts
@@ -132,7 +138,7 @@ export default {
       await doll.react('hop');
       await doll.spin();
       await doll.react('hop');
-      await photo(ctx, { node: doll.node, mood: (m) => doll.mood(m), react: (k) => doll.react(k) });
+      await photo(ctx, { node: doll.node, mood: (m) => doll.mood(m), react: (k) => doll.react(k) }, { fit: true });
       ctx.win({ delay: 300 });
     });
 

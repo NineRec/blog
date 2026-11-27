@@ -171,6 +171,17 @@ export async function photo(ctx, rig, o = {}) {
   await ctx.sleep(380);
   flash.remove();
   let box = o.box;
+  if (!box && o.fit) {
+    // round everything she has on, hat to shoes, umbrella and wings too
+    const rs = [...rig.node.querySelectorAll('img, canvas')].filter((n) => n.offsetParent && getComputedStyle(n).visibility !== 'hidden')
+      .map((n) => n.getBoundingClientRect()).filter((r) => r.width && r.height);
+    if (rs.length) {
+      const p = ctx.point({ clientX: Math.min(...rs.map((r) => r.left)), clientY: Math.min(...rs.map((r) => r.top)) });
+      const q = ctx.point({ clientX: Math.max(...rs.map((r) => r.right)), clientY: Math.max(...rs.map((r) => r.bottom)) });
+      const x0 = Math.max(26, p.x - 6), y0 = Math.max(26, p.y - 6), x1 = Math.min(ctx.W - SHELF_W - 30, q.x + 6), y1 = Math.min(ctx.H - 26, q.y + 6);
+      box = { x: x0, y: y0, w: x1 - x0, h: y1 - y0 };
+    }
+  }
   if (!box) {
     const r = rig.node.getBoundingClientRect(), p = ctx.point({ clientX: r.left, clientY: r.top }), q = ctx.point({ clientX: r.right, clientY: r.bottom });
     const x0 = Math.max(8, p.x), y0 = Math.max(8, p.y), x1 = Math.min(ctx.W - SHELF_W - 30, q.x), y1 = Math.min(ctx.H - 8, q.y);

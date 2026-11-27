@@ -381,9 +381,10 @@ export default {
           if (oil[n.i] && !oil[n.i].fading) { oil[n.i].fading = true; anim(oil[n.i], 'out', 400, { fill: 'forwards' }); }
           if (!layer.wet) return;
           const q = rig.local(p), c = col === 'rainbow' ? RAINBOW[Math.floor(Math.max(0, Math.min(0.99, (q.y - n.y) / n.h)) * 6)] : Array.isArray(col) ? col[1] : col;
-          const cover = layer.dab(q.x, q.y, 24, c, { soft: 0.2, from: ghost.last && nailIn(ghost.last) === n ? rig.local(ghost.last) : null });
+          const cover = layer.dab(q.x, q.y, 32, c, { soft: 0.2, from: ghost.last && nailIn(ghost.last) === n ? rig.local(ghost.last) : null });
           if (Math.random() < 0.1) ctx.sfx('brush');
-          if (cover > 0.85) { layer.wet = false; coat(n.i, k); ctx.sfx('sparkle'); const s = rig.stage(n.c[0], n.c[1]); ctx.burst(s.x, s.y, { n: 6, spread: 60 }); }
+          // two or three strokes paint a nail (a small hand should not need ten): then the whole nail is coated
+          if (cover > 0.6) { layer.wet = false; coat(n.i, k); ctx.sfx('sparkle'); const s = rig.stage(n.c[0], n.c[1]); ctx.burst(s.x, s.y, { n: 6, spread: 60 }); }
         },
       }),
       stickers: () => tools(STICKERS.map((k) => ({ key: k, art: prop(k) })), { size: 70, drop: (k, p) => stick(k, p, 0.45) }),

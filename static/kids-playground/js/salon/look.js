@@ -29,9 +29,14 @@ export function look() {
 }
 /** A room is finished: keep what it changed (a shallow merge per part). */
 export function saveLook(zone, patch = {}) {
+  keepLook(patch);
+  look().done = { ...look().done, [zone]: true };
+  try { store.save(); } catch { /* storage full: the look lives on until the page closes */ }
+}
+/** Keep a change as it happens, before the room is finished (clothes stay on if she leaves the room and comes back). */
+export function keepLook(patch = {}) {
   const l = look();
   for (const [k, v] of Object.entries(patch)) l[k] = v && typeof v === 'object' && !Array.isArray(v) ? { ...(l[k] || {}), ...v } : v;
-  l.done = { ...l.done, [zone]: true };
   try { store.save(); } catch { /* storage full: the look lives on until the page closes */ }
 }
 /** What each room changes on her: playing a room again starts that part over. */

@@ -562,7 +562,9 @@ svg.salon-svg { position: absolute; left: 0; top: 0; display: block; overflow: v
 .sl-bowl > img { width: 100%; height: 100%; object-fit: contain; }
 .sl-bowl-mix { position: absolute; left: 16%; top: 14%; width: 68%; height: 30%; border-radius: 50%; overflow: hidden; opacity: 0; transition: opacity .3s, background .4s; }
 .sl-bowl-mix.on { opacity: 1; }
-.sl-bowl-mix i { position: absolute; width: 46%; height: 70%; margin: -20% 0 0 -20%; border-radius: 50%; background: var(--c); opacity: calc(1 - var(--blend, 0)); transition: opacity .3s; }
+/* the fruit turns round in the bowl: a square spun flat (seen from the side), clipped by the cream's oval */
+.sl-bowl-swirl { position: absolute; left: 0; top: 50%; width: 100%; aspect-ratio: 1; transform: translateY(-50%) scaleY(.37) rotate(var(--turn, 0deg)); }
+.sl-bowl-mix i { position: absolute; width: 46%; height: 46%; margin: -23% 0 0 -23%; border-radius: 50%; background: var(--c); opacity: calc(1 - var(--blend, 0)); transition: opacity .3s; }
 .sl-bowl-mix.done { box-shadow: inset 0 -6px 0 rgba(0, 0, 0, .08), inset 10px 6px 0 rgba(255, 255, 255, .45); }
 .sl-spoon { z-index: 560; }
 .sl-spoon img { width: 100%; height: 100%; object-fit: contain; }
@@ -654,3 +656,5 @@ svg.salon-svg { position: absolute; left: 0; top: 0; display: block; overflow: v
 .sl-drawn-ring img { position: absolute; height: auto; clip-path: inset(0 0 58% 0); filter: drop-shadow(0 2px 2px rgba(0, 0, 0, .25)); }
 .sl-drawn-bracelet { position: absolute; transform-origin: 50% 50%; }
 .sl-drawn-bracelet img { width: 100%; height: 100%; object-fit: contain; transform: scaleY(.36); -webkit-mask-image: linear-gradient(to bottom, transparent 47%, #000 53%); mask-image: linear-gradient(to bottom, transparent 47%, #000 53%); filter: drop-shadow(0 4px 3px rgba(0, 0, 0, .25)); }
+/* mascara is drawn for open eyes: shut, smiling or squinting, the lashes would hang in the air */
+[data-eyes="shut"] .sl-lashes, [data-eyes="happy"] .sl-lashes, [data-eyes="squint"] .sl-lashes { visibility: hidden; }

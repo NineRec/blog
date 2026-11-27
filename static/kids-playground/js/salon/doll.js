@@ -151,11 +151,22 @@ export class Doll {
   /** Which slot's clothes are under a stage point (topmost first), or null. */
   slotAt(p) {
     const order = ['hand', 'glasses', 'hat', 'dress', 'top', 'bottom', 'shoes', 'back'];
+    const hit = (n) => {
+      const r = n.getBoundingClientRect(), a = this.ctx.point({ clientX: r.left, clientY: r.top }), b = this.ctx.point({ clientX: r.right, clientY: r.bottom });
+      return p.x > a.x && p.x < b.x && p.y > a.y && p.y < b.y && opaqueAt(n, (p.x - a.x) / (b.x - a.x), (p.y - a.y) / (b.y - a.y));
+    };
     for (const slot of order) {
-      for (const n of this.nodes[slot] ? parts(this.nodes[slot]) : []) {
-        const r = n.getBoundingClientRect(), a = this.ctx.point({ clientX: r.left, clientY: r.top }), b = this.ctx.point({ clientX: r.right, clientY: r.bottom });
-        if (p.x > a.x && p.x < b.x && p.y > a.y && p.y < b.y && opaqueAt(n, (p.x - a.x) / (b.x - a.x), (p.y - a.y) / (b.y - a.y))) return slot;
-      }
+      const n = this.nodes[slot];
+      if (n && [n, n.front].filter(Boolean).some(hit)) return slot;
+    }
+    // a part drawn behind her (an umbrella's canopy behind her head) counts only where she does not cover it: a
+    // tap on her face or on a hat under the umbrella is not a tap on the umbrella
+    const neck = this.body.stage(NECK.body.x, NECK.body.cut).y;     // above it, the body picture's own head is cut away
+    const her = [p.y > neck && this.body.slots.base.firstElementChild, this.head?.slots.base.firstElementChild,
+      ...(this.head ? [...this.head.slots.hair.children, ...this.head.slots.back.children] : [])].filter((n) => n && (n.tagName === 'IMG' || n.tagName === 'CANVAS'));
+    for (const slot of order) {
+      const n = this.nodes[slot]?.behind;
+      if (n && hit(n) && !her.some(hit)) return slot;
     }
     return null;
   }
