@@ -4,7 +4,7 @@
 import { el, anim, icon, roundButton } from '../core.js';
 import { say, sfx, unlock } from '../audio.js';
 import { confetti, burst } from '../fx.js';
-import { BG, PROPS } from './manifest.js';
+import { BG, BODY, PROPS } from './manifest.js';
 import { ART, img } from './ui.js';
 import { Doll } from './doll.js';
 import { customer, look, resetLook, CUSTOMERS, whoIndex, setWho, lookOf } from './look.js';
@@ -31,9 +31,11 @@ export function shim(holder) {
 
 /** Draw the customer, head to toe, filling a box (w × h px) inside `holder`. Resolves to the Doll. */
 export async function dollIn(holder, w, h, o = {}) {
-  const ctx = shim(holder);
-  const height = h * (o.fill ?? 0.97);
-  const doll = new Doll(ctx, { parent: holder, cx: w / 2, bottom: h - (o.foot ?? 0), height }, o.who || customer(), o.look || look());
+  const ctx = shim(holder), l = o.look || look();
+  // an umbrella's canopy rises above the body picture: she is drawn smaller so it still fits in the frame
+  const H = BODY.size[1], rise = Math.max(0, -(BODY.hold?.[l.wear?.hand]?.behind?.y ?? 0));
+  const height = h * (o.fill ?? 0.97) * H / (H + rise);
+  const doll = new Doll(ctx, { parent: holder, cx: w / 2, bottom: h - (o.foot ?? 0), height }, o.who || customer(), l);
   await doll.ready;
   doll.head.blinking = o.blink !== false;
   return doll;

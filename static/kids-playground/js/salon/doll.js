@@ -76,7 +76,7 @@ export class Doll {
     if (slot === 'dress') { this.off('top', true); this.off('bottom', true); }
     if (slot === 'top' || slot === 'bottom') this.off('dress', true);
     let node;
-    const hat = slot === 'hat' && BUST.hats?.[key], hold = slot === 'hand' && BODY.hold?.[key];
+    const hat = slot === 'hat' && BUST.hats?.[key], hold = slot === 'hand' && BODY.hold?.[key], specs = slot === 'glasses' && BUST.glasses?.[key];
     if (BODY.wear?.[key]) {
       node = await this.body.layer(slot, BODY.wear[key], `sl-wear sl-wear-${slot}`);
       // a cape is the whole cape behind her plus the part over her shoulders (its knot), above her clothes
@@ -90,7 +90,12 @@ export class Doll {
     } else if (hold) {
       // drawn in her hand, fingers closed round it; the open hand of the body picture is hidden
       node = await this.body.layer('hand', hold, `sl-wear sl-wear-${slot}`);
+      // a long thing (an umbrella) is whole behind her, only the fist in front: her head hides the canopy's edge
+      if (hold.behind) node.behind = await this.body.layer('held', hold.behind, `sl-wear sl-wear-${slot}-behind`);
       this.mask(this.body, ['base'], hold.keep, 'hand');
+    } else if (specs) {
+      // drawn as worn (goggles: no strap over the top, see-through lenses round her eyes)
+      node = await this.head.layer('top', { ...specs, skin: false }, `sl-wear sl-wear-${slot}`);
     } else {
       const p = PLACE[slot](key), rig = p.rig === 'head' ? this.head : this.body;
       node = placeOn(rig, p.slot, { key, x: p.x, y: p.y, s: 1, r: p.r || 0 }, p.w);
@@ -101,7 +106,7 @@ export class Doll {
     node.dataset.key = key;
     this.worn[slot] = key;
     this.nodes[slot] = node;
-    if (!quiet) { anim(node, 'squash', 420); if (node.front) anim(node.front, 'squash', 420); }
+    if (!quiet) for (const n of parts(node)) anim(n, 'squash', 420);
     return node;
   }
   /**
@@ -138,7 +143,7 @@ export class Doll {
     delete this.worn[slot];
     delete this.nodes[slot];
     if (!node) return;
-    for (const n of [node, node.front].filter(Boolean)) {
+    for (const n of parts(node)) {
       if (quiet) n.remove();
       else anim(n, 'out', 220, { fill: 'forwards' }).then(() => n.remove());
     }
@@ -147,10 +152,10 @@ export class Doll {
   slotAt(p) {
     const order = ['hand', 'glasses', 'hat', 'dress', 'top', 'bottom', 'shoes', 'back'];
     for (const slot of order) {
-      const n = this.nodes[slot];
-      if (!n) continue;
-      const r = n.getBoundingClientRect(), a = this.ctx.point({ clientX: r.left, clientY: r.top }), b = this.ctx.point({ clientX: r.right, clientY: r.bottom });
-      if (p.x > a.x && p.x < b.x && p.y > a.y && p.y < b.y && opaqueAt(n, (p.x - a.x) / (b.x - a.x), (p.y - a.y) / (b.y - a.y))) return slot;
+      for (const n of this.nodes[slot] ? parts(this.nodes[slot]) : []) {
+        const r = n.getBoundingClientRect(), a = this.ctx.point({ clientX: r.left, clientY: r.top }), b = this.ctx.point({ clientX: r.right, clientY: r.bottom });
+        if (p.x > a.x && p.x < b.x && p.y > a.y && p.y < b.y && opaqueAt(n, (p.x - a.x) / (b.x - a.x), (p.y - a.y) / (b.y - a.y))) return slot;
+      }
     }
     return null;
   }
@@ -165,6 +170,9 @@ export class Doll {
   /** A spin: she twirls round once (squeezes thin and back). */
   spin() { return this.body.pose.animate([{ transform: 'scaleX(1)' }, { transform: 'scaleX(-1)' }, { transform: 'scaleX(1)' }], { duration: 700, easing: 'ease-in-out' }).finished.catch(() => {}); }
 }
+
+/** A worn thing's layers: itself, and the part over her (a cape's knot) or behind her (an umbrella). */
+const parts = (node) => [node, node.front, node.behind].filter(Boolean);
 
 /** Is the picture solid at (u, v) (0..1 across it)? Clothes are tapped only where they are drawn. */
 const probe = document.createElement('canvas').getContext('2d', { willReadFrequently: true });

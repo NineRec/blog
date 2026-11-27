@@ -801,7 +801,7 @@ def body():
             wear[p.stem]['keep'] = keep
 
 
-    holds = {}
+    holds, shelf = {}, sheet_pieces('handheld')
     for p in sorted((RAW / 'worn').glob('hold-*.png')) if (RAW / 'worn').exists() else []:
         e = clean(load(f'worn/{p.name}'))
         m = no_threads(diff_mask(b, e, keep=600, grow=2))
@@ -819,7 +819,13 @@ def body():
         if n:
             sizes = ndimage.sum(L[..., 3] > 6, lab, range(1, n + 1))
             L[..., 3] *= np.isin(lab, [i + 1 for i, v in enumerate(sizes) if v >= 400])
+        behind = None
+        if p.stem in HELD_WHOLE and p.stem in shelf:
+            behind, L, lift = held_whole(shelf[p.stem], L, HELD_WHOLE[p.stem])
         spec = save(L, f'worn-{p.stem}.webp')
+        if behind is not None:
+            spec['behind'] = save(behind, f'worn-{p.stem}-behind.webp')
+            spec['behind']['y'] -= lift
         # where her open hand was and is no longer (fingers now curled, the tips well below the fist): hidden
         keep = body_keep(b, e, m, f'worn-{p.stem}', reach=110, min_px=150)
         if keep:
@@ -827,6 +833,207 @@ def body():
         holds[p.stem] = spec
     if holds:
         M['BODY']['hold'] = holds
+
+
+def hsv(a):
+    """Hue, saturation and value (0..1) of a picture's colours."""
+    rgb = a[..., :3] / 255
+    mx, mn = rgb.max(-1), rgb.min(-1)
+    c = mx - mn
+    r, g, bl = rgb[..., 0], rgb[..., 1], rgb[..., 2]
+    cc = np.maximum(c, 1e-6)
+    h = np.where(mx == r, ((g - bl) / cc) % 6, np.where(mx == g, (bl - r) / cc + 2, (r - g) / cc + 4)) / 6
+    return np.where(c > 1e-6, h, 0), c / np.maximum(mx, 1e-6), mx
+
+
+def recolour(a, m, hue, sat_k=1.0):
+    """The pixels `m` of `a` in another hue (shading kept: value as it was, saturation times sat_k)."""
+    _, s, v = hsv(a)
+    s = np.clip(s * sat_k, 0, 1)
+    h6 = hue * 6
+    i, f = np.floor(h6) % 6, h6 - np.floor(h6)
+    p, q, t = v * (1 - s), v * (1 - s * f), v * (1 - s * (1 - f))
+    rgb = np.select([i[..., None] == k for k in range(6)],
+                    [np.dstack(x) for x in ((v, t, p), (q, v, p), (p, v, t), (p, q, v), (t, p, v), (v, p, q))])
+    out = a.copy()
+    out[..., :3] = np.where(m[..., None], rgb * 255, a[..., :3])
+    return out
+
+
+def rotated_onto(up, axis, top, end, shape):
+    """
+    The upright picture `up` (its axis the column `axis`, its top at row 0) turned and moved so that the axis runs
+    from `top` towards `end` (body points), on a canvas of `shape` (premultiplied, so no dark fringe).
+    """
+    d = np.subtract(end, top).astype(float)
+    dx, dy = d / np.hypot(*d)
+    tx, ty = top
+    im = Image.fromarray(np.clip(up, 0, 255).astype(np.uint8), 'RGBA').convert('RGBa')
+    coeffs = (dy, -dx, axis - dy * tx + dx * ty, dx, dy, -dx * tx - dy * ty)
+    out = im.transform((shape[1], shape[0]), Image.AFFINE, coeffs, resample=Image.BICUBIC).convert('RGBA')
+    return np.asarray(out).astype(np.float32)
+
+
+# Long things held up (an umbrella over her shoulder) are drawn whole from the shelf picture, behind her (like wings:
+# her head and hair hide the canopy's edge, so there is no gap whatever her hair), with only her fist from the edit in
+# front. The edit's own umbrella was drawn round the master's big bald head, so on the real head it stood off to the
+# side, its shaft bent. canopy: where its top sits (centre x, top y) and how wide it is, in body units; stick: the
+# scale of the shaft and hook (the canopy is far bigger than on the shelf, the stick about as thick as her fist holds).
+HELD_WHOLE = {'hold-umbrella': {'canopy': (600, -170, 860), 'stick': 0.95}}
+
+
+def held_whole(piece, L, spec):
+    """
+    (back, fist, lift): the shelf umbrella upright, its short shaft made long and straight (and the shelf's lavender shaft
+    pink like its hook), turned so it runs from the canopy spot down through her fist; and the fist alone (`L` is
+    the edit's layer: fist and umbrella). `back` starts `lift` rows above the body picture (the canopy rises over it).
+    """
+    H, W = L.shape[:2]
+    h, s, v = hsv(L)
+    pink = (L[..., 3] > 6) & ((h > 0.8) | (h < 0.015)) & (s > 0.15)
+    fist = (L[..., 3] > 6) & ~pink
+    lab, n = ndimage.label(fist, structure=np.ones((3, 3)))
+    sizes = ndimage.sum(fist, lab, range(1, n + 1))
+    fist = lab == int(np.argmax(sizes)) + 1
+    front = L.copy()
+    front[..., 3] *= ndimage.gaussian_filter(ndimage.binary_dilation(fist, iterations=1).astype(np.float32), 0.7)
+    ys, xs = np.nonzero(fist)
+    f_top, f_bot = ys.min(), ys.max()
+    # where the shaft goes into her fist (the edit's shaft just above it)
+    band = pink[max(0, f_top - 30):f_top - 4]
+    bx = np.nonzero(band.any(0))[0]
+    grip = (float((bx.min() + bx.max()) / 2) if len(bx) else float(xs.mean()), float(f_top))
+
+    # the shelf umbrella: canopy rows, a plain run of shaft, then collar and hook
+    piece = np.asarray(piece, np.float32)
+    a = piece[..., 3] > 128
+    widths = a.sum(1)
+    y = int(np.argmax(widths))                      # the canopy's widest row; the shaft is the narrow run below it
+    while widths[y] >= 0.1 * widths.max():
+        y += 1
+    s0 = y
+    while abs(int(widths[y + 1]) - int(widths[s0 + 2])) <= 3:
+        y += 1
+    s0, s1 = s0 + 4, y - 4                          # the plain shaft (below the canopy, above the collar)
+    cols = np.nonzero(a[(s0 + s1) // 2])[0]
+    axis = (cols.min() + cols.max()) / 2
+    ph, ps, _ = hsv(piece)
+    hook_hue = float(np.median(ph[s1 + 8:][(piece[s1 + 8:, :, 3] > 200) & (ps[s1 + 8:] > 0.3)]))
+    lav = (piece[..., 3] > 6) & (ph > 0.6) & (ph < 0.85)
+    piece = recolour(piece, lav, hook_hue, sat_k=1.8)
+
+    cx, cy, cw = spec['canopy']
+    kc, ks = cw / a.any(0).sum(), spec.get('stick', 1.0)    # canopy and stick have scales of their own
+    top = (cx, cy)
+    # the collar sits just under her fist, on the line from the canopy through the grip
+    d = np.subtract(grip, top); d = d / np.hypot(*d)
+    end = np.add(grip, d * (f_bot - grip[1] - 6) / d[1])
+    length = np.hypot(*np.subtract(end, top))            # body units, top to collar
+
+    def scaled(x, k):
+        return np.asarray(Image.fromarray(np.clip(x, 0, 255).astype(np.uint8), 'RGBA').convert('RGBa').resize(
+            (max(1, round(x.shape[1] * k)), max(1, round(x.shape[0] * k))), Image.LANCZOS).convert('RGBA')).astype(np.float32)
+
+    # the canopy, without the bit of shaft under it (the stick is drawn again, thinner, behind it)
+    ax = int(round(axis))
+    emerge = next(y for y in range(s0, 0, -1) if not lav[y, ax])     # where the shaft comes out under the canopy
+    half = (cols.max() - cols.min()) / 2 + 3
+    canopy = piece[:s0].copy()
+    xx = np.arange(piece.shape[1])
+    canopy[emerge + 1:, np.abs(xx - axis) <= half, 3] = 0
+    C = scaled(canopy, kc)
+    stick_row = scaled(piece[s1:s1 + 1, cols.min() - 2:cols.max() + 3], ks)
+    hook = scaled(piece[s1:], ks)
+    # the upright umbrella: axis at column X, top at row 0, collar at row `length`
+    X = max(axis * kc, (axis - cols.min() + 2) * ks, axis * ks) + 2
+    Wd = int(X + max(C.shape[1] - axis * kc, hook.shape[1] - axis * ks) + 4)
+    Ht = int(length + hook.shape[0] + 2)
+    up = np.zeros((Ht, Wd, 4), np.float32)
+
+    def put(pic, x0, y0):
+        x0, y0 = int(round(x0)), int(round(y0))
+        h, w = pic.shape[:2]
+        h, w = min(h, Ht - y0), min(w, Wd - x0)
+        dst = up[y0:y0 + h, x0:x0 + w]
+        src = pic[:h, :w]
+        al = src[..., 3:] / 255
+        dst[..., :3] = src[..., :3] * al + dst[..., :3] * (1 - al)
+        dst[..., 3:] = src[..., 3:] + dst[..., 3:] * (1 - al)
+
+    y0 = emerge * kc * 0.8                                     # the stick starts well inside the canopy
+    stick = np.repeat(stick_row, int(length - y0) + 2, 0)
+    put(stick, X - (axis - cols.min() + 2) * ks, y0)
+    put(hook, X - axis * ks, length)
+    put(C, X - axis * kc, 0)
+    lift = max(0, int(-cy) + 40)                               # room above the body picture for the canopy
+    back = rotated_onto(up, X, (cx, cy + lift), (end[0], end[1] + lift), (H + lift, W + 300))     # and beside it
+    lean = np.degrees(np.arctan2(end[0] - top[0], end[1] - top[1]))
+    print(f'   whole held item: canopy x{kc:.2f}, stick x{ks:.2f}, {length:.0f} units long, lean {lean:.1f}°')
+    return back, front, lift
+
+
+def worn_goggles(g, anchors):
+    """
+    Swimming goggles as worn: the shelf picture without the strap arching over the top (worn, it goes round her
+    head, behind her hair), the lenses see-through (her eyes show), stretched a little taller and centred on her eyes.
+    Returns the picture (bust units) or None.
+    """
+    h, s, v = hsv(g)
+    A = g[..., 3]
+    solid = A > 128
+    glass = solid & (v > 0.8) & (s < 0.45)
+    lab, n = ndimage.label(glass)
+    if n < 2:
+        return None
+    sizes = ndimage.sum(glass, lab, range(1, n + 1))
+    lenses = sorted([bbox(lab == i + 1) for i in np.argsort(sizes)[::-1][:2]], key=lambda b: b[0])
+    teal = solid & (h > 0.4) & (h < 0.52) & (s > 0.3)
+    yy, xx = np.mgrid[:g.shape[0], :g.shape[1]]
+    keep = ndimage.binary_dilation(teal, iterations=3)
+    for x0, y0, x1, y1 in lenses:
+        # the frame: from the glass up to the gap under the arch
+        c = (x0 + x1) // 2
+        t = 0
+        while y0 - t - 1 > 0 and A[y0 - t - 1, c] > 60:
+            t += 1
+        t += 1
+        ex, ey, rx, ry = (x0 + x1) / 2, (y0 + y1) / 2, (x1 - x0) / 2 + t, (y1 - y0) / 2 + t
+        keep |= ((xx - ex) / rx) ** 2 + ((yy - ey) / ry) ** 2 <= 1
+        inner = ((xx - ex) / ((x1 - x0) / 2 + 1)) ** 2 + ((yy - ey) / ((y1 - y0) / 2 + 1)) ** 2 <= 1
+        # see-through glass; its white glints stay
+        shine = np.clip((0.3 - s) / 0.2, 0, 1) * np.clip((v - 0.9) / 0.08, 0, 1)
+        clear = ndimage.gaussian_filter((inner & glass).astype(np.float32), 0.8)
+        A = A * (1 - clear * (1 - (0.38 + 0.62 * shine)))
+    (lx0, ly0, lx1, ly1), (rx0, ry0, rx1, ry1) = lenses
+    mid = (ly0 + ly1) / 2
+    keep |= (xx > lx1 - 4) & (xx < rx0 + 4) & (np.abs(yy - mid) < (ly1 - ly0) * 0.3)      # the bridge
+    out = g.copy()
+    out[..., 3] = A * ndimage.gaussian_filter(keep.astype(np.float32), 0.6)
+    # on her: lens centres on her eyes, a little taller than the shelf picture so the frames go round them
+    (ex0, ey), (ex1, _) = anchors['eyeL'], anchors['eyeR']
+    gl, gr = ((lx0 + lx1) / 2, (ly0 + ly1) / 2), ((rx0 + rx1) / 2, (ry0 + ry1) / 2)
+    sx = (ex1 - ex0) / (gr[0] - gl[0])
+    sy = sx * 1.3
+    w, hh = round(g.shape[1] * sx), round(g.shape[0] * sy)
+    im = Image.fromarray(np.clip(out, 0, 255).astype(np.uint8), 'RGBA').convert('RGBa').resize((w, hh), Image.LANCZOS).convert('RGBA')
+    x, y = round(ex0 - gl[0] * sx), round(ey - 6 - gl[1] * sy)
+    return np.asarray(im).astype(np.float32), x, y
+
+
+def glasses_worn():
+    """BUST.glasses: glasses with a worn picture of their own (the goggles), in bust units."""
+    if 'BUST' not in M:
+        return
+    pieces = sheet_pieces('hats')
+    if 'gl-goggles' not in pieces:
+        return
+    got = worn_goggles(pieces['gl-goggles'], M['BUST']['anchors'])
+    if got is None:
+        return
+    pic, x, y = got
+    spec = save(pic, 'worn-gl-goggles.webp')
+    spec['x'] += x; spec['y'] += y
+    M['BUST']['glasses'] = {'gl-goggles': spec}
 
 
 def strings(b, e, m):
@@ -967,7 +1174,7 @@ def review(limit=150):
 
 
 if __name__ == '__main__':
-    bust(); hand(); body(); sheets(); local_props(); backgrounds()
+    bust(); hand(); body(); sheets(); local_props(); glasses_worn(); backgrounds()
     if '--no-review' not in sys.argv:
         review()
     js = '// Generated by tools/playground/salon-build.py — do not edit by hand.\n// Every layer: its file and the box it covers in its master picture.\n'
