@@ -426,6 +426,41 @@ def width_at(alpha, p, u):
     return run(1) + run(-1)
 
 
+def midline(alpha, p, u):
+    """The middle of the finger across p (p moved sideways onto it)."""
+    v = np.array([-u[1], u[0]])
+    def run(sign):
+        for t in range(1, 400):
+            x, y = (p + sign * t * v).round().astype(int)
+            if not (0 <= y < alpha.shape[0] and 0 <= x < alpha.shape[1]) or alpha[y, x] < 128:
+                return t
+        return 400
+    return p + v * (run(1) - run(-1)) / 2
+
+
+def local_axis(alpha, p, u, reach=36):
+    """A finger's direction where p is, from the middles of the finger a little above and below it (a thumb bends)."""
+    for _ in range(2):
+        a, b = midline(alpha, p - u * reach, u), midline(alpha, p + u * reach, u)
+        u = (b - a) / np.linalg.norm(b - a)
+    return u, midline(alpha, p, u)
+
+
+def band(m, alpha, u):
+    """
+    Where a ring drawn on the middle finger sits: `at`, the middle of its band (between the band's two ends, so a
+    big jewel does not move the ring up the finger), and `w0`, how wide the finger is there.
+    """
+    v = np.array([-u[1], u[0]])
+    ys, xs = np.nonzero(m)
+    pts = np.stack([xs, ys], 1).astype(float)
+    across = pts @ v
+    lo, hi = across.min(), across.max()
+    ends = [pts[across < lo + 6].mean(0), pts[across > hi - 6].mean(0)]
+    at = (ends[0] + ends[1]) / 2
+    return {'at': [round(float(at[0])), round(float(at[1]))], 'w0': width_at(alpha, at, u), 'span': round(float(hi - lo))}
+
+
 def worn_jewelry(h, D, nails):
     """Rings drawn worn on the middle finger, and where a ring sits on every finger; bracelets worn on the wrist."""
     alpha = h[..., 3]
@@ -445,25 +480,44 @@ def worn_jewelry(h, D, nails):
         if not m.any():
             continue
         L, m = extract(e, m, solo=True)
+        # Only the ring: where the edit still shows her finger as it was (the skin and outline around the band,
+        # which the grown, feathered diff takes along) it goes, softly, so the band ends crisp at her outline
+        # instead of trailing a blur of finger past it.
+        d = np.abs(e[..., :3] - h[..., :3]).max(-1)
+        L[..., 3] *= np.clip((d - 14) / 26, 0, 1)
+        L[..., 3] *= ndimage.binary_dilation(extract(L, L[..., 3] > 40, solo=True)[1], iterations=2)
+        # Seen from above, a band goes round the sides of the finger out of sight: whatever the edit drew past her
+        # finger's outline (bands are drawn a little wide, the rainbow's straight one most) is cut there, softly,
+        # so every band ends on the outline and fits any finger once scaled to its width.
+        # (only her finger's own: a ring drawn low reaches over the next fingers, which are opaque too)
+        g = geo[mid]
+        ga, gc = local_axis(alpha, np.array(centre(m), float), g['u'])
+        gv, half = np.array([-ga[1], ga[0]]), width_at(alpha, gc, ga) / 2 + 3
+        yy, xx = np.mgrid[:alpha.shape[0], :alpha.shape[1]]
+        own = np.abs((xx - gc[0]) * gv[0] + (yy - gc[1]) * gv[1]) <= half
+        on = ndimage.gaussian_filter((ndimage.binary_dilation(alpha > 128, iterations=2) & own).astype(np.float32), 1.0)
+        L[..., 3] *= on
+        m = L[..., 3] > 40
         rings[p.stem] = save(L, f'worn-{p.stem}.webp')
-        rings[p.stem]['at'] = centre(m)
-        at = at or centre(m)
+        rings[p.stem].update(band(m, alpha, ga))
+        at = at or rings[p.stem]['at']
     g = geo[mid]
-    # without ring pictures, a ring sits a little over two nail lengths below the middle fingertip
-    L = float((np.array(at) - g['c']) @ g['u']) if at else 2.2 * g['len']
-    w0 = width_at(alpha, np.array(at, float) if at else g['c'] + g['u'] * L, g['u'])
-    if True:
-        D['fingers'] = []
-        for i, f in enumerate(geo):
-            # down the finger, but not past where it widens into the palm (or touches the next finger)
-            wn = width_at(alpha, f['c'] + f['u'] * f['len'] * 0.9, f['u'])
-            t, stop = f['len'] * 0.9, L * (f['len'] / g['len']) ** 0.6
-            while t < stop and width_at(alpha, f['c'] + f['u'] * t, f['u']) < wn * 1.35:
-                t += 4
-            r = f['c'] + f['u'] * max(f['len'] * 1.1, min(stop, t - 64))
-            D['fingers'].append({'c': [round(v) for v in f['c']], 'u': [round(float(v), 4) for v in f['u']], 'ring': [round(float(v)) for v in r],
-                                 'w': width_at(alpha, r, f['u']), 'w0': w0, 'ang': round(float(np.degrees(np.arctan2(f['u'][1], f['u'][0]) - np.arctan2(g['u'][1], g['u'][0]))), 2)})
-        D['rings'] = rings
+    gu = local_axis(alpha, np.array(at, float), g['u'])[0] if at else g['u']     # the middle finger where rings were drawn
+    w0 = width_at(alpha, np.array(at, float) if at else g['c'] + g['u'] * 2.2 * g['len'], g['u'])
+    D['fingers'] = []
+    for i, f in enumerate(geo):
+        # A ring is worn low, on the finger's first segment just above where it joins the hand: the web is where
+        # the finger suddenly widens (it meets the palm or the next finger), and the band sits ~0.4 of a finger's
+        # width above it, so the whole band, ends and all, is on the finger.
+        wn = width_at(alpha, f['c'] + f['u'] * f['len'] * 0.9, f['u'])
+        web = next((t for t in range(int(f['len'] * 0.9), 900, 4) if width_at(alpha, f['c'] + f['u'] * t, f['u']) > wn * 1.5), None)
+        t = web - 0.4 * wn if web else 2.2 * f['len']
+        r = f['c'] + f['u'] * max(f['len'] * 1.1, t)
+        # square to the finger and on its middle where the ring is (the nail's direction is the tip's; a thumb bends)
+        lu, r = local_axis(alpha, r, f['u'])
+        D['fingers'].append({'c': [round(v) for v in f['c']], 'u': [round(float(v), 4) for v in lu], 'ring': [round(float(v)) for v in r],
+                             'w': width_at(alpha, r, lu), 'w0': w0, 'ang': round(float(np.degrees(np.arctan2(lu[1], lu[0]) - np.arctan2(gu[1], gu[0]))), 2)})
+    D['rings'] = rings
     bracelets = {}
     for p in sorted((RAW / 'worn').glob('bracelet-*.png')) if (RAW / 'worn').exists() else []:
         e = clean(load(f'worn/{p.name}'))

@@ -31,7 +31,7 @@ import numpy as np
 import soundfile as sf
 from mlx_audio.tts.utils import load_model
 from zoey_pitch import pitch_of
-from voice_level import level
+from voice_level import AAC, level
 
 MIN_PITCH = 350     # Hz: below this a take does not sound like a little girl
 TAKES = 8
@@ -99,7 +99,7 @@ def main():
                 failures.append(key)
             audio = level(audio, rate)       # the same speech loudness as every other clip
             sf.write(wav, audio, rate, subtype='PCM_16')
-            subprocess.run(['afconvert', str(wav), str(OUT / f'{key}.m4a'), '-f', 'm4af', '-d', 'aac', '-b', '64000'], check=True)
+            subprocess.run(['afconvert', str(wav), str(OUT / f'{key}.m4a'), *AAC], check=True)
             info[key] = {'text': text, 'fingerprint': fingerprint, 'seed': seed, 'language': language,
                          'seconds': round(len(audio) / rate, 2), 'pitch_hz': round(pitch)}
             INFO.write_text(json.dumps(info, indent=2, ensure_ascii=False) + '\n')

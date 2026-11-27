@@ -316,7 +316,9 @@ export default {
       let node, at;
       if (spec) {
         node = await rig.layer('top', spec, 'sl-worn-ring sl-removable');
-        const [ax, ay] = spec.at, dx = f.ring[0] - ax, dy = f.ring[1] - ay, sc = f.w / f.w0;
+        // its band ends on the outline of the finger it was drawn on (the build cuts it there): scaled from that
+        // finger's width to this one's, it ends on this finger's outline too
+        const [ax, ay] = spec.at, dx = f.ring[0] - ax, dy = f.ring[1] - ay, sc = f.w / (spec.w0 || f.w0);
         node.style.transformOrigin = `${ax - spec.x}px ${ay - spec.y}px`;
         at = (back) => `translate(${dx - f.u[0] * back}px, ${dy - f.u[1] * back}px) rotate(${f.ang}deg) scale(${sc})`;
       } else {

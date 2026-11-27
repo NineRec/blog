@@ -10,6 +10,10 @@ import numpy as np
 TARGET_DB = -19.5     # speech RMS, dBFS: the median of the published clips (2026-11)
 PEAK = 0.89           # never above -1 dBFS
 TOLERANCE_DB = 2.0    # published clips further off than this are levelled again
+# How clips are stored: HE-AAC (AAC with spectral band replication), mono, 24 kbps. Half the size of the plain
+# AAC at 64 kbps used before, and closer to it than plain AAC at 32 kbps: SBR keeps the 8-12 kHz that makes speech
+# crisp, which plain AAC drops at these rates. Chromium, Safari and Firefox decode it (decodeAudioData).
+AAC = ['-f', 'm4af', '-d', 'aach', '-b', '24000']
 
 
 def speech_db(x, rate):

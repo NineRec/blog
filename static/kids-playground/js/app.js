@@ -260,9 +260,16 @@ function renderAlbum() {
   }
 }
 
+/** Ask the service worker to keep everything this game (or the salon lobby, the album) uses offline. */
+function keep(name) {
+  if (location.protocol !== 'https:' || !navigator.serviceWorker) return;
+  navigator.serviceWorker.ready.then((r) => r.active?.postMessage({ warm: name })).catch(() => {});
+}
+
 function route() {
   const [, kind, id] = location.hash.split('/');
   const def = kind === 'play' && GAMES.find((g) => g.id === id);
+  keep(def ? def.id : kind || 'hub');
   if (def) {
     show('play');
     hubZoey.setPose('idle');

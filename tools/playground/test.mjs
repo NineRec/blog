@@ -24,8 +24,15 @@ function findChrome() {
 }
 
 const MIME = { '.html': 'text/html', '.css': 'text/css', '.js': 'text/javascript', '.json': 'application/json', '.m4a': 'audio/mp4', '.png': 'image/png', '.webp': 'image/webp', '.webmanifest': 'application/manifest+json' };
+// Which files each part of the app loads (the home screen, every game, the salon lobby), for the service worker:
+// it keeps the home screen's files from the start and a game's files once it is opened (build.mjs reads this).
+let phase = 'hub';
+const loaded = {};
+const tag = (p) => { phase = p; };
 const server = createServer((req, res) => {
-  let file = resolve(root, '.' + decodeURIComponent(req.url.split('?')[0]));
+  const url = decodeURIComponent(req.url.split('?')[0]);
+  if (url.startsWith('/kids-playground/') && phase) (loaded[phase] ||= new Set()).add(url.slice('/kids-playground/'.length));
+  let file = resolve(root, '.' + url);
   try {
     if (!file.startsWith(root)) throw new Error('outside');
     if (statSync(file).isDirectory()) file = join(file, 'index.html');
@@ -53,6 +60,7 @@ ws.addEventListener('message', (ev) => {
 });
 const send = (method, params = {}) => new Promise((done, fail) => { const id = ++seq; pending.set(id, (m) => (m.error ? fail(new Error(m.error.message)) : done(m.result))); ws.send(JSON.stringify({ id, method, params })); });
 for (const d of ['Runtime', 'Page', 'Network']) await send(`${d}.enable`);
+await send('Network.setCacheDisabled', { cacheDisabled: true });     // every load reaches the server, so it is seen
 await send('Emulation.setDeviceMetricsOverride', { width: VW, height: VH, deviceScaleFactor: 1, mobile: false });
 
 const js = async (expr) => { const r = await send('Runtime.evaluate', { expression: expr, awaitPromise: true, returnByValue: true }); if (r.exceptionDetails) throw new Error(r.exceptionDetails.exception?.description || 'eval failed'); return r.result.value; };
@@ -446,6 +454,7 @@ for (const name of wanted) {
   try {
     await send('Page.navigate', { url: 'about:blank' });
     await sleep(150);
+    tag(name);
     await send('Page.navigate', { url: `${base}#/play/${name}` });
     await until(() => js(`document.getElementById('stage')?.children.length > 0`), 8000, 'the game to start');
     await sleep(700);
@@ -465,6 +474,7 @@ for (const name of wanted) {
 if (!args.length || args.includes('look')) {
   errors.length = 0;
   await send('Page.navigate', { url: 'about:blank' }); await sleep(150);
+  tag('salon');
   await send('Page.navigate', { url: `${base}#/salon` }); await sleep(900);
   await until(() => js(`!!document.querySelector('#salon-doll .sl-head')`), 6000, 'the lobby customer').catch(() => {});
   await sleep(600);
@@ -481,7 +491,9 @@ if (!args.length || args.includes('lobby')) {
   errors.length = 0;
   try {
     await send('Page.navigate', { url: 'about:blank' }); await sleep(150);
+    tag('hub');
     await send('Page.navigate', { url: base }); await sleep(900);
+    tag('salon');
     await click(await one('.card-door')); await sleep(700);
     if (!(await js(`location.hash === '#/salon' && !document.getElementById('salon').hidden`))) throw new Error('the door did not open the salon');
     if ((await count('#salon-grid .card')) !== 5) throw new Error(`${await count('#salon-grid .card')} rooms in the salon`);
@@ -515,6 +527,7 @@ if (!args.length || args.includes('lobby')) {
     await click(await one('.salon-photo')); await sleep(500);
     if (await count('.salon-photo')) throw new Error('the photo did not close');
     await click(await one('#salon-buttons .round', 3)); await sleep(1500);
+    tag(null);      // the room it opens is that game's own
     await click(await one('#salon-grid .card', 3)); await sleep(900);
     if (!(await js(`location.hash.startsWith('#/play/') && document.getElementById('stage').children.length > 0`))) throw new Error('a room did not open');
     await click(await one('#play-home .round')); await sleep(600);
@@ -526,6 +539,7 @@ if (!args.length || args.includes('lobby')) {
 // Sound after the app has been in the background: the first touch back must bring a running audio context.
 {
   errors.length = 0;
+  tag(null);
   await send('Page.navigate', { url: 'about:blank' }); await sleep(150);
   await send('Page.navigate', { url: base }); await sleep(900);
   await click(await one('.hub-side .zoey'));
@@ -545,10 +559,18 @@ if (!args.length || args.includes('lobby')) {
 }
 
 errors.length = 0;
+tag('album');
 await send('Page.navigate', { url: `${base}#/album` }); await sleep(800);
 const stickers = await count('.sticker'), got = await count('.sticker.got');
 await shot('album');
 console.log(`album: ${got}/${stickers} stickers${errors.length ? ` errors: ${errors.join(' | ')}` : ''}`);
 console.log(`screenshots in ${out}`);
+{
+  // merged into what earlier runs saw: a run of a few games updates just those
+  const f = join(dirname(fileURLToPath(import.meta.url)), 'game-files.json');
+  const all = existsSync(f) ? JSON.parse(readFileSync(f, 'utf8')) : {};
+  for (const [k, v] of Object.entries(loaded)) all[k] = [...v].filter((p) => p && !p.endsWith('/')).sort();
+  writeFileSync(f, JSON.stringify(Object.fromEntries(Object.entries(all).sort()), null, 1) + '\n');
+}
 ws.close(); chrome.kill(); server.close();
 process.exit(failed ? 1 : 0);
