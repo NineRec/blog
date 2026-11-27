@@ -85,3 +85,55 @@ def contact_sheet(items, cell=220, cols=8, matte=(140, 140, 148), mark=(255, 0, 
         sheet.paste(t, (x + (cell - t.width) // 2, y + (cell - t.height) // 2))
         d.text((x + 4, y + cell), label[:30] + (' !' if hot else ''), fill=(200, 0, 120) if hot else (60, 60, 70))
     return sheet
+
+
+# ---- AVIF twins: the same picture as AVIF when that is smaller at the same quality as the WebP the build stores ----
+
+MATTE = np.array([140, 140, 148], np.float32)
+
+
+def seen(im):
+    """A picture as it looks on the review sheets' grey matte (float RGB): edges and see-through parts count."""
+    a = np.asarray(im.convert('RGBA')).astype(np.float32)
+    al = a[..., 3:] / 255
+    return a[..., :3] * al + MATTE * (1 - al)
+
+
+def ssim(x, y):
+    """Mean SSIM over R, G and B (gaussian window, sigma 1.5)."""
+    c1, c2, out = (0.01 * 255) ** 2, (0.03 * 255) ** 2, []
+    for ch in range(3):
+        a, b = x[..., ch], y[..., ch]
+        mu_a, mu_b = ndimage.gaussian_filter(a, 1.5), ndimage.gaussian_filter(b, 1.5)
+        va = ndimage.gaussian_filter(a * a, 1.5) - mu_a ** 2
+        vb = ndimage.gaussian_filter(b * b, 1.5) - mu_b ** 2
+        cov = ndimage.gaussian_filter(a * b, 1.5) - mu_a * mu_b
+        out.append(float((((2 * mu_a * mu_b + c1) * (2 * cov + c2)) / ((mu_a ** 2 + mu_b ** 2 + c1) * (va + vb + c2))).mean()))
+    return sum(out) / 3
+
+
+def avif_bytes(im, q):
+    import io
+    buf = io.BytesIO()
+    im.save(buf, 'AVIF', quality=q, speed=4, subsampling='4:4:4')
+    return buf.getvalue()
+
+
+def matched_avif(im, webp):
+    """
+    (quality, bytes) of the smallest AVIF of `im` at least as close to it as `webp` (the stored WebP's bytes) is;
+    None when that AVIF is not smaller than the WebP.
+    """
+    import io
+    from PIL import Image
+    ref = seen(im)
+    target = ssim(ref, seen(Image.open(io.BytesIO(webp))))
+    lo, hi, best = 20, 95, None
+    while lo <= hi:
+        mid = (lo + hi) // 2
+        data = avif_bytes(im, mid)
+        if ssim(ref, seen(Image.open(io.BytesIO(data)))) >= target:
+            best, hi = (mid, data), mid - 1
+        else:
+            lo = mid + 1
+    return best if best and len(best[1]) < len(webp) else None

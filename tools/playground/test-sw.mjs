@@ -3,7 +3,8 @@
 //   2. opening a game keeps all of that game's files;
 //   3. with the server gone, that game still opens and draws;
 //   4. an update downloads only what changed, and the game is still kept offline afterwards.
-//   node tools/playground/test-sw.mjs [game]          (default: hair)
+//   node tools/playground/test-sw.mjs [game] [avif|webp]      (default: hair, avif; webp is what a device that
+//   does not show AVIF gets: the page is opened with ?fmt=webp)
 import { spawn, execFileSync } from 'node:child_process';
 import { createServer } from 'node:http';
 import { cpSync, mkdtempSync, readFileSync, readdirSync, existsSync, statSync, rmSync, writeFileSync, appendFileSync } from 'node:fs';
@@ -12,7 +13,7 @@ import { fileURLToPath } from 'node:url';
 import { homedir, tmpdir } from 'node:os';
 
 const here = dirname(fileURLToPath(import.meta.url));
-const game = process.argv[2] || 'hair';
+const game = process.argv[2] || 'hair', format = process.argv[3] || 'avif';
 const tmp = mkdtempSync(join(tmpdir(), 'kp-sw-'));
 const app = join(tmp, 'kids-playground');
 cpSync(join(here, '../../static/kids-playground'), app, { recursive: true });
@@ -65,7 +66,11 @@ for (const d of ['Runtime', 'Page']) await send(`${d}.enable`);
 const js = async (expr) => { const r = await send('Runtime.evaluate', { expression: expr, awaitPromise: true, returnByValue: true }); if (r.exceptionDetails) throw new Error(r.exceptionDetails.exception?.description || r.exceptionDetails.text); return r.result.value; };
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const until = async (fn, ms, what) => { const end = Date.now() + ms; while (Date.now() < end) { if (await fn()) return; await sleep(200); } throw new Error(`timed out: ${what}`); };
-const go = async (hash = '') => { await send('Page.navigate', { url: 'about:blank' }); await sleep(100); await send('Page.navigate', { url: base + hash }); await sleep(1200); };
+const go = async (hash = '') => { await send('Page.navigate', { url: 'about:blank' }); await sleep(100); await send('Page.navigate', { url: `${base}?fmt=${format}${hash}` }); await sleep(1200); };
+const keep = async (name) => {
+  await js(`import('./js/salon/ui.js').then((m) => navigator.serviceWorker.controller.postMessage({ warm: ${JSON.stringify(name)}, format: m.FORMAT })).then(() => true)`);
+  await until(async () => (await cached())[1].includes(`__warm/${name}`), 60000, `${name} kept offline`);
+};
 // what the current cache holds: [cache names, paths kept]
 const cached = () => js(`(async () => { const names = (await caches.keys()).filter((k) => k.startsWith('kids-playground-')); const c = await caches.open(names[names.length - 1]);
   return [names, (await c.keys()).map((r) => decodeURIComponent(new URL(r.url).pathname).replace('/kids-playground/', '') || './')]; })()`);
@@ -80,18 +85,23 @@ try {
   asked.length = 0;
   await js(`navigator.serviceWorker.register('sw.js').then(() => navigator.serviceWorker.ready).then(() => true)`);
   await until(() => js('!!navigator.serviceWorker.controller'), 15000, 'the worker to take the page');
-  const CORE = constant('CORE'), GROUPS = constant('GROUPS');
+  const CORE = constant('CORE'), GROUPS = constant('GROUPS'), HASH = constant('HASH');
+  const pick = (p) => (format === 'avif' && p.endsWith('.webp') && HASH[p.slice(0, -5) + '.avif'] ? p.slice(0, -5) + '.avif' : p);
   let [names, kept] = await cached();
   const fetched = asked.filter((p) => p !== 'sw.js');
   check(kept.length === CORE.length && CORE.every((p) => kept.includes(p)), `first visit keeps the core: ${kept.length}/${CORE.length} files, ${mb(CORE)} (downloaded ${fetched.length})`);
 
   // 2. opening a game keeps that game
-  const mine = GROUPS[game] || [];
+  const mine = (GROUPS[game] || []).map(pick), hub = (GROUPS.hub || []).map(pick);
+  check(await js('import("./js/salon/ui.js").then((m) => m.FORMAT)') === format, `the page chose ${format}`);
+  await keep('hub');
   await go(`#/play/${game}`);
-  await js(`navigator.serviceWorker.controller.postMessage({ warm: ${JSON.stringify(game)} }), true`);
-  await until(async () => (await cached())[1].includes(`__warm/${game}`), 60000, `${game} kept offline`);
+  await keep(game);
   [names, kept] = await cached();
-  check(mine.length > 0 && mine.every((p) => kept.includes(p)), `opening ${game} keeps its ${mine.length} files (${mb(mine)})`);
+  const other = format === 'avif' ? '.webp' : '.avif';
+  const both = kept.filter((p) => p.startsWith('assets/salon/') && p.endsWith(other) && kept.includes(p.slice(0, -5) + (format === 'avif' ? '.avif' : '.webp')));
+  check(mine.length > 0 && mine.every((p) => kept.includes(p)) && hub.every((p) => kept.includes(p)) && !both.length,
+    `opening ${game} keeps its ${mine.length} files (${mb(mine)}), as ${format} only${both.length ? `; both formats of ${both.slice(0, 3).join(' ')}` : ''}`);
 
   // 3. offline
   offline = true;
@@ -100,15 +110,16 @@ try {
   await until(() => js(`document.getElementById('stage')?.children.length > 0`), 8000, `${game} to start offline`);
   await sleep(1500);
   const broken = await js(`[...document.querySelectorAll('#stage img')].filter((i) => i.complete && !i.naturalWidth).map((i) => i.src.split('/').pop())`);
+  const shown = await js(`[...document.querySelectorAll('#stage img')].map((i) => i.src.split('.').pop()).filter((x) => x === 'avif' || x === 'webp')`);
   const pics = await js(`document.querySelectorAll('#stage img').length`);
   // and its voice: one of its clips, fetched and decoded with no server
   const clip = mine.find((p) => p.endsWith('.m4a'));
   const heard = !clip || await js(`fetch(${JSON.stringify(clip)}).then((r) => r.arrayBuffer()).then((b) => new OfflineAudioContext(1, 1, 48000).decodeAudioData(b)).then((a) => a.duration > 0, () => false)`);
-  check(!broken.length && !errors.length && heard, `${game} plays offline (${pics} pictures, ${broken.length} missing${broken.length ? ': ' + broken.slice(0, 5).join(' ') : ''}; voice ${clip ? (heard ? 'decodes' : 'MISSING') : 'none'}${errors.length ? '; errors: ' + errors.join(' | ') : ''})`);
+  check(!broken.length && !errors.length && heard, `${game} plays offline (${pics} pictures, ${broken.length} missing${broken.length ? ': ' + broken.slice(0, 5).join(' ') : ''}; ${shown.filter((x) => x === 'avif').length} AVIF / ${shown.filter((x) => x === 'webp').length} WebP; voice ${clip ? (heard ? 'decodes' : 'MISSING') : 'none'}${errors.length ? '; errors: ' + errors.join(' | ') : ''})`);
   offline = false;
 
   // 4. an update: one script and one of the game's files change
-  const changed = ['js/fx.js', mine.find((p) => p.endsWith('.webp') || p.endsWith('.m4a'))].filter(Boolean);
+  const changed = ['js/fx.js', mine.find((p) => /\.(webp|avif|m4a)$/.test(p))].filter(Boolean);
   appendFileSync(join(app, changed[0]), '\n// changed\n');
   if (changed[1]) { const f = join(app, changed[1]); writeFileSync(f, Buffer.concat([readFileSync(f), Buffer.from([0])])); }
   build();

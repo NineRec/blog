@@ -44,18 +44,26 @@ const byFamily = new Map();
 for (const f of files) { const k = family(f); if (k) byFamily.set(k, [...(byFamily.get(k) || []), f]); }
 const widen = (list) => [...new Set(list.flatMap((f) => [f, ...(byFamily.get(family(f)) || [])]))].filter((f) => f in HASH);
 
-const seen = existsSync(join(here, 'game-files.json')) ? JSON.parse(readFileSync(join(here, 'game-files.json'), 'utf8')) : {};
+// A picture with an AVIF twin is listed by its WebP name; the worker keeps whichever the device shows (the page
+// says which), never both. What the tests saw as .avif is counted as its WebP.
+const webpOf = (f) => (f.endsWith('.avif') && files.includes(f.slice(0, -5) + '.webp') ? f.slice(0, -5) + '.webp' : f);
+const twinned = (f) => f.endsWith('.webp') && files.includes(f.slice(0, -5) + '.avif');
+const seen = Object.fromEntries(Object.entries(existsSync(join(here, 'game-files.json')) ? JSON.parse(readFileSync(join(here, 'game-files.json'), 'utf8')) : {})
+  .map(([k, v]) => [k, [...new Set(v.map(webpOf))]]));
 // What a play-through does not hear: a game's own lines are named after it (facial-intro, maze-intro), Zoey's
 // "hello" on the home screen answers a tap, and the album's stickers say their name and a line about the animal.
 const voice = files.filter((f) => f.startsWith('assets/voice/'));
 const named = (prefix) => voice.filter((f) => basename(f).startsWith(prefix));
 const EXTRA = { hub: named('hello.'), album: [...named('about-'), ...named('wd-')] };
 const isAsset = (f) => f.startsWith('assets/') && !f.startsWith('assets/icons/');
-const core = new Set(['./', ...files.filter((f) => !isAsset(f)), ...[...(seen.hub || []), ...EXTRA.hub].filter((f) => f in HASH)]);
+// the home screen's pictures that come in two formats are not on the install list (it cannot know which one the
+// device shows): they are group 'hub', which the page asks for as soon as it has chosen
+const hubFiles = [...(seen.hub || []), ...EXTRA.hub].filter((f) => f in HASH);
+const core = new Set(['./', ...files.filter((f) => !isAsset(f)), ...hubFiles.filter((f) => !twinned(f))]);
 const GROUPS = {};
 for (const name of new Set([...Object.keys(seen), ...Object.keys(EXTRA)])) {
-  if (name === 'hub') continue;
-  const g = widen([...(seen[name] || []), ...(EXTRA[name] || []), ...named(`${name}-`)]).filter((f) => !core.has(f)).sort();
+  const list = name === 'hub' ? hubFiles.filter(twinned) : widen([...(seen[name] || []), ...(EXTRA[name] || []), ...named(`${name}-`)]);
+  const g = list.filter((f) => !f.endsWith('.avif') && !core.has(f)).sort();
   if (g.length) GROUPS[name] = g;
 }
 
@@ -76,6 +84,9 @@ const pathOf = (u) => {
   const p = x.pathname.slice(SCOPE.length);
   return p === '' || p === 'index.html' ? './' : p;
 };
+
+/** The file a device keeps for \`p\`: a picture's AVIF twin where it shows AVIF. */
+const pick = (p, format) => (format === 'avif' && p.endsWith('.webp') && HASH[p.slice(0, -5) + '.avif'] ? p.slice(0, -5) + '.avif' : p);
 
 /** A response as kept: with the content hash of the file it is, to tell later whether it is still current. */
 const stamped = (p, res) => res.blob().then((body) => {
@@ -111,11 +122,11 @@ async function fill(cache, paths, olds = []) {
   await Promise.all(Array.from({ length: 6 }, worker));
 }
 
-async function warm(name, olds = []) {
+async function warm(name, format, olds = []) {
   if (!GROUPS[name]) return;
   const cache = await caches.open(CACHE);
-  await fill(cache, GROUPS[name], olds);
-  await cache.put(href(WARM + name), new Response(''));
+  await fill(cache, GROUPS[name].map((p) => pick(p, format)), olds);
+  await cache.put(href(WARM + name), new Response(format || 'webp'));      // the marker remembers the format
 }
 
 self.addEventListener('install', (event) => {
@@ -127,7 +138,7 @@ self.addEventListener('install', (event) => {
     for (const o of olds) {
       for (const req of await o.keys()) {
         const p = pathOf(req.url);
-        if (p && p.startsWith(WARM)) { await cache.put(req, new Response('')); continue; }
+        if (p && p.startsWith(WARM)) { await cache.put(req, await o.match(req)); continue; }
         if (!p || !HASH[p] || (await cache.match(req))) continue;
         const r = await o.match(req);
         if (r && r.headers.get('x-kp-hash') === HASH[p]) await cache.put(req, r);
@@ -143,7 +154,7 @@ self.addEventListener('activate', (event) => {
     const cache = await caches.open(CACHE);
     for (const req of await cache.keys()) {
       const p = pathOf(req.url);
-      if (p && p.startsWith(WARM)) await warm(p.slice(WARM.length));
+      if (p && p.startsWith(WARM)) await warm(p.slice(WARM.length), await (await cache.match(req)).text());
     }
     const keys = await caches.keys();
     await Promise.all(keys.filter((k) => k.startsWith('kids-playground-') && k !== CACHE).map((k) => caches.delete(k)));
@@ -153,7 +164,7 @@ self.addEventListener('activate', (event) => {
 // the page says which game (or the salon lobby, or the album) it opened: keep all of it offline
 self.addEventListener('message', (event) => {
   const name = event.data && event.data.warm;
-  if (typeof name === 'string') event.waitUntil(warm(name));
+  if (typeof name === 'string') event.waitUntil(warm(name, event.data.format));
 });
 
 self.addEventListener('fetch', (event) => {
@@ -173,9 +184,11 @@ self.addEventListener('fetch', (event) => {
 const mb = (n) => (n / 1e6).toFixed(2) + ' MB';
 const total = files.reduce((s, f) => s + size(f), 0), coreSize = CORE.reduce((s, f) => s + size(f), 0);
 const grouped = new Set(Object.values(GROUPS).flat());
-console.log(`sw.js: ${files.length} files (${mb(total)}), version ${version}`);
-console.log(`  first visit: ${CORE.length} files, ${mb(coreSize)}`);
-for (const [g, list] of Object.entries(GROUPS)) console.log(`  ${g.padEnd(9)} ${String(list.length).padStart(3)} files, ${mb(list.reduce((s, f) => s + size(f), 0))}`);
-const loose = files.filter((f) => !core.has(f) && !grouped.has(f));
+const shown = (list, format) => list.reduce((s, f) => s + size(format === 'avif' && twinned(f) ? f.slice(0, -5) + '.avif' : f), 0);
+const served = (format) => files.filter((f) => !(format === 'avif' ? twinned(f) : f.endsWith('.avif') && files.includes(f.slice(0, -5) + '.webp'))).reduce((s, f) => s + size(f), 0);
+console.log(`sw.js: ${files.length} files, version ${version}; the whole app ${mb(served('avif'))} with AVIF, ${mb(served('webp'))} with WebP`);
+console.log(`  first visit: ${CORE.length} files, ${mb(coreSize)} + home screen pictures (group hub)`);
+for (const [g, list] of Object.entries(GROUPS)) console.log(`  ${g.padEnd(9)} ${String(list.length).padStart(3)} files, ${mb(shown(list, 'avif'))} AVIF / ${mb(shown(list, 'webp'))} WebP`);
+const loose = files.filter((f) => !core.has(f) && !grouped.has(webpOf(f)) && !(f.endsWith('.avif') && grouped.has(webpOf(f))));
 console.log(`  in no group (kept when first used): ${loose.length} files, ${mb(loose.reduce((s, f) => s + size(f), 0))}`);
 if (!Object.keys(seen).length) console.log('  (no game-files.json yet: run the tests once to split the app by game)');

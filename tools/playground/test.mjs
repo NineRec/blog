@@ -1,5 +1,5 @@
 // Plays every game of /kids-playground/ to the end in headless Chromium with real mouse input.
-//   node tools/playground/test.mjs [game ...]        (CHROME=/path/to/chrome, OUT=/dir/for/screenshots, SIZE=1194x834)
+//   node tools/playground/test.mjs [game ...]        (CHROME=/path/to/chrome, OUT=/dir/for/screenshots, SIZE=1194x834, FMT=webp)
 // Needs no packages: it serves static/ itself and talks to the browser over the DevTools protocol.
 import { spawn } from 'node:child_process';
 import { createServer } from 'node:http';
@@ -41,7 +41,8 @@ const server = createServer((req, res) => {
   } catch { res.writeHead(404).end(); }
 });
 await new Promise((r) => server.listen(0, '127.0.0.1', r));
-const base = `http://127.0.0.1:${server.address().port}/kids-playground/`;
+// FMT=webp plays it as a device that does not show AVIF would
+const base = `http://127.0.0.1:${server.address().port}/kids-playground/${process.env.FMT ? `?fmt=${process.env.FMT}` : ""}`;
 
 const chrome = spawn(findChrome(), ['--headless', '--remote-debugging-port=0', `--window-size=${VW},${VH}`, '--hide-scrollbars', '--mute-audio', '--autoplay-policy=no-user-gesture-required', 'about:blank'], { stdio: ['ignore', 'ignore', 'pipe'] });
 const wsUrl = await new Promise((done) => chrome.stderr.on('data', (d) => { const m = /ws:\/\/[^\s]+/.exec(String(d)); if (m) done(m[0]); }));

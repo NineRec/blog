@@ -2,8 +2,40 @@
 // and things to pick, a big green tick to finish, a dashed ring that shows where to work next.
 import { el, anim, icon, roundButton } from '../core.js';
 import { sfx, unlock } from '../audio.js';
+import * as MANIFEST from './manifest.js';
 
 export const ART = 'assets/salon/';
+
+/* Most pictures also come as AVIF, about half the size of the WebP at the same quality. Safari shows AVIF from
+   iOS 16; older devices keep the WebPs. chooseFormat() decodes a 1-pixel AVIF (with see-through, as ours are) once
+   at start-up and, if it shows, points every picture in the manifest that has a twin at it. ?fmt=webp or ?fmt=avif
+   forces one (tests). */
+const PROBE = 'data:image/avif;base64,AAAAIGZ0eXBhdmlmAAAAAGF2aWZtaWYxbWlhZk1BMUIAAAGGbWV0YQAAAAAAAAAhaGRscgAAAAAAAAAAcGljdAAAAAAAAAAAAAAAAAAAAAAOcGl0bQAAAAAAAQAAACxpbG9jAAAAAEQAAAIAAQAAAAEAAAG/AAAAKAACAAAAAQAAAa4AAAARAAAAQmlpbmYAAAAAAAIAAAAaaW5mZQIAAAAAAQAAYXYwMUNvbG9yAAAAABppbmZlAgAAAAACAABhdjAxQWxwaGEAAAAAGmlyZWYAAAAAAAAADmF1eGwAAgABAAEAAADDaXBycAAAAJ1pcGNvAAAAFGlzcGUAAAAAAAAAAQAAAAEAAAAQcGl4aQAAAAADCAgIAAAADGF2MUOBAAwAAAAAE2NvbHJuY2x4AAEADQAGgAAAAA5waXhpAAAAAAEIAAAADGF2MUOBABwAAAAAOGF1eEMAAAAAdXJuOm1wZWc6bXBlZ0I6Y2ljcDpzeXN0ZW1zOmF1eGlsaWFyeTphbHBoYQAAAAAeaXBtYQAAAAAAAAACAAEEAQKDBAACBAEFhgcAAABBbWRhdBIACgQYAAYVMgcYACihABCgEgAKCBgABogIaDQgMhoZR4eGIYeeeeaAAACQQMkcYUsrTY9RRU6koA==';
+export let FORMAT = 'webp';
+
+export function chooseFormat() {
+  const forced = new URLSearchParams(location.search).get('fmt');
+  const shows = forced ? Promise.resolve(forced === 'avif') : new Promise((done) => {
+    const probe = new Image();
+    probe.onload = () => done(probe.width === 1);
+    probe.onerror = () => done(false);
+    setTimeout(() => done(false), 1500);
+    probe.src = PROBE;
+  });
+  return shows.then((yes) => { if (yes) useAvif(); return FORMAT; });
+}
+
+function useAvif() {
+  const twins = new Set(MANIFEST.AVIF || []);
+  const walk = (o) => {
+    for (const k of Object.keys(o)) {
+      const v = o[k];
+      if (typeof v === 'string') { if (twins.has(v)) o[k] = `${v.slice(0, -5)}.avif`; } else if (v && typeof v === 'object') walk(v);
+    }
+  };
+  for (const [k, v] of Object.entries(MANIFEST)) if (k !== 'AVIF' && v && typeof v === 'object') walk(v);
+  FORMAT = 'avif';
+}
 export const img = (name, cls = '') => `<img class="${cls}" src="${ART}${name}" alt="" draggable="false">`;
 
 /** The room picture behind everything. */

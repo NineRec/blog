@@ -9,6 +9,7 @@ import { food, FRUITS, VEGGIES, TREATS } from './art/food.js';
 import { GAMES, GROUPS, SALON } from './games/index.js';
 import { renderSalon, dollIn } from './salon/lobby.js';
 import { saveLook, clearZone } from './salon/look.js';
+import { chooseFormat, FORMAT } from './salon/ui.js';
 import { Zoey } from './zoey.js';
 
 const $ = (id) => document.getElementById(id);
@@ -263,7 +264,7 @@ function renderAlbum() {
 /** Ask the service worker to keep everything this game (or the salon lobby, the album) uses offline. */
 function keep(name) {
   if (location.protocol !== 'https:' || !navigator.serviceWorker) return;
-  navigator.serviceWorker.ready.then((r) => r.active?.postMessage({ warm: name })).catch(() => {});
+  navigator.serviceWorker.ready.then((r) => r.active?.postMessage({ warm: name, format: FORMAT })).catch(() => {});
 }
 
 function route() {
@@ -307,4 +308,4 @@ function init() {
   route();
   if ('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(() => {});
 }
-init();
+chooseFormat().then(init, init);
