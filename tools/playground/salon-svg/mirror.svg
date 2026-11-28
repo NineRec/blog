@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="212" height="301" viewBox="0 0 212 301">
+<defs>
+<linearGradient id="h"><stop offset=".6" stop-color="#fc7abc"/><stop offset="1" stop-color="#f55ca7"/></linearGradient>
+<linearGradient id="g" x2="1" y2="1"><stop offset=".18" stop-color="#b0e6fa"/><stop offset=".19" stop-color="#cdf0fd"/><stop offset=".26" stop-color="#cdf0fd"/><stop offset=".27" stop-color="#ace5f9"/><stop offset=".33" stop-color="#ace5f9"/><stop offset=".34" stop-color="#d4f2fc"/><stop offset=".55" stop-color="#d4f2fc"/><stop offset=".56" stop-color="#8cdef9"/><stop offset=".6" stop-color="#8cdef9"/><stop offset=".61" stop-color="#b3e7fa"/><stop offset=".65" stop-color="#b3e7fa"/><stop offset=".66" stop-color="#80d8fc"/></linearGradient>
+<clipPath id="c"><ellipse id="o" cx="105.5" cy="103" rx="100.5" ry="98"/></clipPath>
+</defs>
+<g stroke="#c4237a" stroke-width="8"><use href="#o"/><path id="p" d="M60 188C74 196 81 204 81 222S71 245 71 265 85 296 103.5 296 136 285 136 265 126 235 126 222 133 196 147 188Z"/></g>
+<use href="#p" fill="url(#h)"/>
+<use href="#o" fill="#f96aaf"/>
+<path d="M2 100a100.5 98 0 1 0 201 0a100.5 98 0 1 0-201 0ZM19 101a83 82 0 1 0 166 0a83 82 0 1 0-166 0Z" fill="#fd7abb" fill-rule="evenodd" clip-path="url(#c)"/>
+<ellipse cx="105" cy="104" rx="83" ry="82" fill="url(#g)" stroke="#c62e84" stroke-width="3.5"/>
+<ellipse cx="89.5" cy="247" rx="7" ry="14" fill="#fdedf9" transform="rotate(12 89.5 247)"/>
+</svg>

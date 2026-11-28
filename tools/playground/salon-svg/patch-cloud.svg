@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="270" height="191" viewBox="0 0 270 191">
+<defs>
+<path id="f" d="M76.9 70.6a62.5 62.5 0 1 0 125 0a62.5 62.5 0 1 0-125 0M9.2 113a55.2 55.2 0 1 0 110.4 0a55.2 55.2 0 1 0-110.4 0M159.8 110.8a50.6 50.6 0 1 0 101.2 0a50.6 50.6 0 1 0-101.2 0M91.5 140.4a39.2 39.2 0 1 0 78.4 0a39.2 39.2 0 1 0-78.4 0M107.1 136.3a44.3 44.3 0 1 0 88.6 0a44.3 44.3 0 1 0-88.6 0M106.2 147.3a34.9 34.9 0 1 0 69.8 0a34.9 34.9 0 1 0-69.8 0M90 120a50 50 0 1 0 100 0a50 50 0 1 0-100 0"/>
+<clipPath id="c"><use href="#f"/></clipPath>
+</defs>
+<use href="#f" fill="#72c7fa" stroke="#1c6bc0" stroke-width="16" paint-order="stroke"/>
+<g clip-path="url(#c)" fill="#9fdafa"><circle cx="139.4" cy="70.6" r="62.5"/><circle cx="44.6" cy="96.4" r="53.6"/><circle cx="190.6" cy="94.2" r="49"/><circle cx="110.9" cy="123.8" r="37.6"/><circle cx="131.6" cy="119.7" r="42.7"/><circle cx="121.3" cy="130.7" r="33.3"/><circle cx="120.2" cy="103.4" r="48.4"/></g>
+<ellipse cx="115.4" cy="41.5" rx="24.7" ry="10.9" transform="rotate(-36.2 115.4 41.5)" fill="#eef8fe"/>
+</svg>

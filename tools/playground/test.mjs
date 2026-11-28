@@ -23,7 +23,7 @@ function findChrome() {
   throw new Error('Set CHROME to a Chromium binary');
 }
 
-const MIME = { '.html': 'text/html', '.css': 'text/css', '.js': 'text/javascript', '.json': 'application/json', '.m4a': 'audio/mp4', '.png': 'image/png', '.webp': 'image/webp', '.webmanifest': 'application/manifest+json' };
+const MIME = { '.html': 'text/html', '.css': 'text/css', '.js': 'text/javascript', '.json': 'application/json', '.m4a': 'audio/mp4', '.png': 'image/png', '.webp': 'image/webp', '.avif': 'image/avif', '.svg': 'image/svg+xml', '.webmanifest': 'application/manifest+json' };
 // Which files each part of the app loads (the home screen, every game, the salon lobby), for the service worker:
 // it keeps the home screen's files from the start and a game's files once it is opened (build.mjs reads this).
 let phase = 'hub';
@@ -61,7 +61,9 @@ ws.addEventListener('message', (ev) => {
 });
 const send = (method, params = {}) => new Promise((done, fail) => { const id = ++seq; pending.set(id, (m) => (m.error ? fail(new Error(m.error.message)) : done(m.result))); ws.send(JSON.stringify({ id, method, params })); });
 for (const d of ['Runtime', 'Page', 'Network']) await send(`${d}.enable`);
-await send('Network.setCacheDisabled', { cacheDisabled: true });     // every load reaches the server, so it is seen
+await send('Network.setCacheDisabled', { cacheDisabled: true });
+// a picture that does not show (a wrong path, a wrong type) is an error too: the shelf would show a broken icon
+await send('Page.addScriptToEvaluateOnNewDocument', { source: `addEventListener('error', (e) => { if (e.target instanceof HTMLImageElement) console.error('picture did not show: ' + e.target.src.split('/').pop()); }, true);` });     // every load reaches the server, so it is seen
 await send('Emulation.setDeviceMetricsOverride', { width: VW, height: VH, deviceScaleFactor: 1, mobile: false });
 
 const js = async (expr) => { const r = await send('Runtime.evaluate', { expression: expr, awaitPromise: true, returnByValue: true }); if (r.exceptionDetails) throw new Error(r.exceptionDetails.exception?.description || 'eval failed'); return r.result.value; };

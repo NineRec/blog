@@ -22,7 +22,7 @@ build();
 const sw = () => readFileSync(join(app, 'sw.js'), 'utf8');
 const constant = (name) => JSON.parse(new RegExp(`const ${name} = (.*);`).exec(sw())[1]);
 
-const MIME = { '.html': 'text/html', '.css': 'text/css', '.js': 'text/javascript', '.json': 'application/json', '.m4a': 'audio/mp4', '.png': 'image/png', '.webp': 'image/webp', '.webmanifest': 'application/manifest+json' };
+const MIME = { '.html': 'text/html', '.css': 'text/css', '.js': 'text/javascript', '.json': 'application/json', '.m4a': 'audio/mp4', '.png': 'image/png', '.webp': 'image/webp', '.avif': 'image/avif', '.svg': 'image/svg+xml', '.webmanifest': 'application/manifest+json' };
 let offline = false;
 const asked = [];
 const server = createServer((req, res) => {

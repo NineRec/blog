@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="251" height="360" viewBox="0 0 251 360">
+<linearGradient id="g" x2="0" y1="15" y2="100" gradientUnits="userSpaceOnUse"><stop stop-color="#ff5053"/><stop offset="1" stop-color="#fb2e34"/></linearGradient>
+<path d="M122.5 226.5C117.5 238.5 114.5 246.5 114.5 258.5C114.5 284.5 139.9 292.5 139.9 318.5C139.9 330.5 131.5 345.5 125.5 356" fill="none" stroke="#b80911" stroke-width="7.5" stroke-linecap="round"/>
+<path d="M109 200H135L143 215Q147 228 121 228.5Q95 228 99 215Z" fill="#eb151e" stroke="#be0510" stroke-width="5" stroke-linejoin="round"/>
+<clipPath id="c"><path id="h" d="M126 34C122 28 100 4.3 76 4.3C34 4.3 4.3 36 4.3 76C4.3 146 80 192 124 196C170 192 246.8 140 246.8 74C246.8 34 218 4.3 184 4.3C152 4.3 131 31 126 34Z"/></clipPath>
+<use href="#h" fill="#ea141d"/>
+<g clip-path="url(#c)"><path d="M0 0H251V25C218 70 190 125 130 138C95 145 55 142 20 118L0 100Z" fill="url(#g)"/>
+<use href="#h" fill="none" stroke="url(#g)" stroke-width="28"/></g>
+<g fill="#fc7c80"><ellipse cx="51.7" cy="41.3" rx="40.6" ry="16.9" transform="rotate(-44 51.7 41.3)"/>
+<ellipse cx="163.6" cy="34.6" rx="29.7" ry="9.4" transform="rotate(-34 163.6 34.6)"/>
+<ellipse cx="37" cy="99.4" rx="16.9" ry="7.1" transform="rotate(67 37 99.4)"/></g>
+<g fill="#fdc3c3"><ellipse cx="46.6" cy="47.1" rx="31.5" ry="13.5" transform="rotate(-48 46.6 47.1)"/>
+<ellipse cx="162.6" cy="34" rx="19.5" ry="7.3" transform="rotate(-34 162.6 34)"/></g>
+<use href="#h" fill="none" stroke="#be0510" stroke-width="6.5" stroke-linejoin="round"/>
+</svg>
